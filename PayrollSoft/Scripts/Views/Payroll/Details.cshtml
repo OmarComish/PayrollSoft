@@ -1,0 +1,108 @@
+﻿@model PayrollSoft.Models.Payroll
+
+@{
+    ViewBag.Title = "Initiate Payroll";
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript">
+
+    function _customizePayroll(theme, title) {
+
+        $("#customizePayrollWin").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 600,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#Delete"),
+            cancelButton: $("#Cancel"),
+            modalOpacity: 0.01
+
+        });
+
+        $("#customizePayrollWin").jqxWindow('open');
+
+    }
+
+  $(document).ready(function(){
+
+       _winID = "Customize";
+       var theme = getDemoTheme();
+       $("#initPayrollProc").jqxButton({theme: theme});
+       $("#initPayrollCustomize").jqxButton({theme:theme});
+
+       document.getElementById("messageNotification").style.visibility = false;
+
+       $("#initPayrollCustomize").click(function(){
+
+           _customizePayroll(theme,_winID);
+
+       });
+
+       $("#initPayrollProc").click(function(){
+
+             //document.getElementById("messageNotification").style.visibility = "visible";
+
+                //alert("payroll process initiated");
+                //$("#messageNotification").jqxNotification("open");
+                _notificationMessage("success","Payroll process initiated");
+
+                $.ajax({
+                    type: "GET",
+                    contentType: "application/json;charset=utf-8",
+                    url: '/Payroll/PayrollList',
+                    data: "{}",
+                    dataType: 'json',
+                    success: function (data) {
+
+                        for (var x = 0; x < data.length; x++) {
+
+                            //console.log(data[x].EmpName);
+                            $.ajax({
+                                cache: false,
+                                datatype: 'jsonp',
+                                url: '/Payroll/InitiatePayroll/' + data[x].EmpID,
+                                type: "POST",
+                                success: function (data) {
+                                  
+                                  _notificationMessage("success","Payroll process completed");
+
+                                },
+                                error: function (result) {
+
+                                }
+
+                            });
+
+                        }
+                    },
+                    error: function (result) {
+                        alert("Error: Could not retrive data from server");
+                    }
+
+
+                });
+
+                //$("#successmessageNotification").jqxNotification("open");
+                 
+       });
+  });
+
+</script>
+
+@Html.Partial("_initiatePayroll")

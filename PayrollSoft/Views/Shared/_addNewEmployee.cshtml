@@ -1,0 +1,242 @@
+<div id='jqxWidget' style="margin-top: 2px;">
+  <div id='jqxTabs'>
+          <ul>
+            <li style="margin-left: 30px;">Personal info</li>
+            <li>Department</li>
+            <li>Academic</li>
+            <li>Miscellaneous</li>
+         </ul>
+         <div>
+             <form id="newEmployee-form" action="#">
+               <table style="margin-top: 30px; margin-left: 5px;">
+                  <tr>
+                    <td><span style="margin-left:10px">Employment number:</span></td>
+                    <td><input id="empID" type="text" class="text-input" /></td>
+                  </tr>
+                  <tr>
+                    <td><div class="inputbox-spacing"></div></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><span style="margin-left:10px">First name:</span></td>
+                    <td><input id="firstName" type="text" class="text-input" /></td>
+                  </tr>
+                  <tr>
+                    <td><div class="inputbox-spacing"></div></td>
+                    <td></td>
+                  </tr>
+                   <tr>
+                    <td><span style="margin-left:10px">Middle name:</span></td>
+                    <td><input id="middleName" type="text" class="text-input" /></td>
+                  </tr>
+                  <tr>
+                     <td colspan="2"><div class="inputbox-spacing"></div></td>
+                  </tr>
+                   <tr>
+                    <td><span style="margin-left:10px">Last name:</span></td>
+                    <td><input id="lastName" type="text" class="text-input" /></td>
+                  </tr>
+                  <tr>
+                    <td><div class="inputbox-spacing"></div></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><span style="margin-left:10px">Physical address:</span></td>
+                    <td><input id="address" type="text" class="text-input" /></td>
+                  </tr>
+                  <tr>
+                    <td><div class="inputbox-spacing"></div></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><span style="margin-left:10px">Contact number:</span></td>
+                    <td><input id="contactNo" type="text" class="text-input" />
+                        <input id="contactNo2" type="text" class="text-input" /></td>
+                  </tr>
+                  <tr>
+                    <td><div class="inputbox-spacing"></div></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><span style="margin-left:10px">Gender:</span></td>
+                    <td><div id="sex"></div></td>
+                  </tr>
+                  <tr>
+                    <td><div class="inputbox-spacing"></div></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><span style="margin-left:10px">Date of birth:</span></td>
+                    <td><div id="dob"></div></td>
+                  </tr>
+                  <tr>
+                     <td><span class="inputbox-spacing"></span></td>
+                   </tr>
+                  <tr>
+                    <td><span style="margin-left:10px">Marital status:</span></td>
+                    <td><div id="maritalStatus"></div></td>
+                  </tr>
+               </table>
+             </form>
+         </div>
+         <div>
+              <table style="margin-top: 30px; margin-left: 10px;">
+                   <tr>
+                    <td>Department:</td>
+                    <td><div id="deptno"></div></td>
+                  </tr>
+                  <tr>
+                    <td><div class="inputbox-spacing"></div></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Jop Title:</td>
+                    <td><div id="jobposition"></div></td>
+                  </tr>
+                  <tr>
+                    <td><div class="inputbox-spacing"></div></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Grade:</td>
+                    <td><div id="empgrade"></div></td>
+                  </tr>
+                   <tr>
+                    <td><div class="inputbox-spacing"></div></td>
+                    <td></td>
+                  </tr>
+                   <tr>
+                    <td>Appointment date:</td>
+                    <td><div id="dateHired"></div></td>
+                  </tr>
+                   <tr>
+                    <td><div class="inputbox-spacing"></div></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>End date:</td>
+                    <td><div id="enddate"></div></td>
+                  </tr>
+                  <tr>
+                    <td><div class="inputbox-spacing"></div></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                     <td>Employment type:</td>
+                     <td><div id="emptype"></div></td>
+                  </tr>
+                  <tr>
+                    <td><div class="inputbox-spacing"></div></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                     <td>Pay schedule:</td>
+                     <td><div id="payschedule"></div></td>
+                  </tr>
+                  <tr>
+                     <td><div class="inputbox-spacing"></div></td>
+                     <td></td>
+                  </tr>
+                  <tr>
+                     <td><div class="inputbox-spacing"></div></td>
+                     <td></td>
+                  </tr>
+                  <tr>
+                    <td><span style="margin-left:10px"><div id="onPayroll">On Payroll</div></span></td>
+                    <td></td>
+                  </tr>
+              </table>
+         </div>
+         <div>
+            <table style="margin-top: 30px; margin-left: 10px; width: 90%;">
+              <tr>
+                 <td>Highest qualification:</td>
+                 <td><div id="highestQualification"></div></td>
+              </tr>
+              <tr>
+                <td colspan="2"><span class="inputbox-spacing"></span></td>
+              </tr>
+              <tr>
+                  <td>Qualification name:</td>
+                  <td><input type="text" id="qualificationName"  class="text-input" /></td>
+              </tr>
+              <tr>
+                <td colspan="2"><span class="inputbox-spacing"></span></td>
+              </tr>
+              <tr>
+                 <td>Other qualifications:</td>
+                 <td><div id="otherQualification"></div></td>
+              </tr>
+              <tr>
+                <td colspan="2"><span class="inputbox-spacing"></span></td>
+              </tr>
+               <tr>
+                  <td>Proffession:</td>
+                  <td><input type="text" id="profession"  class="text-input" /></td>
+              </tr>            
+            </table>       
+         </div>
+         <div>
+            <table style="margin-top: 30px; margin-left: 5px; width: 80%">
+               <tr>
+                   <td>Identity type:</td>
+                   <td><div id="identityType"></div></td>
+                   <td></td>
+               </tr>
+               <tr>
+                 <td colspan="3"><span class="inputbox-spacing"></span></td>
+               </tr>
+               <tr>
+                  <td>Nationality:</td>
+                  <td><div id="nationality"></div></td>
+                  
+               </tr>
+               <tr>
+                 <td colspan="2"><span class="inputbox-spacing"></span></td>
+               </tr>
+                <tr>
+                    <td>Identity number:</td>
+                    <td><input id="identityNumber" type="text" class="text-input" /></td>
+               </tr>
+                <tr>
+                 <td colspan="2"><span class="inputbox-spacing"></span></td>
+               </tr>
+               <tr>
+                    <td>Identity number valid until:</td>
+                    <td><div id="validUntil"></div></td>
+               </tr>
+               <tr>
+                  <td colspan="2"><span class="inputbox-spacing"></span></td>
+               </tr> 
+               <tr>
+                  <td>Next of kin name</td>
+                  <td><input id="nextOfKinName" type="text" class="text-input" /></td>
+                 
+               </tr>
+               <tr>
+                  <td colspan="2"><span class="inputbox-spacing"></span></td>
+               </tr>
+               <tr>
+                  <td>Next of kin contact number:</td>
+                  <td><input id="nextOfKinMobile1" type="text" class="text-input" />
+                      <input id="nextOfKinMobile2" type="text" class="text-input" /></td>
+                  
+               </tr> 
+            </table>           
+         </div>
+  </div>
+  <table style="margin-top: 2px; float: right;">
+    <tr>
+      <td>
+        <a class="btn icon-btn btn-success" href="#" id="addBtn"><span class="glyphicon btn-glyphicon glyphicon-plus img-circle text-success"></span>Add</a>
+      </td>
+      <!--<td><button class="menu-button" id="addBtn"><span class="glyphicon glyphicon-plus pull-left" />Add</span></button></td>
+      <td><span class="inputbox-spacing"><input type="button" value="Cancel" id="Cancel" /></span></td>-->
+     </tr>
+   </table>
+
+     <div id="messageNotification" style="overflow:hidden;">
+       <div></div>
+     </div>
+ </div> 
+

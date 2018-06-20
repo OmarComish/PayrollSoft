@@ -1,0 +1,1097 @@
+@model IEnumerable<PayrollSoft.Models.Settings>
+
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/implement-ui-widget-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript">
+function _checkAccessRights(appModule, userPermissions){
+
+    for(var x = 0; x < userPermissions.length; x ++){
+
+        if(userPermissions[x].name === appModule){
+
+            console.log(userPermissions[x].name + " = " + userPermissions[x].roles);
+
+                switch(userPermissions[x].roles){
+
+                      case 'CRUD':
+
+                      console.log("Create, Read, Update and Delete rights");
+
+                      createRole = true;
+                      readRole = true;
+                      updateRole = true;
+                      deleteRole = true;
+
+                      break;
+
+                      case 'CRU':
+
+                          console.log("Create, Read and Update rights");
+                          createRole = true;
+                          readRole = true;
+                          updateRole = true;
+
+                          break;
+
+                      case 'CR':
+
+                          console.log("Create and Read rights");
+
+                          createRole = true;
+                          readRole = true;
+
+                          break;
+
+                      case 'R':
+
+                          console.log("Read rights");
+                          readRole = true;
+
+                          break;
+
+                      case 'C':
+
+                          console.log("Create rights");
+                          createRole = true;
+                          break;
+
+                      case undefined:
+                          console.log("No rights for " + key);
+                          break;
+                  }
+          }
+     }
+}
+
+  function _getUserAccessRights(appmodule){
+
+       console.log("Now calling the _getUserAccessRights from " + appmodule);
+            $.ajax({
+                    cache: false,
+                    datatype: "jsonp",
+                    url:"/Home/RetrieveUserRoles",
+                    type: 'GET',
+                    success: function (data){
+
+                       for(var x = 0; x < data.length; x ++){
+
+                         userPrivilegdes.push({name:data[x].ModuleId, roles: data[x].AccessId});
+                       }
+
+                       _checkAccessRights(appmodule, userPrivilegdes);
+
+                    },
+                    error: function(jqXHR, textStatus, errorThrown){
+                           console.log("Error, " + errorThrown);
+                    }
+            });
+}
+
+
+  function _readleavePayConfig(){
+
+   $.ajax({
+           cache: false,
+           datatype: "jsonp",
+           url: "/Settings/readleavePaySettings",
+           type: 'GET',
+           success: function(data,xhr,status){
+                   for(var key in data){
+                        if(key.hasOwnProperty(key)){
+
+
+                           $("#leavePayrate").val(data[key].RateOfLeavePay);
+                           if(data[key].RateOfLeavePay > 0){
+
+                               $("#rateofPay2").jqxCheckBox({checked: true});
+                           } else{
+
+                               $("#rateofPay").jqxCheckBox({checked:true});
+                           }
+
+                           $("#frequencyOfPay").val(data[key].LeaveFrequency);
+
+                           $('#leaveDays').val(data[key].IncludeLeavePayAfter);
+                            if(data[key].IncludeLeavePayAfter > 0){
+
+                               $("#leavePayInclusionChk2").jqxCheckBox({checked: true});
+                           } else{
+
+                               $("#leavePayInclusion").jqxCheckBox({checked:true});
+                           }
+
+                           $("#payType").val(data[key].RateBasedOn);
+
+                        }
+                   }
+           },
+           error: function(jqXHR, textStatus, errorThrown){
+              console.log("Error, " + errorThrown);
+           }
+     });
+
+
+
+  }
+
+  function _addpaymentType(data){
+
+       console.log("invoking the _addpaymentType function...");
+       console.log("verifying the  contents of JSON data object...");
+       console.log(data.payType);
+       console.log(data.Description);
+       _addNewRecord(data,"PaymentType");
+
+       console.log("Exiting function...");
+  }
+
+    function _showCalendarWin(theme, title) {
+
+        $("#calendarWin").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 600,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#Delete"),
+            cancelButton: $("#Cancel"),
+            modalOpacity: 0.01,
+            initContent: function(){
+
+                 $("#jqxcalWidget").jqxCalendar({width: 220, height: 220});
+            }
+
+        });
+
+        $("#calendarWin").jqxWindow('open');
+
+    }
+
+   function _exceptionGridData()
+   {
+
+     var source = { datatype: 'json',
+                   datafields: [{ name:'payTypeDescription', type: 'string' }, { name:'groupEligible', type: 'string'}],
+                   id: 'groupEligible',
+                   url: '/Earning/getPaymentType'};
+
+      var _dataSource = new $.jqx.dataAdapter(source);
+
+      return _dataSource;
+   }
+
+    function _loadWindow(theme,title){
+
+        if(title=="Loan type"){
+
+          $("#loantypeWin").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 380,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#loantypeDelete"),
+            cancelButton: $("#loantypeCancel"),
+            modalOpacity: 0.01,
+            initContent: function(){
+
+                 //$("#jqxcalWidget").jqxCalendar({width: 220, height: 220});
+            }
+
+        });
+
+        $("#loantypeWin").jqxWindow('open');
+
+        }else{
+
+          $("#loaninterestWin").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 600,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#loaninterestDelete"),
+            cancelButton: $("#loanineterestCancel"),
+            modalOpacity: 0.01,
+            initContent: function(){
+
+                 //$("#jqxcalWidget").jqxCalendar({width: 220, height: 220});
+            }
+
+        });
+
+        $("#loaninterestWin").jqxWindow('open');
+
+        }
+
+
+    }
+
+    function _loadprioritycodeGrid(dataAdapter){
+
+       $("#prioritycodesdataGrid").jqxGrid({
+            width: 625,
+            source: dataAdapter,
+            theme: theme,
+            pageable: true,
+            autoheight: true,
+            sortable: true,
+            selectionmode: 'singlerow',
+            columns: [{text:'Code',datafield:'PriorityCode',width:250},{text:'Description',datafield:'Description',width:625}]
+       });
+    }
+
+   function _loadexceptionsDataGrid(){
+
+    var dataAdapter = _exceptionGridData();
+
+       $("#exceptionsdataGrid").jqxGrid({
+            width: 625,
+            source: dataAdapter,
+            theme: theme,
+            pageable: true,
+            autoheight: true,
+            sortable: true,
+            selectionmode: 'singlerow',
+            columns: [{text:'Payment type',datafield:'payTypeDescription',width:250},{text:'Group eligible',datafield:'groupEligible',width:625}]
+       });
+    }
+
+    function _priorityCodeWin(title,data){
+
+        $('#priorityCodeWindow').jqxWindow({
+            theme: theme,
+            resizable: true,
+            width: 650,
+            minHeight: 360,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton:$('#prioritySave'),
+            modalOpacity: 0.01,
+            initContent: function(){
+
+                _loadprioritycodeGrid(data);
+            }
+        });
+
+         $("#priorityCodeWindow").jqxWindow('open');
+    }
+
+    function _payrollExceptionWin(title){
+
+        $('#payrollExceptionWindow').jqxWindow({
+            theme: theme,
+            resizable: true,
+            width: 650,
+            minHeight: 360,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton:'',
+            modalOpacity: 0.01,
+            initContent: function(){
+
+                _loadexceptionsDataGrid();
+            }
+        });
+
+         $("#payrollExceptionWindow").jqxWindow('open');
+    }
+
+   $(document).ready(function(){
+
+    // _getUserAccessRights("Settings");
+
+   	 _glcontroller = "Settings";
+     var theme = getDemoTheme();
+     var title = 'Application Configuration';
+
+
+
+     _readleavePayConfig();
+
+
+     $('#jqxTabs').jqxTabs({ height: 450, width: 900, theme: theme });
+     $('#SaveTaxBtn').jqxButton({theme:theme,width:'50px'});
+     $('#SavePensionBtn').jqxButton({theme:theme});
+     $('#EditPensionBtn').jqxButton({theme:theme});
+     $('#jqxTaxWidget').jqxTabs({height: 200,
+                                 width: 520,
+                                 theme: theme,
+                                 initTabContent:function(tab){
+
+                                  }
+                              });
+
+
+     //Populate the data source objects
+     var _empDetails = { datatype: 'json',
+                        datafields: [{ name: 'EmpID', type: 'string' }, { name: 'EmpName', type: 'string'}],
+                        id: 'EmpID',
+                        url: '/Settings/getEmployee' };
+      var empDetailsDataSource = new $.jqx.dataAdapter(_empDetails);
+
+
+
+
+      var _loanType = {datatype: 'json',
+                       datafields: [{ name: 'Code', type: 'string' },{ name: 'Description', type: 'string'},
+                                    {name: 'InterestRate',type: 'number'},{name:'AutoGenerateLoanRefNum',type:'string'},{name:'EnablePrecalculation',type:'string'}],
+                       id: 'Code',
+                       url: '/Settings/getLoanType'};
+
+      var loanTypeDataSource = new $.jqx.dataAdapter(_loanType);
+
+      var _jobGrade = { datatype: 'json',
+                        datafields: [{ name: 'GradeId', type: 'string' },
+                                     { name: 'GradeName', type: 'string'}],
+                         id: 'GradeId',
+                         url: '/EmployeeGrade/GetGrades' };
+
+     var jobGradeDataSource = new $.jqx.dataAdapter(_jobGrade);
+
+     var source ={datatype: 'json',
+                  datafields:[{name:'PriorityCode',type: 'string'},{name:'Description',type: 'string'}],
+                  id: 'PriorityCode',
+                  url: '/Settings/getPriorityCodes'};
+
+     var dataAdapter = new $.jqx.dataAdapter(source);
+
+
+
+
+
+
+    // $('#jqxTaxWidget').jqxTabs({height: 150, width 300, theme: theme});
+
+     document.getElementById('priorityCodeWindow').style.visibility = "hidden";
+     document.getElementById('jqxHolidayWidget').style.visibility = "hidden";
+     document.getElementById('loaninterestWin').style.visibility = "hidden";
+     document.getElementById('loantypeWin').style.visibility = "hidden";
+     document.getElementById('payrollExceptionWindow').style.visibility = "hidden";
+
+     //===============================LOANS TAB ===========================================================================//
+        $("#chkAutogenerateLoanRefNum").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+        $("#chkPrecalculateloan").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+
+        $("#maxRepaymntPeriod").jqxNumberInput({theme: theme, height: '20px',width: '130px',spinButtons: true});
+        $("#loanrefNum").jqxInput({theme: theme, height: '20px',width: '250px'});
+        $("#loantypeCode").jqxInput({theme: theme, height: '20px',width: '250px'});
+        $("#loantypeDescript").jqxInput({theme: theme, height: '25px',width: '280px'});
+        $("#empID").jqxInput({theme: theme, height: '25px',width: '200px'});
+        $("#employeeName").jqxInput({source:empDetailsDataSource, displayMember:"EmpName", valueMember:"EmpID", placeHolder:"Employee name", theme: theme, height: '25px',width: '250px'});
+
+
+        $("#loanType").jqxDropDownList({
+                   theme: theme, source:loanTypeDataSource,
+                   selectedIndex: -1, width: '130px', height: '20px',dropDownHeight: "50px",displayMember:"Code", valueMember:"Code"});
+
+        $("#loanStatus").jqxDropDownList({ placeHolder:"Loan status",
+                   theme: theme, source:['Active','Frozen'],
+                   selectedIndex: -1, width: '180px', height: '20px',dropDownHeight: "50px"});
+
+        $("#loanProcessingOption").jqxDropDownList({placeHolder: "Choose processing option",theme: theme, source:['Auto','Manual'],
+                                                   selectedIndex: -1, width: '200px',height: '20px',dropDownHeight: "50px"});
+
+        $("#loanProcessingDate").jqxNumberInput({theme: theme, height: '20px',width: '130px',spinButtons: true});
+
+        // $("#interestType").jqxDropDownList({
+        //            theme: theme, source:['Flex','Limited'],
+        //            selectedIndex: -1, width: '130px', height: '20px',dropDownHeight: "50px"});
+        // $("#annuityMethod").jqxDropDownList({
+        //            theme: theme, source:['Method1','Method2'],
+        //            selectedIndex: -1, width: '130px', height: '20px',dropDownHeight: "50px"});
+
+        $("#startDate").jqxDateTimeInput({ theme: theme, width: '160px', height: '25px', formatString: 'dd/MM/yyyy' });
+        $("#maturityDate").jqxDateTimeInput({ theme: theme, width: '160px', height: '25px', formatString: 'dd/MM/yyyy' });
+
+        $('#interestRate').jqxNumberInput({ width: '130px', height: '25px', symbol: '%', spinButtons: true,Disabled:false });
+        $('#loaninterestRate').jqxNumberInput({ width: '130px', height: '25px', symbol: '%', spinButtons: true });
+
+        $("#loanAmount").jqxNumberInput({ width: '130px', height: '20px', symbol: '', spinButtons: true });
+        $("#totalInterest").jqxNumberInput({ width: '130px', height: '20px', symbol: '', spinButtons: true });
+        $("#paybackPeriods").jqxNumberInput({ width: '130px', height: '20px', symbol: '', spinButtons: true });
+        $("#monthlyRepayment").jqxNumberInput({ width: '180px', height: '20px', symbol: '', spinButtons: true });
+
+        $('#loaninterestType').jqxButton({ theme: theme });
+        $('#loanDetails').jqxButton({ theme: theme });
+        $('#precalculateLoan').jqxButton({ theme: theme });
+        $('#saveLoanBtn').jqxButton({ theme: theme });
+        $('#loantypeDetails').jqxButton({ theme: theme });
+        $('#loanTypeCancelBtn').jqxButton({theme: theme});
+        $('#saveLoanSettingsBtn').jqxButton({theme:theme});
+        $('#loanTypeOKBtn').jqxButton({theme: theme});
+
+
+        //----Events triggered code ----//
+
+        $('#loanTypeOKBtn').click(function(){
+
+            $("#loantypeWin").jqxWindow('close');
+        });
+
+        $("#employeeName").on('select',function(event){
+             if(event.args){
+               var item = event.args.item;
+               $('#empID').val(item.value.trim());
+               //console.log(item.value.trim());
+             }
+        });
+
+        $("#loanType").on('select',function(event){
+
+
+         if(event.args){
+            var index = $("#loanType").jqxDropDownList('selectedIndex');
+             $("#loantypeDescript").val(loanTypeDataSource.records[index].Description);
+             //$("#loanType").val(loanTypeDataSource.records[index].Code);
+             $("#interestRate").val(loanTypeDataSource.records[index].InterestRate);
+             //console.log("Loan precalculation: " + loanTypeDataSource.records[index].EnablePrecalculation);
+             //console.log("Autogenerate ref number: " + loanTypeDataSource.records[index].AutoGenerateLoanRefNum);
+
+             var refnum = AutogenerateCode();
+             //console.log("refnum: " + refnum);
+             //$('#loanrefNum').val("");
+
+            //if(loanTypeDataSource.records[index].AutoGenerateLoanRefNum.trim() == true){
+               //$('#loanrefNum').val(loanTypeDataSource.records[index].Code.trim() + refnum);
+                //console.log(loanTypeDataSource.records[index].AutoGenerateLoanRefNum.trim());
+             //}
+             if(loanTypeDataSource.records[index].AutoGenerateLoanRefNum.trim() === "true"){
+                console.log("ref number autogenerate true");
+                $('#loanrefNum').val(loanTypeDataSource.records[index].Code.trim() + refnum);
+             }
+
+         }
+
+        });
+
+        $('#loantypeDetails').click(function(){
+
+             _loadWindow(theme,"Loan type");
+             document.getElementById('loantypeWin').style.visibility = "visible";
+
+
+        });
+
+        $('#loaninterestType').click(function(){
+
+             _loadWindow(theme,"Existing loan types");
+             document.getElementById('loaninterestWin').style.visibility = "visible";
+
+        });
+
+        $('#precalculateLoan').click(function(){
+
+            console.log("loan precalculation method invoked");
+
+            //_getUserAccessRights("Loans");
+           /* var datarow ={interestRate:$('#interestRate').val(),PaybackPeriods:$('#paybackPeriods').val(),LoanAmount:$('#loanAmount').val()};
+
+            console.log("interest rate: " + datarow.interestRate);
+            console.log("payback periods: " + datarow.PaybackPeriods);
+            console.log("Loan Amount: " + datarow.LoanAmount);
+
+            $.ajax({
+                cache: false,
+                datatype: "jsonp",
+                url: "/Settings/PrecalculateLoan",
+                type: "POST",
+                data: datarow,
+                success: function (data, status, xhr) {
+                    alert(status);
+                    //$("#jqxgrid").jqxGrid('updatebounddata');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                    //commit(false);
+                }
+
+            });*/
+
+            //if(updateRole === true){
+
+              $.ajax({
+                  cache: false,
+                  datatype: "jsonp",
+                  url: "/Settings/PrecalculateLoan",
+                  type: "POST",
+                  data: {},
+                  success: function(status,xhr){
+                       _notificationMessage("success", "loan repayment calculation completed"); //Notify the user
+                  },
+                  error: function(jqXHR, textStatus,errorThrown){
+
+                      _notificationMessage("error", errorThrown); //Notify the user
+                  }
+
+              });
+
+          //  } else {
+
+            //  _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+
+          //  }
+
+
+
+        });
+
+        $('#saveLoanBtn').click(function(){
+
+            // _getUserAccessRights("Loans");
+
+            _glfunctionInvoked ="saveLoanBtn";
+
+             console.log(_glcontroller);
+             console.log(_glfunctionInvoked);
+
+             var datarow = {LoanRefNumber: $('#loanrefNum').val(),
+                            LoanTypeNumber:$("#loanType").val().trim(),
+                            EmpID: $('#empID').val(),
+                            startDate:$('#startDate').val(),
+                            EndDate:$('#maturityDate').val(),
+                            PaybackPeriods: $('#paybackPeriods').val(),
+                            LoanAmount:$('#loanAmount').val(),
+                            MonthlyRepayment:$('#MonthlyRepayment').val(),
+                            Status: $('#loanStatus').val()
+                           };
+         console.log("CreateRole: " + createRole);
+
+        // if(createRole === true){
+
+            ///<summary>
+           ///DEBUG CODE: checking if all variables have been populated with data before posting to the controller
+           ///</summary>
+           //_verifyDataBeforePosting(datarow);
+
+          _addNewRecord(datarow,_glcontroller);
+
+
+           for(var x =1; x< datarow.PaybackPeriods + 1;x++){
+
+              var entrynum = AutogenerateCode();
+              var row = {EntryID:entrynum,LoanRefNumber:$('#loanrefNum').val(),EndOfPeriod:x};
+              console.log(row.EntryID + " " + row.LoanRefNumber + " " + row.EndOfPeriod);
+
+             $.ajax({
+                 cache: false,
+                 datatype: "jsonp",
+                 url: "/Settings/saveLoanPortifolio",
+                 type: "POST",
+                 data: row,
+                 success: function(status,xhr){
+                      _notificationMessage("success", "loan saved successfully"); //Notify the user
+                 },
+                 error: function(jqXHR, textStatus,errorThrown){
+
+                     _notificationMessage("error", errorThrown); //Notify the user
+                 }
+
+             });
+           }
+
+           var registerrow ={LoanRefNumber:$('#loanrefNum').val(),LoanBalance:$('#loanAmount').val(),PeriodToUpdate:1};
+             $.ajax({
+                 cache: false,
+                 datatype: "jsonp",
+                 url: "/Settings/addLoanRegister",
+                 type: "POST",
+                 data: registerrow,
+                 success: function(status,xhr){
+                     // _notificationMessage("success", "loan repayment calculation completed"); //Notify the user
+                 },
+                 error: function(jqXHR, textStatus,errorThrown){
+
+                     _notificationMessage("error", errorThrown); //Notify the user
+                 }
+
+             });
+
+        // } else {
+
+          // _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+
+        // }
+
+
+
+        });
+
+
+         $('#loanTypeCancelBtn').click(function(){
+
+
+
+           $("#loantypeWin").jqxWindow('close');
+
+         });
+
+        $('#saveLoanSettingsBtn').click(function(){
+
+            _glfunctionInvoked ="saveLoanSettingsBtn";
+
+            // console.log("save loan settings action triggered");
+             var datarow = {Code:$('#loantypeCode').val(),
+                            Description:$('#loantypeDescript').val(),
+                            InterestRate:$('#loaninterestRate').val(),
+                            AutoGenerateLoanRefNum: $('#chkAutogenerateLoanRefNum').val(),
+                            MaxLoanRepaymentPeriod: $('#maxRepaymntPerid').val(),
+                            EnablePrecalculation: $('#chkPrecalculateloan').val()
+                          };
+
+           //if(createRole === true){
+
+            // _addNewRecord(datarow, _glcontroller);
+
+           //} else {
+
+            // _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+
+          // }
+
+
+        });
+
+      //==============================PAYROLL TAB CONTROLS ========================================
+
+      _paymentTypeData = _exceptionGridData();
+
+      $("#setpayrollRunDateChk").jqxCheckBox({ theme: theme, checked: true });
+      $("#PaymentexceptionChk").jqxCheckBox({ theme: theme, checked: true });
+      $("#PaymentexceptionBtn").jqxButton({theme: theme});
+
+    /*  $("#payrollPaymentType").jqxDropDownList({placeHolder:"Payment type",theme: theme,
+                               source:_paymentTypeData,selectedIndex: -1, width: '250px',
+                               height: '20px',dropDownHeight: "90px",displayMember: "payTypeDescription",
+                               valueMember: "payTypeDescription"});*/
+
+      $("#payrollGroupEligible").jqxDropDownList({placeHolder:"Group eligible",
+                        theme: theme, source:jobGradeDataSource,
+                        selectedIndex: -1, width: '260px', height: '20px',dropDownHeight: "90px",
+                        displayMember:"GradeId",valueMember:"GradeName" });
+
+      $("#PayrollRunDateBtn").jqxButton({theme: theme});
+
+      $("#exceptionOKBtn").jqxButton({theme: theme});
+
+      $("#ExceptionSaveBtn").jqxButton({theme:theme});
+
+      $('#PaymentexceptionBtn').click(function(){
+
+         title ="Exceptions";
+
+
+         document.getElementById('payrollExceptionWindow').style.visibility="visible";
+
+
+        _payrollExceptionWin(title);
+
+
+
+     });
+
+
+     //==============================#jqxTaxWidget, Pension Tab controls==============================//
+
+      $('#employerContribAmount').jqxNumberInput({ width: '250px', height: '25px', symbol: '%', spinButtons: true });
+      $('#employeeContribAmount').jqxNumberInput({ width: '250px', height: '25px', symbol: '%', spinButtons: true });
+
+     //==============================End of #jqxTaxWidget, Pension Tab controls=======================//
+
+
+    //===============================#jqxTaxWidget controls==========================================//
+
+    $("#TaxName").jqxInput({ theme: theme, height: '20px',width:'300px', disabled: false });
+    $("#Descript").jqxInput({ theme: theme, height: '30px', width: '300px', disabled: false });
+    $("#dateIssued").jqxDateTimeInput({ theme: theme, width: '300px', height: '20px', formatString: 'MM-dd-yyyy' });
+    $("#RateStatus").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+    $("#firstThresholdAmt").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+    $("#firstThresholdRate").jqxNumberInput({ width: '250px', height: '25px', symbol: '%', spinButtons: true });
+    $("#secondThresholdAmt").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+    $("#secondThresholdRate").jqxNumberInput({ width: '250px', height: '25px', symbol: '%', spinButtons: true });
+    $("#thirdThresholdAmt").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+    $("#thirdThresholdRate").jqxNumberInput({ width: '250px', height: '25px', symbol: '%', spinButtons: true });
+
+
+    //==============================End of #jqxTaxWidget controls====================================//
+
+     $('#NewTaxCode').jqxButton({ theme: theme });
+     $('#viewDefinedHoliday').jqxButton({ theme: theme });
+     $('#defineHoliday').jqxButton({ theme: theme });
+     $('#saveHolidayBtn').jqxButton({ theme: theme });
+     $("#holidayName").jqxInput({placeHolder:"Enter holiday name", theme: theme, height: '25px',width: '200px', disabled: false});
+     $("#dateFrom").jqxDateTimeInput({ theme: theme, width: '160px', height: '25px', formatString: 'dd-MM-yyyy' });
+     $("#dateTo").jqxDateTimeInput({ theme: theme, width: '160px', height: '25px', formatString: 'dd-MM-yyyy' });
+
+     $("#leavePayInclusion").jqxCheckBox({ theme: theme, width: '185px'});
+     $("#schemeContribToLeavePay").jqxCheckBox({ theme: theme, width: '185px', checked: false });
+     $("#rateofPay").jqxCheckBox({ theme: theme, width: '185px'});
+     $("#rateofPay2").jqxCheckBox({ theme: theme, width: '185px'});
+     $("#leavePayrate").jqxNumberInput({ width: '140px', height: '25px', symbol: '%', spinButtons: true });
+
+     $("#payType").jqxDropDownList({
+                   theme: theme, source:['Basic Pay','Gross Pay'],
+                   selectedIndex: -1, width: '130px', height: '20px',dropDownHeight: "50px"});
+
+     $("#payFrequency").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+
+     $("#frequencyOfPay").jqxDropDownList({
+                   theme: theme, source:['Weekly','Monthly','Annually'],
+                   selectedIndex: -1, width: '130px', height: '20px',dropDownHeight: "60px"});
+
+     $('#leavePayInclusionChk2').jqxCheckBox({ theme: theme, width: '185px'});
+     $('#leaveDays').jqxNumberInput({ width: '120px', height: '25px', spinButtons: true });
+
+//===============================================================================================================================//
+//========================================EARNINGS TAB CONTROLS==================================================================//
+
+    $("#payCode").jqxInput({theme: theme, height: '20px',width: '130px'});
+    $("#payType2").jqxInput({theme: theme, height: '20px',width: '130px'});
+
+    $("#groupEligible").jqxDropDownList({
+                        theme: theme, source:jobGradeDataSource,
+                        selectedIndex: -1, width: '130px', height: '20px',dropDownHeight: "80px",
+                        displayMember:"GradeId",valueMember:"GradeName" });
+
+    $("#precedenceFactor").jqxDropDownList({
+                        theme: theme, source:['Actual amount','Pay rate'],
+                        selectedIndex: -1, width: '130px', height: '20px',dropDownHeight: "50px"});
+    // $("#groupEligible3").jqxDropDownList({
+    //                     theme: theme, source:['A','S'],
+    //                     selectedIndex: -1, width: '130px', height: '20px',dropDownHeight: "50px"});
+
+
+
+    $("#debitGL").jqxDropDownList({ source:['draccgl','craccgl'],theme: theme, width: '130px', height: '20px',
+                                    selectedIndex: -1, dropDownHeight: '50px' });
+    $("#payMethod").jqxInput({theme: theme, width: '130px', height: '20px' });
+
+    $("#paycodeDescription").jqxInput({placeHolder:"Pay code description", theme: theme, height: '25px',width: '500px'});
+    $("#payTypeDescription").jqxInput({placeHolder:"Pay type description", theme: theme, height: '25px',width: '500px'});
+    $("#groupEligibleDescription").jqxInput({placeHolder:"Pay type description", theme: theme, height: '25px',width: '500px'});
+    $("#debitGlDescription").jqxInput({placeHolder:"GL Account name", theme: theme, height: '25px',width: '500px'});
+    $("#priorityDescription2").jqxInput({placeHolder:"Priority Description", theme: theme, height: '25px',width: '500px'});
+
+    $("#rateDerivedSource").jqxDropDownList({
+                   theme: theme, source:['HAL','TAL','FAL','SAL'],
+                   selectedIndex: -1, width: '130px', height: '20px',dropDownHeight: "50px"});
+
+    $("#payRate").jqxNumberInput({ width: '130px', height: '25px', symbol: '%', spinButtons: true });
+    $("#actualPayAmount").jqxNumberInput({ width: '250px', height: '20px', symbol: '', spinButtons: true });
+
+    $('#newPayCode').jqxButton({ theme: theme });
+    $('#earningspriorityCode').jqxButton({ theme:theme });
+    $('#newpayTypeCode').jqxButton({theme: theme});
+    $('#payrateEdit').jqxButton({theme:theme});
+    $('#viewEarningsBtn').jqxButton({theme:theme});
+    $('#saveEarningsBtn').jqxButton({theme:theme});
+
+    $("#timesheetEntryAllowedChk").jqxCheckBox({ theme: theme, width: '185px'});
+    $("#paidAsEarningsChk").jqxCheckBox({ theme: theme, width: '185px'});
+    $("#taxableIncomeChk").jqxCheckBox({ theme: theme, width: '185px'});
+
+    $("#priority").jqxDropDownList({placeHolder:'Payment priority', theme: theme, source:dataAdapter,
+                   selectedIndex: -1, width: '130px', height: '20px',dropDownHeight: "80px",
+                   valueMember: 'PriorityCode',displayMember:'PriorityCode'});
+
+    $("#priority").on('select',function(event){
+        if(event.args){
+            var index = $("#priority").jqxDropDownList('selectedIndex');
+            $("#priorityDescription2").val(dataAdapter.records[index].Description);
+        }
+    });
+
+     $("#groupEligible").on('select',function(event){
+         if(event.args){
+            var index = $("#groupEligible").jqxDropDownList('selectedIndex');
+             $("#groupEligibleDescription").val(jobGradeDataSource.records[index].GradeName)
+
+         }
+      });
+
+      $('#earningspriorityCode').click(function(){
+
+          title ="Priority Code";
+
+          //Unhide the priorityCodeWindow now..
+          document.getElementById('priorityCodeWindow').style.visibility="visible";
+
+         _priorityCodeWin(title,dataAdapter);
+
+      });
+
+    $('#saveEarningsBtn').click(function(){
+
+        //_getUserAccessRights("Payments");
+
+        _glfunctionInvoked ="saveEarningsBtn";
+
+         var datarow = {
+                        payCode: $('#payCode').val(),
+                        payType: $('#payType2').val(),
+                        payCodeDescription: $('#paycodeDescription').val(),
+                        payTypeDescription: $('#payTypeDescription').val(),
+                        groupEligible: $('#groupEligible').val(),
+                        groupEligibleDescription: $('#groupEligibleDescription').val(),
+                        debitGL: $('#debitGL').val(),
+                        debitGlDescription: $('#debitGlDescription').val(),
+                        payRate: $('#payRate').val(),
+                        rateDerivedSource: $('#rateDerivedSource').val(),
+                        actualPayAmount: $('#actualPayAmount').val(),
+                        payMethod: $('#payMethod').val(),
+                        timesheetEntryAllowed: $('#timesheetEntryAllowedChk').val(),
+                        paidAsEarnings: $('#paidAsEarningsChk').val(),
+                        taxableIncome: $('#taxableIncomeChk').val(),
+                        priority: $('#priority').val(),
+                        higherPrecedenceFactor: $('#precedenceFactor').val()
+                    };
+
+         //var paymentdataRow = {payType:$('#payType2').val(),Description:$('#payTypeDescription').val()};
+
+        //_addpaymentType(paymentdataRow);
+
+        //if(createRole === true){
+
+           _addNewRecord(datarow,_glcontroller);
+
+        //} else {
+
+          //  _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+
+      //  }
+
+
+
+     });
+
+//===============================================================================================================================//
+//===================================DEDUCTIONS TAB CONTROLS ====================================================================//
+
+    $("#deductpayCode").jqxInput({theme: theme, height: '20px',width: '130px'});
+    $("#deductpayType").jqxInput({theme: theme, height: '20px',width: '130px'});
+
+    $("#deductgroupEligible").jqxDropDownList({
+                        theme: theme, source:jobGradeDataSource,
+                        selectedIndex: -1, width: '130px', height: '20px',dropDownHeight: "80px",
+                        displayMember:"GradeId",valueMember:"GradeName" });
+
+    $("#creditGL").jqxDropDownList({ source:['draccgl','craccgl'],theme: theme, width: '130px', height: '20px',
+                                    selectedIndex: -1, dropDownHeight: '50px' });
+
+    $("#deductionPriority").jqxDropDownList({ theme: theme, source:dataAdapter,
+                                              selectedIndex: -1, width: '130px', height: '20px',dropDownHeight: "80px",
+                                              displayMember:"PriorityCode",valueMember:"PriorityCode" });
+
+    $("#prioritycodeId").jqxInput({theme: theme, width: '130px', height: '20px' });
+    $("#priorityCodeDescription").jqxInput({theme: theme, width: '300px', height: '20px' });
+
+    $("#deductpaycodeDescription").jqxInput({placeHolder:"Pay code description", theme: theme, height: '25px',width: '500px'});
+    $("#deductpayTypeDescription").jqxInput({placeHolder:"Pay type description", theme: theme, height: '25px',width: '500px'});
+    $("#deductgroupEligibleDescription").jqxInput({placeHolder:"Pay type description", theme: theme, height: '25px',width: '500px'});
+    $("#creditGlDescription").jqxInput({placeHolder:"GL Account name", theme: theme, height: '25px',width: '500px'});
+    $("#priorityDescription").jqxInput({placeHolder:"Priority Description", theme: theme, height: '25px',width: '500px'});
+
+    $('#deductnewpriorityCode').jqxButton({ theme: theme });
+    $('#deductnewpayTypeCode').jqxButton({theme: theme});
+    $('#viewDeductionsBtn').jqxButton({theme:theme});
+    $('#saveDeductionBtn').jqxButton({theme:theme});
+    $('#prioritycodeSave').jqxButton({theme: theme});
+    $('#prioritycodeOKBtn').jqxButton({theme:theme});
+
+    $("#includeInretrospectPayChk").jqxCheckBox({ theme: theme, width: '185px'});
+    $("#deductfromEmployeeChk").jqxCheckBox({ theme: theme, width: '185px'});
+
+    $("#deductionPriority").on('select',function(event){
+
+            if(event.args){
+              var index = $("#deductionPriority").jqxDropDownList('selectedIndex');
+              $('#priorityDescription').val(dataAdapter.records[index].Description);
+            }
+      });
+
+      $("#deductgroupEligible").on('select',function(event){
+         if(event.args){
+            var index = $("#deductgroupEligible").jqxDropDownList('selectedIndex');
+             $("#deductgroupEligibleDescription").val(jobGradeDataSource.records[index].GradeName)
+
+         }
+      });
+
+     $('#deductnewpriorityCode').click(function(){
+
+         title ="Priority Code";
+
+         //Unhide the priorityCodeWindow now..
+         document.getElementById('priorityCodeWindow').style.visibility="visible";
+
+        _priorityCodeWin(title,dataAdapter);
+
+
+
+     });
+
+     $('#prioritycodeSave').click(function(){
+
+        //  _getUserAccessRights("Payments");
+
+        _glfunctionInvoked = "prioritycodeSave";
+         //console.log(_glfunctionInvoked);
+
+         var datarow ={PriorityCode: $('#prioritycodeId').val(),Description: $('#priorityCodeDescription').val()};
+         //console.log("Priority code:" + $('#prioritycodeId').val());
+         ///console.log("Description:" + $('#priorityCodeDescription').val());
+         //if(createRole === true){
+
+           _addNewRecord(datarow,_glcontroller);
+
+           $("#prioritycodesdataGrid").jqxGrid('updatebounddata');
+           dataAdapter.dataBind(); //refreshes the data adapter
+
+        // } else {
+
+          //  _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+
+        // }
+
+     });
+
+     $('#prioritycodeOKBtn').click(function(){
+        //document.getElementById('prioritycodeOKBtn').style.visible = "hidden";
+        $("#priorityCodeWindow").jqxWindow('close');
+     });
+
+     $('#saveDeductionBtn').click(function(){
+
+         _getUserAccessRights("Payments");
+
+        _glfunctionInvoked="saveDeductionBtn";
+
+         var deductdataRow = {payCode: $('#deductpayCode').val(),
+                              payType:$('#deductpayType').val(),
+                              payCodeDescription:$('#deductpaycodeDescription').val(),
+                              payTypeDescription: $('#deductpayTypeDescription').val(),
+                              gradeId: $('#deductgroupEligible').val(),
+                              groupEligibleDescription: $('#deductgroupEligibleDescription').val(),
+                              creditGL:$('#creditGL').val(),creditGlDescription:$('#creditGlDescription').val(),
+                              priorityCode:$('#deductionPriority').val(),priorityDescription:$('#priorityDescription').val(),
+                              includeInrestrospectPayments:$('#includeInretrospectPayChk').val(),
+                              deductionTakenFromEmployee:$('#deductfromEmployeeChk').val()
+                            };
+
+      //if(createRole === true){
+        _addNewRecord(deductdataRow,_glcontroller);
+      //} else {
+
+      //  _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+      //}
+
+
+
+     });
+
+//================================================================================================================================//
+     $('#NewTaxCode').click(function(){
+
+     	  document.getElementById('jqxTaxWidget').style.visibility = "visible";
+     	  console.log("Tax Code Clicked");
+     });
+
+     $('#SaveTaxBtn').click(function(){
+
+        console.log("Save Tax Code clicked!")
+     });
+
+     $('#saveHolidayBtn').click(function(){
+
+          _getUserAccessRights("Holiday");
+
+         console.log("Save Leave pay settings button clicked!");
+
+         var datarow = {ID:"LP001",
+                        LeaveFrequency: $("#frequencyOfPay").val(),
+                        RateOfLeavePay: $("#leavePayrate").val(),
+                        IncludeLeavePayAfter: $('#leaveDays').val(),
+                        RateBasedOn: $("#payType").val()
+                    };
+
+                console.log(datarow.ID);
+                console.log(datarow.LeaveFrequency);
+                console.log(datarow.RateOfLeavePay);
+                console.log(datarow.IncludeLeavePayAfter);
+                console.log(datarow.RateBasedOn);
+
+                console.log("Controller name: " + _glcontroller);
+
+                //_foo(_glcontroller);
+           //if(createRole === true){
+
+             _addNewRecord(datarow,_glcontroller);
+
+          // } else {
+
+          //   _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+          // }
+
+
+
+     });
+
+
+
+
+
+     $('#defineHoliday').click(function(){
+
+        //document.getElementById('jqxHolidayWidget').style.visibility = "visible";
+        //_showCalendar();
+        //_showCalendarWin(theme,'Calendar');
+        console.log("define calendar button clicked");
+     });
+
+
+     $("#leavePayInclusion").on('change',function(event){
+
+           $("#leavePayInclusionChk2").jqxCheckBox({checked: false});
+           $('#leaveDays').jqxNumberInput({disabled: true});
+     });
+
+     $("#leavePayInclusionChk2").on('change',function(event){
+
+         $("#leavePayInclusion").jqxCheckBox({checked: false});
+         $('#leaveDays').jqxNumberInput({disabled: false});
+     });
+
+     $("#rateofPay").on('change',function(event){
+
+         var ctrlstate = event.args.checked;
+
+        //$("#rateofPay2").jqxCheckBox({checked: false});
+        // $("#leavePayrate").jqxNumberInput({disabled: true});
+        //$("#payType").jqxDropDownList({disabled: true});
+
+         console.log("The state of RateOfPay control " + ctrlstate);
+
+     });
+
+   });
+
+</script>

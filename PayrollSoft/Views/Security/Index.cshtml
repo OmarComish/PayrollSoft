@@ -1,0 +1,464 @@
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxpasswordinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxvalidator.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/implement-ui-widget-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript">
+
+
+function _loadUserPermissionGrid(datasource){
+
+  $('#jqx-roles-grid').jqxGrid({
+              width: 800,
+              source: datasource,
+              theme: theme,
+              pageable: true,
+              autoheight: true,
+              sortable: true,
+              selectionmode: 'none',
+              columns: [
+                        {text:'Module', datafield:'ModuleId',width: 100 },
+                        {text:'Create Role', datafield:'CreateRole',width:100},
+                        {text:'View Role', datafield:'ReadRole',width:100},
+                        {text:'Edit Role', datafield:'UpdateRole',width:100},
+                        {text:'Delete Role', datafield:'DeleteRole',width:100},
+                        {text:'Auth Role', datafield:'AuthRole',width:100},
+                        {text: 'Action', datafield: 'Edit', columntype: 'button',cellsrenderer: function(){
+                                return 'Edit';
+                           },buttonclick: function(row){
+
+                              _glfunctionInvoked = "editRoleBtn";
+                              editrow = row;
+                              var dataRecord = $("#jqx-roles-grid").jqxGrid('getrowdata', editrow);
+
+                              console.log(dataRecord.CreateRole);
+
+                              $("#userIdpermission").val(dataRecord.UserName);
+                              $('#c-role').val(dataRecord.CreateRole);
+                              $('#r-role').val(dataRecord.ReadRole);
+                              $('#u-role').val(dataRecord.UpdateRole);
+                              $('#d-role').val(dataRecord.DeleteRole);
+                              $('#a-role').val(dataRecord.AuthRole);
+                              var m = applicationModule.find(x => x.name === dataRecord.ModuleId);
+                              $('#module').val(m.id);
+
+                           }
+                        },
+                        {text: 'Action', datafield: 'Revoke', columntype: 'button', cellsrenderer: function(){
+                                return 'Revoke';
+                            }, buttonclick: function(row){
+                                
+                                document.getElementById("deleteRecDialog").style.visibility = "visible";
+
+                                revokerow = row;
+                                var dataRecord = $("#jqx-roles-grid").jqxGrid('getrowdata', revokerow);
+
+                                $("#userIdpermission").val(dataRecord.UserName);
+
+                                var moduleId = applicationModule.find(x => x.name === dataRecord.ModuleId);
+
+                                $('#module').val(moduleId.id);
+                                
+                                _deleterecordDialog("Are you sure you want to revoke this role?");
+
+                              }  
+                        }
+                       ]
+   });
+
+  $("#jqx-roles-grid").jqxGrid('updatebounddata');
+}
+
+function _loadUserGrid(datasource){
+
+    $('#jqxgrid').jqxGrid({
+                width: 630,
+                source: datasource,
+                theme: theme,
+                pageable: true,
+                autoheight: true,
+                sortable: true,
+                selectionmode: 'none',
+                columns: [{text:'Full name', datafield:'fullName', width:150 },
+                          {text:'User Id', datafield:'userId', width:90 },
+                          {text:'Created by', datafield:'createdBy',width:150 },
+                          {text:'Modified by', datafield:'modifiedBy',width:150 },
+                          {text:'Status',datafield:'status',width:90 }
+                         ]
+     });
+
+    $("#jqxgrid").jqxGrid('updatebounddata');
+
+}
+
+function _readDataSource(data){
+
+           var source = {
+                         localdata: data,
+                         datatype: 'array',
+                         datafields:[ 
+                                      {name: 'UserName', type: 'string'},
+                                      {name: 'ModuleId', type: 'string'},
+                                      {name: 'CreateRole', type: 'number'},
+                                      {name: 'ReadRole', type: 'number'},
+                                      {name: 'UpdateRole', type: 'number'},
+                                      {name: 'DeleteRole', type: 'number'},
+                                      {name: 'AuthRole', type: 'number'}
+                                   ]
+                        };
+
+           return new $.jqx.dataAdapter(source);
+}
+
+function _getUserPriviledges(name){
+
+  var records = new Array();
+
+         $.ajax({
+              cache: false,
+              datatype: "jsonp",
+              url: "/Security/GetUserPriviledges/",
+              type: "POST",
+              data: {UserName: name},
+              success: function (data, status, xhr) {
+
+                for (var i = 0; i < data.length; i++) {
+
+                    module = findElementById(applicationModule,parseInt(data[i].ModuleId));
+                    records.push({ UserName:   data[i].UserName,
+                                   ModuleId:   module.name,
+                                   CreateRole: data[i].CreateRole,
+                                   ReadRole:   data[i].ReadRole,
+                                   UpdateRole: data[i].UpdateRole,
+                                   DeleteRole: data[i].DeleteRole,
+                                   AuthRole:   data[i].AuthRole
+                                });
+                }
+
+                 _loadUserPermissionGrid(_readDataSource(records));
+
+              },
+              error: function (jqXHR, textStatus, errorThrown) {
+               
+                 console.log(errorThrown);
+  
+             }
+           });
+}
+
+function _loadSecurityWin(theme, title) {
+
+        $("#securityConfigWin").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: '90%',
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#Delete"),
+            cancelButton: $("#Cancel"),
+            modalOpacity: 0.01
+
+        });
+
+        $("#securityConfigWin").jqxWindow('open');
+
+}
+
+$(document).ready(function(){
+
+     _getUserAccessRights();
+
+     _glcontroller = "Security";
+
+     var theme = getDemoTheme();
+     var title = 'Security';
+     var chkControlState = [];
+     var actionState = false;
+     var userName = "";
+     var intcreateRole = 0;
+     var intreadRole = 0;
+     var intupdateRole = 0;
+     var intdeleteRole = 0;
+     var intauthRole = 0;
+
+     document.getElementById("deleteRecDialog").style.visibility = "hidden";
+
+     var userIdDataSource = {
+                            datatype: 'json',
+                            datafields: [{name: 'FullName',   type:'string'},
+                                         {name: 'UserName',     type:'string'}],
+                            id: 'UserName',
+                            url: '/Security/GetUserNames'
+     };
+
+     var userNamesData = new $.jqx.dataAdapter(userIdDataSource);
+
+     $('#jqxTabWidget').jqxTabs({ height: 500, width: '100%', theme: theme });
+     $("#fullname").jqxInput({ theme: theme, width: '380px', height: '25px' });
+     $("#userId").jqxInput({ theme: theme, width: '380px', height: '25px' });
+     $("#password").jqxPasswordInput({ theme: theme, width: '380px', height: '25px', showStrength: true, showStrengthPosition: "right" });
+     $("#createdBy").jqxInput({ theme: theme, width: '380px', height: '25px' });
+     $("#modifiedBy").jqxInput({ theme: theme, width: '380px', height: '25px' });
+
+     $("#lastsignedOn").jqxDateTimeInput({ theme: theme, width: '380px', height: '25px', formatString: 'dd-MM-yyyy' });
+     $("#dateCreated").jqxDateTimeInput({ theme: theme, width: '380px', height: '25px', formatString: 'dd-MM-yyyy' });
+     $("#lastchangedOn").jqxDateTimeInput({ theme: theme, width: '380px', height: '25px', formatString: 'dd-MM-yyyy' });
+
+     $("#status").jqxDropDownList({
+         theme: theme, source: ["Active","Disabled"], selectedIndex: -1,
+         width: "380px", height: "25px", promptText: "Status...",
+         dropDownHeight: "50px"
+     });
+
+     $("#userIdpermission").jqxInput({source: userNamesData,displayMember: 'FullName',valueMember:'UserName', theme: theme, width: '380px', height: '25px' });
+     
+     $("#userIdpermission").on('select', function (event) {
+
+         if (event.args) {
+
+             var item = event.args;
+             userName = item.value.trim();
+             $('#viewRoleBtn').jqxButton({disabled: false});
+             $('#c-role').jqxCheckBox({ disabled: false });
+             $('#r-role').jqxCheckBox({ disabled: false });
+             $('#u-role').jqxCheckBox({ disabled: false });
+             $('#d-role').jqxCheckBox({ disabled: false });
+             $('#a-role').jqxCheckBox({ disabled: false });
+             
+         }
+     });
+
+     $('#c-role').jqxCheckBox({theme: theme, width: '40px', checked: false, disabled: true });
+     $('#r-role').jqxCheckBox({theme: theme, width: '40px', checked: false, disabled: true });
+     $('#u-role').jqxCheckBox({theme: theme, width: '40px', checked: false, disabled: true });
+     $('#d-role').jqxCheckBox({theme: theme, width: '40px', checked: false, disabled: true });
+     $('#a-role').jqxCheckBox({theme: theme, width: '40px', checked: false, disabled: true });
+
+     $('#module').jqxDropDownList({
+         theme: theme, source: _glapplicationModule, selectedIndex: -1,
+         width: "230px", height: "20px", promptText: "Module...",
+         dropDownHeight: "100px", displayMember: "name", valueMember: "id"
+     });
+
+     $('#module').on('change', function(event){
+        if(event.args){
+          index = $('#module').jqxDropDownList('selectedIndex');
+
+          console.log($('#module').val(index));
+        }
+     });
+
+    $('#userSaveBtn').jqxButton({theme:theme});
+    $('#userCancelBtn').jqxButton({theme:theme});
+    $('#grantRoleBtn').jqxButton({disabled: true, theme:theme});
+    $('#viewRoleBtn').jqxButton({disabled: true, theme: theme});
+
+    $('#userSaveBtn').click(function(){
+
+       _glfunctionInvoked ="userSaveBtn";
+
+        var data = [];
+
+        var record = {
+                      UserId: 0,
+                      FullName: $('#fullname').val(),
+                      UserName: $('#userId').val(),
+                      Password: $('#password').val(),
+                      LastSignedOn: $('#lastsignedOn').val(),
+                      DateCreated: $('#dateCreated').val(),
+                      Status: $('#status').val(),
+                      ModifiedBy: $('#modifiedBy').val(),
+                      CreatedBy: $('#createdBy').val(),
+                      LastChangedOn: $('#lastchangedOn').val()
+                    };
+
+        data.push(record.FullName,record.UserName,record.CreatedBy,record.ModifiedBy,record.Status);
+
+         var source = {
+                      localdata: data,
+                      datatype: 'json',
+                      datafields:[
+                        {name:'fullName',type: 'string'},
+                        {name:'userId',type: 'string'},
+                        {name:'createdBy',type: 'string'},
+                        {name:'modifiedBy',type: 'string'},
+                        {name:'status',type: 'string'}
+
+                      ],
+                    };
+
+           var dataAdapter = new $.jqx.dataAdapter(source);
+
+          if(__authorised(_glcontroller, userPrivilegdes, "Create") === true){
+
+            _loadUserGrid(dataAdapter);
+            
+            __POSTWrapper(record, _glfunctionInvoked);
+
+          } else {
+
+              _notificationMessage("error","Permission denied! You have insufficient rights to complete this action");
+          }
+
+    });
+
+  $('#grantRoleBtn').click(function(){
+
+          var role = null;
+          if(_glfunctionInvoked !="editRoleBtn"){
+              _glfunctionInvoked = "grantRoleBtn";
+              role = "Create";
+          } else {
+             role = "Update";
+          }
+
+               var record = { ModuleId:   $('#module').val(),
+                              UserName:   userName,
+                              CreateRole: intcreateRole,
+                              ReadRole:   intreadRole,
+                              UpdateRole: intupdateRole,
+                              DeleteRole: intdeleteRole ,
+                              AuthRole: intauthRole};
+           
+          ///<summary>
+          ///Verify if the user has the Permssion to invoke the grantRole/updateRole Action
+          ///</summary>
+
+          if(__authorised(_glcontroller, userPrivilegdes, role) === true){
+               
+              __POSTWrapper(record, _glfunctionInvoked);
+
+              _getUserPriviledges(userName);
+
+           } else {
+
+              _notificationMessage("error","Permission denied! You have insufficient rights to complete this action");
+
+           }
+
+
+  });
+
+  $('#viewRoleBtn').click(function(){
+
+     if(__authorised(_glcontroller, userPrivilegdes, "Read") === true){
+
+       _getUserPriviledges(userName);
+
+     } else {
+
+       _notificationMessage("error","Permission denied! You have insufficient rights to complete this action");
+     }
+
+  });
+
+    ///<summary>
+    /// Event handlers for the checkboxes.If the event captures an event, it examines if the
+    /// the value of the event.args parameter is True/False. 
+    ///</summary>
+
+      $('#c-role').on('change',function(event){
+
+          intcreateRole = event.args.checked;
+          intcreateRole = (intcreateRole === true ? 1 : 0);
+
+          if($("#userIdpermission").val().trim().length > 0){
+
+             $('#grantRoleBtn').jqxButton({disabled: false });
+          }
+          
+      });
+
+      $('#r-role').on('change',function(event){
+
+        intreadRole = event.args.checked;
+        intreadRole = (intreadRole === true ? 1 : 0);
+
+          if($("#userIdpermission").val().trim().length > 0){
+            
+             $('#grantRoleBtn').jqxButton({disabled: false });
+          }
+        
+      });
+
+      $('#u-role').on('change',function(event){
+
+          intupdateRole = event.args.checked;
+          intupdateRole = (intupdateRole === true ? 1 : 0);
+
+          if($("#userIdpermission").val().trim().length > 0){
+            
+             $('#grantRoleBtn').jqxButton({disabled: false });
+          }
+          
+      });
+
+      $('#d-role').on('change',function(event){
+
+          intdeleteRole = event.args.checked;
+          intdeleteRole = (intdeleteRole === true ? 1 : 0);
+
+          if($("#userIdpermission").val().trim().length > 0){
+            
+             $('#grantRoleBtn').jqxButton({disabled: false });
+          }
+          
+      });
+
+      $('#a-role').on('change',function(event){
+
+          intauthRole = event.args.checked;
+          intauthRole = (intauthRole === true ? 1 : 0);
+
+          if($("#userIdpermission").val().trim().length > 0){
+            
+             $('#grantRoleBtn').jqxButton({disabled: false });
+          }
+          
+      });
+
+      ///<summary>
+      ///End of checkboxes Event handlers
+      ///</summary>
+
+
+      $("#DeleteDialogBtn").click(function(){ 
+
+             $("#deleteRecDialog").jqxWindow('hide');
+
+             _glfunctionInvoked = 'deleteDialogBtn';
+
+             var recId = {UserName: $("#userIdpermission").val(), ModuleId: $("#module").val() };
+
+             if(__authorised(_glcontroller, userPrivilegdes, "Delete") === true){
+
+                 console.log(recId.ModuleId);
+
+                  //_deleteRecord(recId,_glfunctionInvoked);
+                 __POSTWrapper(recId, _glfunctionInvoked);
+                    
+                 _getUserPriviledges(recId.UserName);
+
+              } else {
+
+                   _notificationMessage("error","Permission denied! You have insufficient rights to complete this action");
+              }
+      });
+});
+
+</script>
+
+@Html.Partial("_systemSecurityConfig")

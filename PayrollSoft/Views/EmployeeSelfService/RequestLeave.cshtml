@@ -1,0 +1,131 @@
+@{
+    ViewBag.Title = "RequestLeave";
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/implement-ui-widget-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+<script type="text/javascript">
+
+function _getLeaveTypes(){
+
+	  var _results = { datatype: 'json',
+	                datafields: [{ name: 'LeaveTypeId', type: 'string' },
+	                             { name: 'Description', type: 'string'}],
+	                 id: 'GradeId',
+	                 url: '/Settings/getLeaveTypes' };
+
+	   return new $.jqx.dataAdapter(_results);
+}
+
+function _calculateLeavePeriod(initDate, finalDate){
+
+	 var date1 = parseInt(initDate.split("-")[2]);
+     var month1 = parseInt(initDate.split("-")[1]);
+     var year1 = parseInt(initDate.split("-")[0]);
+
+     var date2 = parseInt(finalDate.split("-")[2]);
+     var month2 =parseInt(finalDate.split("-")[1]);
+     var year2 = parseInt(finalDate.split("-")[0]);
+
+     var finalDate = null;
+     var yeardiff = 0;
+     var monthdiff = 0;
+     var datediff = 0;
+
+
+     if((year2 === year1) && (month2 === month1) && (date2 === date1)){
+        //calculate the hours difference
+     } else if((year2 === year1) && (month2 === month1) && (date2 < date1)){
+     	_notificationMessage('error','Leave to date cannot be less than Leave from date');
+     	return false;
+     } else if((year2 < year1) && (month2 === month1) && (date2 >= date1)){
+     	_notificationMessage('error','Leave to date cannot be less than Leave from date');
+     	return false;
+     } else if((year2 === year1) && (month2 < month1) && (date2 === date1)){
+     	_notificationMessage('error','Leave to date cannot be less than Leave from date');
+     	return false;
+     } else if((year2 === year1) && (month2 < month1) && (date2 >= date1)){
+     	_notificationMessage('error','Leave To date cannot be less than Leave From date');
+     } else{
+
+ 	     if(year2 > year1){
+	       yeardiff = parseInt(year2 - year1);
+	     }
+	     if(month2 > month1){
+	     	monthdiff = parseInt(month2 - month1);
+	     }
+	     if(date2 > date1){
+	     	datediff = parseInt(date2 - date1);
+	     }
+
+         if((yeardiff === 0) && (monthdiff === 0)) return datediff;
+         if((yeardiff > 0) && (monthdiff === 0)) return yeardiff + " year " + datediff + " days";
+         if((yeardiff === 0) && (monthdiff > 0)) return monthdiff + " months " + datediff + " days";
+	     
+     }
+
+}
+
+function _initializeUIElements(){
+
+   $('#jqxTab').jqxTabs({ height: 350, width: '100%', theme: theme });
+   $('#fullname').jqxInput({ theme: theme, width: '380px', height: '25px' });
+   $('#fullname').val(userFullName);
+   $('#leaveFrom').jqxDateTimeInput({ theme: theme, width: '380px', height: '25px', formatString: 'yyyy-MM-dd'});
+   $('#leaveTo').jqxDateTimeInput({ theme: theme, width: '380px', height: '25px', formatString: 'yyyy-MM-dd'});
+   $('#numberOfDays').jqxInput({ theme: theme, width: '380px', height: '25px' });
+   $('#reason').jqxInput({theme: theme, width: '380px', height: '30px'});
+   $('#leavetype').jqxDropDownList({
+                   theme: theme, source: _getLeaveTypes(),
+                   selectedIndex: -1, width: '380px', height: '25px',dropDownHeight: "80px",
+                   displayMember: 'Description', valueMember: 'LeaveTypeId'});
+
+   $('#submitRequestBtn').jqxButton({theme: theme});
+   $('#cancelRequestBtn').jqxButton({theme: theme});
+}
+
+$(document).ready(function(){
+
+   _glcontroller = 'EmployeeSelfService';
+   var theme = getDemoTheme();
+
+   _initializeUIElements();
+
+   
+   $('#leaveTo').on('change',function(event){
+   	  if(event.args){
+   	  	console.log('change event fired!');
+   	  	$('#numberOfDays').val(_calculateLeavePeriod($('#leaveFrom').val(),$('#leaveTo').val()));
+   	  }
+   });
+
+   $('#submitRequestBtn').click(function(){
+
+   	   var record = { leaveTypeId: $('#leavetype').val(),
+   	                  LeaveFrom: $('#leaveFrom').val(),
+   	                  LeaveTo: $('#leaveTo').val(),
+   	                  DaysRequested: $('#numberOfDays').val(),
+   	                  Reason: $('#reason').val()};
+
+   	    __POSTWrapper(record, 'submitRequestBtn');
+   });
+
+
+});
+
+</script>
+
+@Html.Partial("_requestLeave")

@@ -1,0 +1,16 @@
+----------------------------------------------------------------------------*/
+.jqxwidget{
+  width: 400px;
+}
+.jqxNavigationBar .jqx-navbar-wrapper {
+  margin-top: 2px;
+  margin-bottom: 0;
+}
+.jqxNavigationBar .jqx-navbar-wrapper .jqx-navbar-img {
+  float:left;
+}
+.jqx-navbar-label {
+  margin-left: 4px;
+  float: left;
+  padding-left: 3px;
+}

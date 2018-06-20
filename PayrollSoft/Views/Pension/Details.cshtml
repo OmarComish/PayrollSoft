@@ -1,0 +1,25 @@
+﻿@model PayrollSoft.Models.Pension
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Pension</legend>
+
+    <div class="display-label">EmployerContrRate</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.EmployerContrRate)
+    </div>
+
+    <div class="display-label">EmployeeContrRate</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.EmployeeContrRate)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.PensionRefNum }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

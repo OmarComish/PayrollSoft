@@ -1,0 +1,50 @@
+﻿@model PayrollSoft.Models.Settings
+
+@{
+    ViewBag.Title = "Loan settings";
+}
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/datagrid_datasource.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+
+<script type="text/javascript">
+
+
+    $(document).ready(function(){
+
+      _glcontroller = "Settings";
+      var theme = getDemoTheme();
+      var title = 'Application Configuration';
+      
+      $('#jqxTabs').jqxTabs({ width: '100%', height: 400, position: 'top', theme: theme });
+      $("#chkAutogenerateLoanRefNum").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+      $("#chkPrecalculateloan").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+
+      $("#maxRepaymntPeriod").jqxNumberInput({theme: theme, height: '20px',width: '130px',spinButtons: true});
+
+      $("#loanProcessingOption").jqxDropDownList({placeHolder: "Choose processing option",theme: theme, source:['Auto','Manual'],
+                                                 selectedIndex: -1, width: '200px',height: '20px',dropDownHeight: "50px"});
+      $("#loanProcessingDate").jqxNumberInput({theme: theme, height: '20px',width: '130px',spinButtons: true});
+
+      $('#loaninterestType').jqxButton({ theme: theme });
+      $('#loantypeDetails').jqxButton({ theme: theme });
+      $('#saveLoanSettingsBtn').jqxButton({theme:theme});
+
+    });
+
+</script>
+
+@Html.Partial("_LoanSettings")

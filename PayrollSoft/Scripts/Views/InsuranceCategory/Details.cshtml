@@ -1,0 +1,30 @@
+﻿@model PayrollSoft.Models.InsuranceCategory
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>InsuranceCategory</legend>
+
+    <div class="display-label">Insurance</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Insurance.Description)
+    </div>
+
+    <div class="display-label">Description</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Description)
+    </div>
+
+    <div class="display-label">MonthlyRate</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.MonthlyRate)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.CategoryID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

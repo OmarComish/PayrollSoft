@@ -1,0 +1,205 @@
+@model IEnumerable<PayrollSoft.Models.Settings>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+<script type="text/javascript">
+
+function __saveSettings(records){
+
+   var numofrecords = records.length;
+
+   for(var t = 0; t < records.length; t ++){
+        
+            $.ajax({
+               cache: false,
+               datatype: "jsonp",
+               url: "/Settings/SavePayrollSettings",
+               type: "POST",
+               data: records[t],
+               success: function (data) {
+                  
+                   if(t === numofrecords){
+                     // _notificationMessage(data.status, data.message);
+                     console.log(">>>>>>>> " + data.status + "  " + data.message);
+                   }
+                  
+               },
+               error: function(jqXHR, textStatus, errorThrown){
+                    console.log(errorThrown);
+               }
+         });
+    }
+
+}
+
+  function __getPaycodeData(){
+
+    // var paycodes = [];
+
+   var paycodes = {
+           datatype: 'json',
+           datafields: [{ name: 'payCode', type: 'string' },
+                         { name: 'Description', type: 'string'}],
+           id: 'payCode',
+           url: '/Settings/getPaymentCodes'
+       };
+
+      return new $.jqx.dataAdapter(paycodes);
+      
+  }
+
+  $(document).ready(function(){
+    
+
+    _glcontroller = "Settings";
+   var theme = getDemoTheme();
+   var title = 'Payroll settings';
+   var paycodes = __getPaycodeData();
+   var settings = [];
+
+        // _paymentTypeData = _exceptionGridData();
+
+        var _jobGrade = { datatype: 'json',
+                          datafields: [{ name: 'GradeId', type: 'string' },
+                                       { name: 'GradeName', type: 'string'}],
+                           id: 'GradeId',
+                           url: '/EmployeeGrade/GetGrades' };
+
+       var jobGradeDataSource = new $.jqx.dataAdapter(_jobGrade);
+       
+         $('#jqxTabs').jqxTabs({ width: '100%', height: 400, position: 'top', theme: theme });
+         $("#setpayrollRunDateChk").jqxCheckBox({ theme: theme, checked: false });
+         $("#PaymentexceptionChk").jqxCheckBox({ theme: theme, checked: false });
+         $("#pensionFormularChk").jqxCheckBox({theme: theme, checked: false});
+         $("#taxFormularChk").jqxCheckBox({theme: theme, checked: false});
+         $("#loanFormularChk").jqxCheckBox({theme: theme, checked: false});
+         $("#severanceFormularChk").jqxCheckBox({theme: theme, checked: false});
+
+         $("#PaymentexceptionBtn").jqxButton({theme: theme});
+
+         $("#pensionformulaPaycode").jqxDropDownList({ theme: theme, source: paycodes, selectedIndex: -1, disabled: true,
+                                                       width: "200px", height: "25px", promptText: "Code",
+                                                       dropDownHeight: "80px", displayMember: "payCode", valueMember: "payCode" });
+
+         $("#taxformulaPaycode").jqxDropDownList({ theme: theme, source: paycodes, selectedIndex: -1, disabled: true,
+                                                       width: "200px", height: "25px", promptText: "Code",
+                                                       dropDownHeight: "80px", displayMember: "payCode", valueMember: "payCode" });
+
+        $("#loanformulaPaycode").jqxDropDownList({ theme: theme, source: paycodes, selectedIndex: -1, disabled: true,
+                                                       width: "200px", height: "25px", promptText: "Code",
+                                                       dropDownHeight: "80px", displayMember: "payCode", valueMember: "payCode" });
+
+        $("#severanceformulaPaycode").jqxDropDownList({ theme: theme, source: paycodes, selectedIndex: -1, disabled: true,
+                                                       width: "200px", height: "25px", promptText: "Code",
+                                                       dropDownHeight: "80px", displayMember: "payCode", valueMember: "payCode" });
+
+        $("#PayrollRunDateBtn").jqxButton({theme: theme});
+        $("#saveSettingsBtn").jqxButton({theme: theme, disabled: true});
+
+        $("#pensionFormularChk").on('change',function(event){
+            if(event){
+                $("#pensionformulaPaycode").jqxDropDownList({ disabled: false});
+            }
+        });
+
+        $("#loanFormularChk").on('change',function(event){
+            if(event){
+                $("#loanformulaPaycode").jqxDropDownList({ disabled: false});
+            }
+        });
+
+        $("#taxFormularChk").on('change',function(event){
+            if(event){
+                $("#taxformulaPaycode").jqxDropDownList({ disabled: false});
+            }
+        });
+
+        $("#severanceFormularChk").on('change',function(event){
+            if(event){
+                $("#severanceformulaPaycode").jqxDropDownList({ disabled: false});
+            }
+        });
+
+        $("#pensionformulaPaycode").on('change',function(event){
+
+            if(event){
+                 settings.push({Paycode:   $("#pensionformulaPaycode").val(),
+                                Formular:   'PENSION',
+                                DateUpdated: CurrentDate()
+                              });
+                 $("#saveSettingsBtn").jqxButton({disabled: false});
+            }
+        });
+
+        $("#taxformulaPaycode").on('change',function(event){
+
+            if(event){
+                 settings.push({Paycode:   $("#taxformulaPaycode").val(),
+                                Formular:   'TAX',
+                                DateUpdated: CurrentDate()
+                              });
+
+                 $("#saveSettingsBtn").jqxButton({disabled: false});
+            }
+        });
+
+        $("#loanformulaPaycode").on('change',function(event){
+
+            if(event){
+                 settings.push({Paycode:   $("#loanformulaPaycode").val(),
+                                Formular:   'STAFFLOAN',
+                                DateUpdated: CurrentDate()
+                              });
+
+                 $("#saveSettingsBtn").jqxButton({disabled: false});
+            }
+        });
+
+        $("#severanceformulaPaycode").on('change',function(event){
+
+            if(event){
+                 settings.push({Paycode:   $("#severanceformulaPaycode").val(),
+                                Formular:   'SEVERANCE',
+                                DateUpdated: CurrentDate()
+                              });
+
+                 $("#saveSettingsBtn").jqxButton({disabled: false});
+            }
+        });
+
+
+         $('#saveSettingsBtn').click( function(){
+               
+            if(settings.length != 0){
+              __saveSettings(settings);
+            }
+
+         });
+
+
+         $('#PaymentexceptionBtn').click(function(){
+
+            title ="Exceptions";
+            //document.getElementById('payrollExceptionWindow').style.visibility="visible";
+           //_payrollExceptionWin(title);
+
+        });
+
+  });
+
+</script>
+
+
+@Html.Partial("_PayrollSettings")

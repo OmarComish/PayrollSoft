@@ -1,0 +1,142 @@
+
+<div>
+    <div id="jqxgrid"></div>
+</div>
+
+
+<div id="detailswindow" style="overflow: hidden";>
+    <div>Deductions/Earning</div>
+    <div style="overflow: hidden;">
+      <div id="jqxTabs">
+            <ul>
+               <li style="margin-left: 25px;">General</li>
+               <li>Overtime</li>
+               <li>Timesheet</li>
+            </ul>
+            <div>
+                <table style="margin-left: 10px; margin-top: 25px;">
+                    <tr>
+                        <td>Employee:</td>
+                        <td><input id="emp"/></td>
+                        <td><span class="inputbox-spacing"></span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><div class="inputbox-spacing"></div></td>
+                    </tr>
+                    <tr>
+                      <td>Grade:</td>
+                      <td><input id="empGroup"/></td>
+                    </tr>
+                    <tr>
+                      <td><div class="inputbox-spacing"></div></td>
+                      <td colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <td>Pay code:</td>
+                        <td><div id="payCode"></div></td>
+                        <td><input id="paycodeDescription"/></td>
+                    </tr>
+                    <tr>
+                      <td><div class="inputbox-spacing"></div></td>
+                      <td colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <td>Deduction/Earning amount:</td>
+                        <td><div id="Amount"></div></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                      <td><div class="inputbox-spacing"></div></td>
+                      <td colspan="2"></td>
+                    </tr>
+                    <tr>
+                      <td><div class="inputbox-spacing"></div></td>
+                      <td colspan="2"></td>
+                    </tr>
+                    <tr>
+                      <td><div id="sysdefinedFormulaChk">Use Fixed amount</div></td>
+                      <td colspan="2"></td>
+                    </tr>
+                </table>
+                <div style="float:right;">
+                 <table>
+                  <tr>
+                    <td><input style="margin-right: 10px;float: right;" type="button" id="overtimeBtn" value="Overtime" /></td>
+                    <td></td>
+                  </tr>
+                </table>
+                </div>
+            </div>
+            <div>
+                <table style="margin-top: 35px; margin-left: 10px; width: '80%';">
+                   <tr>
+                       <td>Overtime hours:</td>
+                       <td><div id="overtimeHours"></div></td>
+                       <td></td>
+                   </tr>
+                   <tr>
+                      <td><div class="inputbox-spacing"></div></td>
+                      <td colspan="2"></td>
+                   </tr>
+                   <tr>
+                      <td>Pay code:</td>
+                      <td><div id="overtimepayCode"></div></td>
+                      <td><input id="overtimepaycodeDescription"/></td>
+                   </tr>
+                </table>
+            </div>
+            <div>
+              
+            </div>
+      </div>
+        
+     <!--<div style="float:left;">
+          <table>
+            <tr>
+                <td><div style="margin-left: 10px;"><input type="button" value="Timesheet data" id="enterTimesheetData"/></div></td>
+                <td></td>
+            </tr>
+          </table>
+    </div> -->
+
+
+
+    <div style="margin-top: 10px;"></div>
+        <div style="float:left;margin-left: 10px;">
+        <table>
+            <tr>
+               <td><input type="button" value="Refresh list" id="refreshList" /></td>
+               <!--<td><a class="btn icon-btn btn-success" href="#" id="refreshList"><span class="glyphicon btn-glyphicon glyphicon-refresh img-circle text-success"></span></a></td>-->
+            </tr>
+        </table>
+        </div>
+        <table style="float:right;margin-right: 10px;">
+            <tr>
+                <td><input type="button" value="Add" id="addItemtoPayment" /></td>
+                <td><span style="margin-left: 5px;"><input type="button" value="Finish" id="finishBtn" /></span></td>
+            </tr>
+        </table>
+
+        <div style="margin-left:5px;">
+            <div id="detailgrid"></div>
+        </div>
+    </div>
+
+</div>
+
+<div id="messageNotification" style="overflow:hidden;">
+     <div></div>
+</div>
+
+<div id="confirmActionDialog" style="overflow: hidden";>
+    <div></div>
+    <div style="overflow: hidden;">
+      <div id="dialogmessage"></div>
+      <table style="float: right; margin-top: 10px;">
+           <tr>
+             <td><input type="button" value="Proceed" id="proceedBtn" /></td>
+             <td><span class="inputbox-spacing"><input type="button" value="Cancel" id="cancelBtn" /></span></td>
+           </tr>
+      </table>
+    </div>
+</div>

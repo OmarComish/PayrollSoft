@@ -1,0 +1,58 @@
+﻿@model PayrollSoft.Models.Employee
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<fieldset>
+    <legend>Employee</legend>
+
+    <div class="display-label">EmpName</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.EmpName)
+    </div>
+
+    <div class="display-label">Departments</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Departments.DeptName)
+    </div>
+
+    <div class="display-label">EmployeeGrades</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.EmployeeGrades.GradeName)
+    </div>
+
+    <div class="display-label">HireDate</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.HireDate)
+    </div>
+
+    <div class="display-label">DateOfBirth</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DateOfBirth)
+    </div>
+
+    <div class="display-label">JobTitle</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.JobTitle)
+    </div>
+
+    <div class="display-label">Gender</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Gender)
+    </div>
+
+    <div class="display-label">MobileNumber</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.MobileNumber)
+    </div>
+</fieldset>
+@using (Html.BeginForm()) {
+    <p>
+        <input type="submit" value="Delete" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}

@@ -1,0 +1,905 @@
+
+ @model IEnumerable<PayrollSoft.Models.Employee>
+
+
+@{
+    ViewBag.Title = "Index";
+}
+<!--<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcore.js")"></script>-->
+<script src="@Url.Content("~/Scripts/jquery-ui-1.8.24.min.js")"type="text/javascript"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<!--<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxmenu.js")"></script>-->
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<!--<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxwindow.js")"></script>-->
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownbutton.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtree.js")"></script>
+
+<script type="text/javascript">
+
+function __eventListener(){
+   
+  if (_glpersonnelId != null){
+
+      document.getElementById('searchval').innerHTML = _glpersonnelId;
+      console.log( _glpersonnelId);
+  }
+  return;
+}
+
+function _readDataSource(data){
+      
+    var source = {
+           localdata: data,
+           datatype: 'array',
+           datafields: [
+                           { name: 'EmpName', type: 'string' },
+                           { name: 'Gender', type: 'string' },
+                           { name: 'EmpID', type: 'string' },
+                           { name: 'DeptName', type: 'string' },
+                           { name: 'DeptID', type: 'string' },
+                           { name: 'HireDate', type: 'date' },
+                           { name: 'DateOfBirth', type: 'date' },
+                           { name: 'JobTitle', type: 'string' },
+                           { name: 'GradeID', type: 'string' },
+                           { name: 'MobileNumber', type: 'number' },
+                           { name: 'EmploymentStatus', type: 'string' },
+                           { name: 'onPayroll', type: 'number'}
+                      ]
+      };
+      
+       return new $.jqx.dataAdapter(source);
+}
+
+function _getDataFromServer(param, searchby){
+
+       var records = new Array();
+
+       $.ajax({
+              cache: false,
+              datatype: "jsonp",
+              url: "/Employee/" + searchby + "/",
+              type: "POST",
+              data: param,
+              success: function (data, status, xhr) {
+
+                 for(var x = 0; x < data.length; x ++){
+
+                   records.push({EmpName:          data[x].EmpName, 
+                                 DateOfBirth:      data[x].DateOfBirth,
+                                 EmpID:            data[x].EmpID,
+                                 DeptName:         data[x].DeptName,
+                                 DeptID:           data[x].DeptID,
+                                 Gender:           data[x].Gender,
+                                 HireDate:         data[x].HireDate,
+                                 DateOfBirth:      data[x].DateOfBirth,
+                                 MobileNumber:     data[x].MobileNumber,
+                                 JobTitle:         data[x].JobTitle,
+                                 GradeID:          data[x].GradeID,
+                                 EmploymentStatus: data[x].EmploymentStatus
+                               });
+                   
+                 }
+
+                _loadGridData(_readDataSource(records));
+
+              }, 
+              error: function (jqXHR, textStatus, errorThrown) {
+               
+                 console.log(errorThrown);
+  
+             }
+
+
+       });
+}
+
+function __Search(val){
+  
+   
+  if(_glsearchByPersonnelName){
+       
+      var param = {empName: val};
+      _getDataFromServer(param, "SearchByName");
+
+  } else if(_glsearchByPersonnelId){
+      
+      var param = {EmpID: val};
+      _getDataFromServer(param, "SearchByPersonnelId");
+      
+  } else if (_glsearchByGradeId ){
+      
+      var param = {GradeId: val};
+      _getDataFromServer(param, "SearchByGradeId");
+
+  } else if (_glsearchByDesignation){
+    
+      var param = {designation: val};
+      _getDataFromServer(param, "SearchByDesignation");
+
+  } else if (_glsearchByEmploymentStartDate){
+      
+      $("#searchval").val($("#startdate").val());
+      var param = {startdate: val};
+      _getDataFromServer(param, "SearchByEmploymentStartDate");
+
+  } else if (_glsearchByEmploymentStatus){
+     
+     var param = {status: val};
+     _getDataFromServer(param, "SearchByStatus");
+
+  } else if (_glsearchByGender){
+     
+      var param = {gender: val};
+     _getDataFromServer(param, "SearchByGender");
+
+  } else if (_glsearchByDepartment){
+      
+      var param = {department: val};
+     _getDataFromServer(param, "SearchByDepartment");
+
+  }else {
+    
+  }
+  
+}
+
+function _createFormElements(title, theme,dataAdapter) {
+
+        $('#window').jqxWindow({
+            theme: theme,
+            resizable: false,
+            minWidth: 940,
+            minHeight: 300,
+            width: 1200,
+            height: 300,
+            title: title,
+            initContent: function () {
+                $("#jqxgrid").jqxGrid({
+                    width: 940,
+                    source: dataAdapter,
+                    theme: theme,
+                    pageable: true,
+                    autoheight: true,
+                    sortable: true,
+                    selectionmode: 'none',
+                    columns: [
+                              { text: 'Name', datafield: 'EmpName', width: 150 },
+                              { text: 'Gender', datafield: 'Gender', width: 80 },
+                              { text: 'Emp ID', datafield: 'EmpID', width: 70 },
+                              { text: 'Department', datafield: 'DeptName', width: 100 },
+                              { text: 'Dept Number', datafield: 'DeptID', width: 100 },
+                              { text: 'Hire Date', datafield: 'HireDate', width: 100 },
+                              { text: 'Birth Date', datafield: 'DateOfBirth', width: 100 },
+                              { text: 'Job Title', datafield: 'JobTitle', width: 100 },
+                              { text: 'Grade', datafield: 'GradeID', width: 50 },
+                              { text: 'Status', datafield: 'EmploymentStatus', width: 70 },
+                              { text: 'Phone', datafield: 'MobileNumber', width: 100 }
+
+                    ]
+
+                });
+            }
+
+        });
+
+        $("#copypopupWindow").jqxWindow('hide');
+
+        $('#window').jqxWindow('focus');
+}
+
+function _loadGridData(dataAdapter) {
+
+        $("#jqxgrid").jqxGrid({
+            width: '100%',
+            source: dataAdapter,
+            theme: theme,
+            pageable: true,
+            autoheight: true,
+            sortable: true,
+            selectionmode: 'none',
+            columns: [
+                              { text: 'Name', datafield: 'EmpName', width: '20.2%' },
+                              { text: 'Gender', datafield: 'Gender', width: '7%' },
+                              { text: 'ID', datafield: 'EmpID', width: '10%' },
+                              { text: 'Department', datafield: 'DeptName', width: '20.2%' },
+                              //{ text: 'Dept Number', datafield: 'DeptID', width: 90 },
+                              //{ text: 'Hire Date', datafield: 'HireDate', width: 110 },
+                              //{ text: 'Birth Date', datafield: 'DateOfBirth', width: 110 },
+                              { text: 'Designation', datafield: 'JobTitle', width: '22.5%' },
+                              { text: 'Grade', datafield: 'GradeID', width: '10%' },
+                              { text: 'Status', datafield: 'EmploymentStatus', width: '11.24%' },
+                              //{ text: 'Phone', datafield: 'MobileNumber', width: 110 }
+
+                    ]
+
+        });
+ }
+
+function _editpopUpWindow(title, theme) {
+
+             $("#editpopupWindow").jqxWindow({
+                 theme: theme,
+                 title: title,
+                 resizable: true,
+                 width: 350,
+                 isModal: true,
+                 autoOpen: false,
+                 okButton: $("#editWinSaveBtn"),
+                 cancelButton: $("#editWinCancelBtn"),
+                 modalOpacity: 0.01,
+                 initContent: function () {
+
+                      
+                 }
+
+             });
+
+             $("#editpopupWindow").jqxWindow('open');
+}
+
+function _copypopupWindow(title,theme){
+
+          $("#copypopupWindow").jqxWindow({
+                 theme: theme,
+                 title: title,
+                 resizable: true,
+                 width: 890,
+                 height: 460,
+                 isModal: true,
+                 autoOpen: false,
+                 okButton: $("#copyWinSaveBtn"),
+                 cancelButton: $("#copyWinCancelBtn"),
+                 modalOpacity: 0.01,
+                 initContent: function () {
+
+
+
+                 }
+
+             });
+
+             $("#copypopupWindow").jqxWindow('open');
+
+}
+
+function _delpopupWindow(title,theme){
+
+      $("#delpopupWindow").jqxWindow({
+           theme: theme,
+           resizable: false,
+           width: 260,
+           isModal: true,
+           autoOpen: false,
+           title: title,
+           okButton: $("#Delete"),
+           cancelButton: $("#Cancel"),
+           modalOpacity: 0.01
+
+      });
+
+      $("#delpopupWindow").jqxWindow('open');
+}
+
+
+function __AutoComplete() {
+       console.log("Auto complete event triggered!");
+}
+
+function caller(id, controller, action) {
+       var ret = __searchParam($("#id").val().trim(), controller, "update");
+       return ret ? ret : false;
+}
+
+function __buildPersonnelDataSource(){
+
+        var source = {
+           datatype: 'json',
+           datafields: [
+                           { name: 'EmpName', type: 'string' },
+                           { name: 'Gender', type: 'string' },
+                           { name: 'EmpID', type: 'string' },
+                           { name: 'DeptName', type: 'string' },
+                           { name: 'DeptID', type: 'string' },
+                           { name: 'HireDate', type: 'date' },
+                           { name: 'DateOfBirth', type: 'date' },
+                           { name: 'JobTitle', type: 'string' },
+                           { name: 'GradeID', type: 'string' },
+                           { name: 'MobileNumber1', type: 'string' },
+                           { name: 'MobileNumber2', type: 'string' },
+                           { name: 'EmploymentStatus', type: 'string' },
+                           { name: 'onPayroll', type: 'integer' },
+                           { name: 'PaySchedule', type: 'string'},
+                           { name: 'MaritalStatus', type: 'string'},
+                           { name: 'NextOfKinName', type: 'string'},
+                           { name: 'ContactNo1', type: 'string'},
+                           { name: 'ContactNo2', type: 'string'},
+                           { name: 'IdentityNumber', type: 'string'},
+                           { name: 'IdentityType', type: 'string'},
+                           { name: 'Nationality', type: 'string'},
+                           { name: 'Address', type: 'string'},
+                           { name: 'ValidityDate', type: 'date'},
+                           { name: 'Description', type: 'string'}
+
+                      ],
+           id: 'EmpID',
+           url: '/Employee/Employees'
+       };
+
+        return new $.jqx.dataAdapter(source);//,                { 
+                  //formatData: function(data){
+                   // data.name_startsWith = document.getElementById('personnelId').value;
+                   // return data;
+                  //}
+                //});
+}
+
+
+$(document).ready(function () {
+
+      _getUserAccessRights();
+
+       _glcontroller = "Employee";
+       var deptNumber = null;
+       var controller = 'Employee';
+       var onPayroll = true;
+       var theme = getDemoTheme();
+       var title = 'Listings';
+
+
+       //populate the data sources..
+       var _deptDataSource = {
+           datatype: 'json',
+           datafields: [{ name: 'DeptID', type: 'string' },
+                         { name: 'DeptName', type: 'string'}],
+           id: 'DeptID',
+           url: '/Department/GetDepartments'
+       };
+
+       var genders = ["Male", "Female"];
+       var jobtitle = ["Human Resources Manager", "Information Technology Officer", "Financial Controller", "CEO"];
+       var _jobTitle = {};
+       var _jobGrade = { datatype: 'json', datafields: [{ name: 'GradeId', type: 'string' }, { name: 'GradeName', type: 'string'}], id: 'GradeId', url: '/EmployeeGrade/GetGrades' };
+       var empStatusDataAdapter = ["Active", "Retired", "Resigned", "Suspended"];
+
+       var deptDataAdapter = new $.jqx.dataAdapter(_deptDataSource);
+       var jobGradeDataSource = new $.jqx.dataAdapter(_jobGrade);
+
+       //Hide all the popup windows when loading the main window for this view
+       //document.getElementById("Menu").style.visibility = "hidden";
+       document.getElementById("editpopupWindow").style.visibility = "hidden";
+       document.getElementById("copypopupWindow").style.visibility = "hidden";
+       document.getElementById("delpopupWindow").style.visibility="hidden";
+       //document.getElementById("searchpopupWindow").style.visibility = "hidden";
+
+       // create context menu
+
+       var contextMenu = $('#Menu').jqxMenu({ width: 130, height: 230, autoOpenPopup: false, mode: 'popup', theme: theme });
+       $("#jqxgrid").on('contextmenu', function () {
+           return false;
+       });
+
+       $("#Menu").on('itemclick', function (event) {
+
+           var args = event.args;
+           var rowindex = $("#jqxgrid").jqxGrid('getselectedrowindex');
+           var offset = $("#jqxgrid").offset();
+
+           if ($.trim($(args).text()) == "Edit") {
+
+               //UNHIDE THE EDIT POPUP WINDOW HERE...
+               document.getElementById("copypopupWindow").style.visibility = "visible";
+
+               title = "Edit";
+
+                _glfunctionInvoked = "editPersonnelRecord";
+
+               editrow = rowindex;
+               //var offset = $("#jqxgrid").offset();
+               $("#copypopupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 60, y: parseInt(offset.top) + 60} });
+
+               //get the clicked row's data and populate the input fields
+               var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
+
+
+               $("#name").val(dataRecord.EmpName);
+               $("#empID").val(dataRecord.EmpID).trim();
+               $("#dateHired").val(dataRecord.HireDate);
+               $("#contactNo").val(dataRecord.MobileNumber1);
+               $("#contactNo2").val(dataRecord.MobileNumber1);
+               $("#sex").val(dataRecord.Gender);
+               $("#dob").val(dataRecord.DateOfBirth);
+               $("#onPayroll").val(dataRecord.onPayroll);
+               $("#deptname").val(dataRecord.DeptName);
+               $("#empgrade").val(dataRecord.GradeID);
+               $("#jobposition").val(dataRecord.JobTitle);
+               $("#deptno").val(dataRecord.DeptID.trim());
+               $("#address").val(dataRecord.Address);
+               $("#empstatus").val(dataRecord.EmploymentStatus);
+               $("#emptype").val(dataRecord.Description);
+               $("#payschedule").val(dataRecord.PaySchedule);
+               $("#identityType").val(dataRecord.IdentityType);
+               $("#identityNumber").val(dataRecord.IdentityNumber);
+               $("#nationality").val(dataRecord.Nationality);
+               $("#validUntil").val(dataRecord.ValidityDate);
+               $("#identityType").val(dataRecord.IdentityType);
+               $("#nextOfKinName").val(dataRecord.NextOfKinName);
+               $("#nextOfKinMobile1").val(dataRecord.ContactNo1);
+               $("#nextOfKinMobile2").val(dataRecord.ContactNo2);
+               $("#maritalStatus").val(dataRecord.MaritalStatus);
+
+               var rowdata = { EmpID: dataRecord.EmpID, EmpName: dataRecord.EmpName, DeptID: dataRecord.DeptID, onPayroll: dataRecord.onPayroll, Description: dataRecord.Description };
+
+               console.log("Edit action  " + rowdata.Description);
+
+                ///<summary>
+                ///Changes to the Code:
+                ///the Edit action will invoke the copypopWindow instead of the Edit window
+                ///this is to take advantage of code resuse
+                ///</summary>
+
+                _copypopupWindow(title, theme);
+
+
+           }
+
+           if ($.trim($(args).text()) == "Copy") {
+
+               //UNHIDE THE COPY POPUP WINDOW HERE...
+               document.getElementById("copypopupWindow").style.visibility = "visible";
+
+               //var rowindex = $("#jqxgrid").jqxGrid('getselectedrowindex');
+               console.log("Copy menu option selected");
+               
+               _glfunctionInvoked = "copyPersonnelRecord";
+
+               title = "copy";
+
+               editrow = rowindex;
+               // var offset = $("#jqxgrid").offset();
+               $("#copypopupWindow").jqxWindow({ position: { x: parseInt(offset.left) + 60, y: parseInt(offset.top) + 60} });
+               //get the clicked row's data and populate the input fields
+               var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
+               $("#name").val(dataRecord.EmpName);
+               $("#empID").val(dataRecord.EmpID).trim();
+               $("#dateHired").val(dataRecord.HireDate);
+               $("#contactNo").val(dataRecord.MobileNumber1);
+               $("#contactNo2").val(dataRecord.MobileNumber1);
+               $("#sex").val(dataRecord.Gender);
+               $("#onPayroll").val(dataRecord.onPayroll);
+               $("#dob").val(dataRecord.DateOfBirth);
+               $("#deptname").val(dataRecord.DeptName);
+               $("#empgrade").val(dataRecord.GradeID);
+               $("#jobposition").val(dataRecord.JobTitle);
+               $("#deptno").val(dataRecord.DeptID.trim());
+               $("#address").val(dataRecord.Address);
+               $("#empstatus").val(dataRecord.EmploymentStatus);
+               $("#emptype").val(dataRecord.Description);
+               $("#emptype").val(dataRecord.Description);
+               $("#identityType").val(dataRecord.IdentityType);
+               $("#identityNumber").val(dataRecord.IdentityNumber);
+               $("#nationality").val(dataRecord.Nationality);
+               $("#validUntil").val(dataRecord.ValidityDate);
+               $("#identityType").val(dataRecord.IdentityType);
+               $("#nextOfKinName").val(dataRecord.NextOfKinName);
+               $("#nextOfKinMobile1").val(dataRecord.ContactNo1);
+               $("#nextOfKinMobile2").val(dataRecord.ContactNo2);
+               $("#maritalStatus").val(dataRecord.MaritalStatus);
+               
+
+               var rowdata = { EmpID: dataRecord.EmpID, EmpName: dataRecord.EmpName, DeptID: dataRecord.DeptID };
+               console.log(rowdata.DeptID);
+
+
+               //here show the popup window...
+               _copypopupWindow(title, theme);
+           }
+
+           if ($.trim($(args).text()) == "Suspend") {
+
+               console.log("Suspend menu option selected");
+               editrow = rowindex;
+               var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
+               console.log(dataRecord.EmpName);
+               var rowdata = {
+                   EmpID: dataRecord.EmpID,
+                   EmpName: dataRecord.EmpName,
+                   DeptID: dataRecord.DeptID,
+                   GradeID: $("#grade").val(),
+                   HireDate: $("#hireDate").val(),
+                   DateOfBirth: $("#dob").val(),
+                   JobTitle: $("#jobTitle").val(),
+                   Gender: $("#gender").val(),
+                   MobileNumber: $("#phone").val()
+               };
+               console.log(rowdata.DeptID.trim());
+
+               //_checkIfRecordExists(rowdata.EmpID,controller);
+               // _checkRecord(rowdata.EmpID);
+               __searchParam(rowdata.EmpID);
+           }
+
+           if($.trim($(args).text()) == "Delete"){
+
+               editrow = rowindex;
+               var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
+
+               $("#empID").val(dataRecord.EmpID).trim();
+
+              document.getElementById("delpopupWindow").style.visibility="visible";
+
+               console.log("Delete action is invoked for record Emp Id: " + dataRecord.EmpID);
+
+               _delpopupWindow("Confirm delete",theme);
+           }
+
+       });
+
+       $("#jqxgrid").on('rowclick', function (event) {
+
+           if (event.args.rightclick) {
+               $("#jqxgrid").jqxGrid('selectrow', event.args.rowindex);
+               var scrollTop = $(window).scrollTop();
+               var scrollLeft = $(window).scrollLeft();
+               contextMenu.jqxMenu('open', parseInt(event.args.originalEvent.clientX) + 5 + scrollLeft, parseInt(event.args.originalEvent.clientY) + 5 + scrollTop);
+
+               return false;
+           }
+       });
+
+
+
+       //initialize input fields on the Edit popup window...
+       $("#id").jqxInput({ theme: theme, height: '20px', disabled: true });
+       $("#deptno").jqxInput({ theme: theme });
+       $("#empName").jqxInput({ theme: theme, height: '20px', disabled: false });
+       $("#jobTitle").jqxInput({ theme: theme, height: '20px', width: '200px', disabled: false });
+       $("#gender").jqxDropDownList({
+           theme: theme, source: _genderDataSource, selectedIndex: -1,
+           width: "150px", height: "25px", promptText: "Gender...",
+           dropDownHeight: "40px"
+       });
+       $("#phone").jqxInput({ theme: theme, height: '20px', width: '120px', disabled: false });
+       $("#dept").jqxInput({ source: deptDataAdapter, displayMember: "DeptName", valueMember: "DeptID", theme: theme, width: '180px', height: '20px' });
+       $("#dept").on('select', function (event) {
+           if (event.args) {
+               var item = event.args;
+               var _dept = item.value.trim();
+               console.log(_dept);
+           }
+       });
+
+       $("#status").jqxDropDownList({
+           theme: theme, source: empStatusDataAdapter, selectedIndex: -1,
+           width: "150px", height: "20px", promptText: "Status...",
+           dropDownHeight: "80px"
+       });
+
+       $("#gradeId").jqxInput({ source: jobGradeDataSource, displayMember: "GradeName", valueMember: "GradeID", theme: theme, width: '180px', height: '20px' });
+       $("#gradeId").on('select', function (event) {
+           if (event.args) {
+               var item = event.args;
+               var _grade = item.value.trim();
+               console.log(_grade);
+           }
+       });
+
+
+       $("#birthdate").jqxDateTimeInput({ theme: theme, width: '250px', height: '20px', formatString: 'dd-MM-yyyy' });
+       $("#hiredate").jqxDateTimeInput({ theme: theme, width: '250px', height: '20px', formatString: 'dd-MM-yyyy' });
+
+       $("#editWinCancelBtn").jqxButton({ theme: theme });
+       $("#editWinSaveBtn").jqxButton({ theme: theme });
+
+       $("#editWinSaveBtn").click(function () {
+
+            if(__authorised("Personnel", userPrivilegdes, "Create") === true){
+
+                 $("#editpopupWindow").jqxWindow('hide');
+
+                 var datarow = { EmpID: $("#id").val(),
+                     EmpName: $("#empName").val(),
+                     DeptID: $("#deptno").val(),
+                     GradeID: $("#gradeId").val(),
+                     HireDate: $("#hiredate").val(),
+                     DateOfBirth: $("#birthdate").val(),
+                     JobTitle: $("#jobTitle").val(),
+                     Gender: $("#gender").val(),
+                     MobileNumber: $("#phone").val(),
+                     EmploymentStatus: $("#status").val()
+                 };
+
+                 _editRecord(datarow.EmpID.trim(), datarow, controller);
+                 //_verifyDataBeforePosting(datarow);
+
+            } else {
+
+               _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+            }
+
+
+       });
+  
+       //Initialize the input fields on the COPY popup window..
+
+       $('#jqxTabs').jqxTabs({ height: 380, width: 780, theme: theme });
+       $("#empID").jqxInput({ theme: theme, width: '380px', height: '25px' });
+       $("#name").jqxInput({ theme: theme, width: '380px', height: '25px'});
+       $("#address").jqxInput({ theme: theme, width: '380px', height: '25px' });
+       $("#qualificationName").jqxInput({ theme: theme, width: '500px', height: '25px' });
+       $("#profession").jqxInput({ theme: theme, width: '500px', height: '25px' });
+       $("#contactNo").jqxInput({ theme: theme, width: '250px', height: '25px', placeHolder: '1st number' });
+       $("#contactNo2").jqxInput({ theme: theme, width: '250px', height: '25px', placeHolder: 'other number' });
+       $("#deptname").jqxInput({ source: deptDataAdapter, displayMember: "DeptName", valueMember: "DeptID", theme: theme, width: '380px', height: '25px' })
+       $("#deptname").on('select', function (event) {
+
+           if (event.args) {
+               var item = event.args.item;
+               console.log(item.value.trim()); //varible.trim() to remove any white spaces from both sides of a string
+           }
+       });
+
+       $("#empgrade").jqxInput({ source: jobGradeDataSource, displayMember: "GradeName", valueMember: "GradeId", theme: theme, width: '380px', height: '25px' });
+       $("#empgrade").on('select', function (event) {
+           if (event.args) {
+               var item = event.args.item;
+               console.log(item.value.trim());
+           }
+       });
+
+       $("#onPayroll").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+       $("#identityNumber").jqxInput({ theme: theme, width: '500px', height: '25px' });
+       $("#nextOfKinName").jqxInput({ theme: theme, width: '500px', height: '25px' });
+       $("#nextOfKinMobile1").jqxInput({ theme: theme, width: '250px', height: '25px',placeHolder: '1st number' });
+       $("#nextOfKinMobile2").jqxInput({ theme: theme, width: '240px', height: '25px',placeHolder: 'other number' });
+
+       $("#sex").jqxDropDownList({
+           theme: theme, source: genders,
+           selectedIndex: -1, width: '380px', height: '25px',
+           promptText: "Gender...", dropDownHeight: "50px"
+       });
+
+       $("#empstatus").jqxDropDownList({
+           theme: theme, source: empStatusDataAdapter, selectedIndex: -1,
+           width: "150px", height: "20px", promptText: "Status...",
+           dropDownHeight: "80px"
+       });
+
+
+       $("#jobposition").jqxDropDownList({
+           theme: theme, source: jobtitle, selectedIndex: -1,
+           width: "380px", height: "25px", promptText: "Job title..",
+           dropDownHeight: "80px"
+       });
+
+       $("#maritalStatus").jqxDropDownList({
+            theme: theme, source: ['Married','Single','Divorced'],
+            selectedIndex: -1, width: '500px', height: '25px',
+            promptText: "Marital status...", dropDownHeight: "80px"
+       });
+
+       $("#emptype").jqxDropDownList({theme: theme, source: ['Permanent','Contract','Seasonal'],
+              selectedIndex: -1, width: '500px', height: '25px',
+              promptText: "Employment type", dropDownHeight: "80px", displayMember: "Description",
+              valueMember: "EmploymentTypeId" 
+       });
+
+      $("#identityType").jqxDropDownList({
+          theme: theme, source: ['National Id','Passport','Drivers licence'],
+          selectedIndex: -1, width: '500px', height: '25px',
+          promptText: "Identity type.", dropDownHeight: "80px"
+      });
+
+      $("#nationality").jqxDropDownList({
+          theme: theme, source: ['Angola','Algeria','Malawi','Zimbabwe','Botswana'],
+          selectedIndex: -1, width: '500px', height: '25px',
+          promptText: "nationality...", dropDownHeight: "80px"
+      });
+
+      $("#highestQualification").jqxDropDownList({
+          theme: theme, source: ['Doctorate','Masters','Bachelors','Diploma','Certificate'],
+          selectedIndex: -1, width: '500px', height: '25px',
+          promptText: "qaulification...", dropDownHeight: "130px"
+      });
+
+      $("#otherQualification").jqxDropDownList({
+          theme: theme, source: ['Doctorate','Masters','Bachelors','Diploma','Certificate'],
+          selectedIndex: -1, width: '500px', height: '25px',
+          promptText: "qaulification...", dropDownHeight: "130px"
+      });
+
+       $("#onPayroll").on('change', function (event) {
+
+           onPayroll = event.args.checked;
+
+       });
+
+       $("#dateHired").jqxDateTimeInput({ theme: theme, width: '380px', height: '25px', formatString: 'yyyy-MM-dd' });
+       $("#enddate").jqxDateTimeInput({ theme: theme, width: '380px', height: '25px', formatString: 'yyyy-MM-dd' });
+       $("#dob").jqxDateTimeInput({ theme: theme, width: '380px', height: '25px', formatString: 'yyyy-MM-dd' });
+       $("#validUntil").jqxDateTimeInput({ theme: theme, width: '500px', height: '25px', formatString: 'yyyy-MM-dd' });
+
+       //$("#copyWinSaveBtn").jqxButton({ theme: theme });
+       $("#copyWinCancelBtn").jqxButton({ theme: theme });
+       $("#Delete").jqxButton({ theme: theme });
+       $("#Cancel").jqxButton({ theme: theme });
+       //$("#copyWinlookupdeptBtn").jqxButton({ theme: theme });
+
+
+       $("#Delete").click(function(){
+
+             $("#delpopupWindow").jqxWindow('hide');
+
+             if(__authorised("Personnel", userPrivilegdes, "Delete") === true){
+
+                _deleteRecord($("#empID").val(),_glcontroller);
+                //console.log($("#empID").val());
+
+             } else {
+
+               _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+             }
+
+       });
+
+       //End of initialization of COPY window controls...
+       $("#copyWinSaveBtn").click(function () {
+
+           $("#copypopupWindow").jqxWindow('hide');
+
+          if(_glfunctionInvoked ==="copyPersonnelRecord"){
+
+             if(__authorised("Personnel", userPrivilegdes, "Create") === true){
+
+                  var onPayroll = (_glOnPayroll === true ? 1 : 0);
+
+                  var record = {
+                                  EmpID: $("#empID").val(),
+                                  EmpName: $("#name").val(),
+                                  DeptID: $("#deptno").val(),
+                                  GradeID: $("#empgrade").val(),
+                                  HireDate: $("#dateHired").val(),
+                                  EndDate: $("#enddate").val(),
+                                  DateOfBirth: $("#dob").val(),
+                                  JobTitle: $("#jobposition").val(),
+                                  Gender: $("#sex").val(),
+                                  MobileNumber1: $("#contactNo").val(),
+                                  MobileNumber2: $("#contactNo2").val(),
+                                  EmploymentStatus: "Active",
+                                  EmploymentType: $("#emptype").val(),
+                                  PaySchedule: $("#emptype").val(),
+                                  onPayroll: onPayroll,
+                                  MaritalStatus: $("#maritalStatus").val(),
+                                  Address: $("#address").val(),
+                                  Nationality: $("#nationality").val(),
+                                  IdentityType: $("#identityType").val(),
+                                  IdentityNumber: $("#identityNumber").val(),
+                                  ValidityDate: $("#validUntil").val(),
+                                  NextOfKinName: $("#nextOfKinName").val(),
+                                  ContactNo1: $("#nextOfKinMobile1").val(),
+                                  ContactNo2: $("#nextOfKinMobile2").val()                            
+                            };
+
+                   _addNewRecord(record,_glcontroller);
+                   
+                   $("#jqxgrid").jqxGrid('updatebounddata');
+
+             } else {
+
+                _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+             }
+
+          } else {
+
+             if(__authorised("Personnel", userPrivilegdes, "Update") === true){
+
+                  var onpayroll = ($("#onPayroll").val() === true ? 1 : 0);
+
+                  var datarow = { EmpID: $("#empID").val(),
+                                  EmpName: $("#name").val(),
+                                  DeptID: $("#deptno").val(),
+                                  GradeID: $("#empgrade").val(),
+                                  HireDate: $("#dateHired").val(),
+                                  EndDate: $("#enddate").val(),
+                                  DateOfBirth: $("#dob").val(),
+                                  JobTitle: $("#jobposition").val(),
+                                  Gender: $("#sex").val(),
+                                  MobileNumber1: $("#contactNo").val(),
+                                  MobileNumber2: $("#contactNo2").val(),
+                                  EmploymentStatus: "Active",
+                                  EmploymentType: $("#emptype").val(),
+                                  PaySchedule: $("#emptype").val(),
+                                  onPayroll: onpayroll,
+                                  MaritalStatus: $("#maritalStatus").val(),
+                                  Address: $("#address").val(),
+                                  Nationality: $("#nationality").val(),
+                                  IdentityType: $("#identityType").val(),
+                                  IdentityNumber: $("#identityNumber").val(),
+                                  ValidityDate: $("#validUntil").val(),
+                                  NextOfKinName: $("#nextOfKinName").val(),
+                                  ContactNo1: $("#nextOfKinMobile1").val(),
+                                  ContactNo2: $("#nextOfKinMobile2").val()
+                      };
+
+                    //_verifyDataBeforePosting(datarow);
+
+                    _editRecord(datarow.EmpID.trim(), datarow, controller);
+
+                   $("#jqxgrid").jqxGrid('updatebounddata');
+
+             } else {
+
+                _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+             }
+          }
+            
+
+       });
+
+
+
+       $("#Cancel").click(function () {
+
+           var row = {};
+
+           //Call the _editRecord method
+           // _editRecord(rowid);
+
+       });
+
+       $('#searchval').autocomplete({
+    
+          source: function(query, response){
+            
+              $.ajax({
+                url: '/Employee/GetNames',
+                type: 'POST',
+                datatype: 'json',
+                data: {prefix: query.term},
+                success: function(data, status, xhr){
+                    
+                   $('#searchval').html('<li class="ui-autocomplete">' + response($.map(data, function(item){ 
+                                                                            return item.EmpName; })) + '</li>');
+
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+
+                }
+
+              });
+          }
+       });
+
+
+       //setInterval(function(){
+       // __eventListener();
+       //},3000);
+
+       
+
+       //_createFormElements(title, theme, dataAdapter);
+      //if((createRole != true) || (readRole != true )|| (updateRole != true) || (deleteRole != true)){
+
+        _loadGridData(__buildPersonnelDataSource());
+
+      //} else {
+
+       // _loadGridData(dataAdapter);
+     // }
+
+   });
+
+</script>
+
+     @Html.Partial("_viewProfiles")

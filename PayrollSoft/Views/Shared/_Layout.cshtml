@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>PayrollSoft</title>
+     
+     <!-- Bootstrap CSS CDN  & CUSTOM CSS-->
+<link href="@Url.Content("~/Content/css/bootstrap.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/css/main.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/css/custom.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Scripts/jqwidgets/styles/jqx.base.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/jquery_lib/jquery.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery-ui-1.8.24.min.js")" type="text/javascript"></script>
+<!--<script src="@Url.Content("~/Scripts/jquery_lib/native.js")" type="text/javascript"></script>-->
+<script src="@Url.Content("~/Scripts/jquery_lib/jquery-1.12.4.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/bootstrap.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/gettheme.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxcore.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxnavbar.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxnavigationbar.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxnotification.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/demos.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxbuttons.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxbuttongroup.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxwindow.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxradiobutton.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/globalization/globalize.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxdatetimeinput.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxcalendar.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxmaskedinput.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxtooltip.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxscrollbar.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxpanel.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxmenu.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxtoolbar.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jqxcombobox.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jscript-commom-func-lib.js")" type="text/javascript" ></script>
+<script src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")" type="text/javascript" ></script>
+<script type="text/javascript">
+
+function redirectToUrl(url){
+        window.location.href = url;
+}
+     
+function loadAction(x){
+
+    var itemname = findElementById(menuItems,x);
+
+   if( itemname != undefined){
+      redirectToUrl(itemname.name);
+   }
+        
+}
+
+function foo(){
+
+    console.log('Am on focus! Watch Me!!!');
+    //setInterval(foo(), 3000);
+}
+var count = 0;
+
+$(document).ready(function () {
+
+     
+  _getUserAccessRights();
+
+  var menuloader =  setTimeout(function(){
+    
+     if(userPrivilegdes.length > 0){
+        __initializeMainUIElements();
+        __getPendingItems();
+        clearTimeout(menuloader);
+     }
+   }, 1000);
+
+  menuloader;
+  /*
+  setInterval(function(){
+    if(userPrivilegdes.length != 0){       
+     __getPendingItems();
+    }
+  }, 1500);*/
+   //var notification = setTimeout(__getPendingItems(),1500);
+
+   //notification;
+     
+    $('#sidebarCollapse').on('click', function () {
+        $('#sidebar').toggleClass('active');
+    });
+
+});
+
+  </script>
+</head>
+<body>
+
+          <div class="wrapper">
+        <!-- Sidebar Holder -->
+        <nav id="sidebar">
+            <div class="sidebar-header" id="app-title">
+                <!--<h3>PayrollSoft</h3>-->
+                <strong>SSF</strong>
+            </div>
+            <!-- menu content -->
+            <div id="menu-content">
+            <!--<ul class="list-unstyled components">
+                <li class="active">
+                    <a href="#" onclick="loadAction(this.id);" id="homeMenuBtn">
+                        <i class="glyphicon glyphicon-home"></i>
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a href="#payrollSubmenu" data-toggle="collapse" aria-expanded="false">
+                        <i class="glyphicon glyphicon-briefcase"></i>
+                        Payroll
+                    </a>
+                    <ul class="collapse list-unstyled" id="payrollSubmenu">
+                        <li><a href="#" onclick="loadAction(this.id);" id="payrollServiceMenuBtn">Payroll service</a></li>
+                        <li><a href="#" onclick="loadAction(this.id);" id="payrollListMenuBtn">Payroll list</a></li>
+                    </ul>
+                    <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">
+                        <i class="glyphicon glyphicon-duplicate"></i>
+                        Payments
+                    </a>
+                    <ul class="collapse list-unstyled" id="pageSubmenu">
+                        <li><a href="#" onclick="loadAction(this.id);" id="deductionsMenuBtn">Deductions</a></li>
+                        <li><a href="#" onclick="loadAction(this.id);" id="earningsMenuBtn">Earnings</a></li>
+                        <li><a href="#" onclick="loadAction(this.id);" id="loansMenuBtn">Loans</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#personnelSubmenu" data-toggle="collapse" aria-expanded="false">
+                        <i class="glyphicon glyphicon-user"></i>
+                        Personnel
+                    </a>
+                    <ul class="collapse list-unstyled" id="personnelSubmenu">
+                        <li><a href="#" onclick="loadAction(this.id);" id="personnelListMenuBtn">Listings</a></li>
+                        <li><a href="#" onclick="loadAction(this.id);" id="personnelNewMenuBtn">New personnel</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#reportsSubmenu" data-toggle="collapse" aria-expanded="false">
+                        <i class="glyphicon glyphicon-folder-open"></i>
+                        Reports
+                    </a>
+                    <ul class="collapse list-unstyled" id="reportsSubmenu">
+                        <li><a href="#" onclick="loadAction(this.id);" id="personnelPayslipRpt">Personnel payslips</a></li>
+                        <li><a href="#">Company payslips</a></li>
+                        <li><a href="#" onclick="loadAction(this.id);" id="pensionRpt">Pension Report</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#settingsSubmenu" data-toggle="collapse" aria-expanded="false">
+                        <i class="glyphicon glyphicon-cog"></i>
+                        Settings
+                    </a>
+                    <ul class="collapse list-unstyled" id="settingsSubmenu">
+                      <li><a href="#" onclick="loadAction(this.id);" id="userMgtMenuBtn">User management</a></li>
+                      <li><a href="#" onclick="loadAction(this.id);" id="leavesMenuBtn">Leaves</a></li>
+                      <li><a href="#" onclick="loadAction(this.id);" id="loanSettingsMenuBtn">Loans</a></li>
+                      <li><a href="#" onclick="loadAction(this.id);" id="overtimeSettingsMenuBtn">Overtime</a></li>
+                      <li><a href="#" onclick="loadAction(this.id);" id="payrollSettingsMenuBtn">Payroll</a></li>
+                      <li><a href="#" onclick="loadAction(this.id);" id="personnelsettingsMenuBtn">Personnel</a></li>
+                      <li><a href="#" onclick="loadAction(this.id);" id="pensionMenuBtn">Pension</a></li>
+                      <li><a href="#" onclick="loadAction(this.id);" id="severanceMenuBtn">Severance</a></li>
+                      <li><a href="#" onclick="loadAction(this.id);" id="taxationMenuBtn">Taxation</a></li>
+                    </ul>
+                </li>
+            </ul>-->
+            </div> 
+            <!-- menu content ends-->
+
+            <!--<ul class="list-unstyled CTAs">
+                <li><a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a></li>
+                <li><a href="https://bootstrapious.com/p/bootstrap-sidebar" class="article">Back to article</a></li>
+            </ul>-->
+            <span style="margin-left: 5px;" id="copyrightmsge"> Spiral Software Foundation © 2018 </span>
+        </nav>
+
+        <!-- Page Content Holder -->
+        <div id="content">
+
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+
+                    <div class="navbar-header">
+                        <button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn">
+                            <i class="glyphicon glyphicon-align-left"></i>
+                            <span></span>
+                        </button>
+                    </div>
+
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="#"><i class="glyphicon glyphicon-unlock"></i></a></li>
+                            <li><a href="#"><i class="glyphicon glyphicon-refresh"></i></a></li>
+                            <li><a href="#" id="export-rpt" onclick="__toolBarMapper(this.id);"><i class="glyphicon glyphicon-export"></i></a></li>
+                            <li><a href="#"><i class="glyphicon glyphicon-print"></i></a></li>
+                            <li><a href="#"><i class="glyphicon glyphicon-copy"></i></a></li>
+                            <li><a href="#"  id="filtersIcon" onclick="__toolBarMapper(this.id);">
+                                <i class="glyphicon glyphicon-filter"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+           
+            <!--<h4>Payroll list </h4>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p> -->
+
+            <div id='chartContainer'>
+                @RenderBody()
+            </div>
+            
+            
+            <!-- <div class="line"></div>-->
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.  nbsp;</p>
+
+            <div class="line"></div>
+           <!--
+            <h2>Lorem Ipsum Dolor</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+            <div class="line"></div>
+
+            <h3>Lorem Ipsum Dolor</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>  -->
+        </div>
+    </div>
+  </body>
+</html>

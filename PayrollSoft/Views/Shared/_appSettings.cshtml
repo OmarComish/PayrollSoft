@@ -1,0 +1,881 @@
+
+  <!-- <div class="wrap-x1">
+            <p>Personal Info</p>
+            <div style="margin-top:7px; padding-left: 3px;">Employement Number</div>
+            <input style="margin-top: 3px; margin-left: 8px;" id="empID" />
+            <div style="margin-top:7px; padding-left: 5px;"> Name</div>
+            <input style="margin-top: 3px; margin-left: 8px;" id="name" />
+            <div style="margin-top:7px; padding-left: 8px;">Phone</div>
+            <input style="margin-top: 3px; margin-left: 8px;" id="contactNo" />
+            <div style="margin-top:7px; padding-left: 8px;">Gender</div>
+            <div style="margin-top: 3px; margin-left: 8px;" id="sex"></div>
+            <div style="margin-top:7px; padding-left: 8px;">Date of Birth</div>
+            <div style="margin-top: 3px; margin-left: 8px;" id="dob"></div>
+   </div>
+   <div class="wrap-x1">
+            <p>Department</p>
+             <div style="margin-top:7px; padding-left: 8px;">Department</div>
+             <div style="margin-top: 3px; margin-left: 8px;" id="deptname"></div>
+             <div style="margin-top:7px; padding-left: 5px;">Job Title</div>
+             <div style="margin-top: 3px; margin-left: 8px;" id="jobposition"></div>
+             <div style="margin-top:7px; padding-left: 8px;">Grade</div>
+             <div style="margin-top: 3px; margin-left: 8px;" id="empgrade"></div>
+             <div style="margin-top:7px; padding-left: 8px;">Hire Date</div>
+             <div style="margin-top: 3px; margin-left: 8px;" id="dateHired"></div>
+  </div>-->
+
+  <div>
+        <div id="jqxTabWidget">
+                <div style='float: left;'>
+                    <div id='jqxTabs'>
+                         <ul style='margin-left: 10px;'>
+                                  <li>Deductions</li>
+                                  <li>Pension</li>
+                                  <li>Payroll</li>
+                                  <li>Taxation</li>
+                                  <li>Holidays</li>
+                                  <li>Earnings</li>
+                                  <li>Loans</li>
+                                  <li>Loans-x</li>
+                             </ul>
+                             <div>
+                                 <!-- Deductions TAB code -->
+
+                                 <div style="padding-top:25px;"></div>
+                                 <table>
+                                     <tr>
+                                         <td><div style="margin-left: 10px;">Pay code:</div></td>
+                                         <td><input id="deductpayCode" /></td>
+                                         <td></td>
+                                         <td><input id="deductpaycodeDescription" /></td>
+                                         <td></td>
+                                     </tr>
+                                     <tr>
+                                        <td><div style="margin-left: 10px;">Pay type:</div></td>
+                                        <td><input id="deductpayType" /></td>
+                                        <td></td>
+                                        <td><input id="deductpayTypeDescription" /></td>
+                                        <td><div><input type="button" id="deductnewpayTypeCode" value="Create..." /></div></td>
+                                    </tr>
+                                    <tr>
+                                       <td><div style="margin-left: 10px;">Group eligible:</div></td>
+                                       <td><div id="deductgroupEligible"></div></td>
+                                       <td></td>
+                                       <td><input id="deductgroupEligibleDescription" /></td>
+                                       <td></td>
+                                    </tr>
+                                    <tr>
+                                         <td><div style="margin-left: 10px;">Credit GL:</div></td>
+                                         <td><div id="creditGL"></div></td>
+                                         <td></td>
+                                         <td><input id="creditGlDescription" /></td>
+                                         <td></td>
+                                    </tr>
+                                    <tr>
+                                         <td><div style="margin-left: 10px;">Priority:</div></td>
+                                         <td><div id="deductionPriority"></div></td>
+                                         <td></td>
+                                         <td><input id="priorityDescription" /></td>
+                                         <td><div><input type="button" id="deductnewpriorityCode" value="Create..." /></div></td>
+                                    </tr>
+                                 </table>
+                                 <div style="padding-top:10px;"></div>
+                                 <table>
+                                     <tr>
+                                        <td><div style="margin-left: 10px;"><div id="includeInretrospectPayChk">Include this deduction in retrospective payments</div></div></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                      </tr>
+                                      <tr>
+                                        <td><div style="margin-left: 10px;"><div id="deductfromEmployeeChk">Deduction taken from Employee</div></div></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                      </tr>
+                                  </table>
+                                  <div style="float: left;">
+                                  <table>
+                                      <tr>
+                                        <td><div style="padding-top: 20px;"><input style="margin-left: 10px;" type="button" id="viewDeductionsBtn" value="View existing" /></div></td>
+                                       </tr>
+                                  </table>
+                                  </div>
+                                  <div style="float: right;">
+                                  <table>
+                                      <tr>
+                                       <td><div style="padding-top:20px; margin-right: 10px;"><input type="button" id="saveDeductionBtn" value="Save" /></div></td>
+                                      </tr>
+                                 </table>
+                                 </div>
+
+                                <!-- PENSION TAB -->
+                             </div>
+                             <div>
+                                 <div class="tbl-div-spacing">
+                                    <table>
+                                      <tr>
+
+                                          <td>Employers contribution:</td>
+                                          <td></td>
+                                          <td><div id="employerContribAmount"></div></td>
+                                          <td></td>
+                                          <td>of Pensionable Earnings</td>
+                                          <td></td>
+
+                                      </tr>
+                                      <tr>
+                                          <td>Employees contribution:</td>
+                                          <td></td>
+                                          <td><div id="employeeContribAmount"></div></td>
+                                          <td></td>
+                                          <td>of Pensionable Earnings</td>
+                                          <td></td>
+                                      </tr>
+                                      <tr></tr>
+                                      <tr>
+                                          <td></td>
+                                          <td></td>
+                                          <td></td>
+                                          <td></td>
+                                          <td>&nbsp;&nbsp;<div class="tbl-div-spacing"><input type="button" id="SavePensionBtn" value="Save" />&nbsp;<input type="button" id="EditPensionBtn" value="Edit" /></div></td>
+                                          <td></td>
+                                      </tr>
+                                    </table>
+                                 </div>
+                             </div>
+
+                             <div>
+                                  <!--PAYROLL-->
+                             <div class="tbl-div-spacing"></div>
+                                <table style="border-left: 5px;">
+                                    <tr>
+                                      <td></td>
+
+                                      <td></td>
+                                    </tr>
+                                    <tr>
+                                      <td><div id="PaymentexceptionChk"style="margin-left:5px;">Add payment to exception</div></td>
+                                      <td><input type="button" id="PaymentexceptionBtn" value="Exceptions..." /></td>
+
+                                    </tr>
+                                    <tr>
+                                      <td><div id="setpayrollRunDateChk" style="margin-left:5px;">Set payroll run date</div></td>
+                                      <td><input type="button" id="PayrollRunDateBtn" value="Define date" /></td>
+                                      <td></td>
+                                    </tr>
+                                </table>
+                             </div>
+
+                             <div>
+                                 <!--TAXATION 1535463-->
+                                  <table>
+                                     <tr>
+                                     	<td>
+
+                                     	<div style="padding-top: 25px;">
+                                     	<input style="margin-left: 10px;" type="button" id="NewTaxCode" value="New Taxation Code" /><div>
+
+                                     	</td>
+                                       <td>
+                                           <div class="wrap-x2">
+                                            <div id="jqxTaxWidget" style="position: absolute;">
+                                            	<ul style='margin-left: 10px;'>
+                                            		  <li>General</li>
+                                                      <li>1st Threshold</li>
+                                                      <li>2nd Threshold</li>
+                                                      <li>3rd Threshold</li>
+                                            	</ul>
+                                            	<div>
+                                            		<div style='padding-top:30px;margin-left:20px;'>
+                                            			<table>
+                                            				<tr>
+                                            				  <td align="right">Code:</td>
+                                            				  <td align="left"><input id="TaxName" /></td>
+                                            			     </tr>
+                                            			     <tr><td></td><td></td></tr>
+                                            			     <tr>
+                                            			     	<td align="right">Description:</td>
+                                            			     	<td align="left"><input id="Descript" /></td>
+                                            			     </tr>
+                                            			     <tr><td></td><td></td></tr>
+                                            			     <tr>
+                                            			     	<td align="right">Date Issued:</td>
+                                            			     	<td align="left"><div id="dateIssued"></div></td>
+                                            			     </tr>
+                                            			     <tr><td></td><td></td></tr>
+                                            			     <tr>
+                                            			     	<td align="right">Active</td>
+                                            			     	<td align="left"><div id="RateStatus"></div></td>
+                                            			     </tr>
+                                            			</table>
+                                            	    </div>
+                                            	</div>
+                                            	<div>
+                                            		<div style='padding-top:30px;margin-left:20px;'>
+                                            			<table>
+                                                    <tr>
+                                                      <td align:="right">1st Threshold Amount:</td>
+                                                      <td align:="left"><div id="firstThresholdAmt"></div></td>
+                                                    </tr>
+                                                    <tr>
+                                                      <td align="right">Rate:</td>
+                                                      <td><div id="firstThresholdRate"></div></td>
+                                                    </tr>
+                                            			</table>
+                                            		</div>
+                                            	</div>
+                                            	<div>
+                                                <div style='padding-top:30px;margin-left:20px;'>
+                                                  <table>
+                                                    <tr>
+                                                      <td align:="right">2nd Threshold Amount:</td>
+                                                      <td align:="left"><div id="secondThresholdAmt"></div></td>
+                                                    </tr>
+                                                    <tr>
+                                                      <td align="right">Rate:</td>
+                                                      <td><div id="secondThresholdRate"></div></td>
+                                                    </tr>
+                                                  </table>
+                                                </div>
+                                              </div>
+                                            	<div>
+                                                  <div style='padding-top:30px;margin-left:20px;'>
+                                                  <table>
+                                                    <tr>
+                                                      <td align:="right">3rd Threshold Amount:</td>
+                                                      <td align:="left"><div id="thirdThresholdAmt"></div></td>
+                                                    </tr>
+                                                    <tr>
+                                                      <td align="right">Rate:</td>
+                                                      <td><div id="thirdThresholdRate"></div></td>
+                                                    </tr>
+                                                  </table>
+                                                </div>
+                                              </div>
+                                            </div>
+                                           </div>
+
+                                       </td>
+                                       <td>
+                                      </td>
+                                     </tr>
+                                  </table>
+                                  <table>
+                                    <tr>
+                                       <td><div style="padding-top: 25px;margin-left:10px;">
+                                         <input type="button" id="SaveTaxBtn" value="Save" /></div>
+                                       </td>
+                                    </tr>
+                                  </table>
+                             </div>
+                            <div>
+                              <div style="padding-top:25px;"></div>
+                              <!--- from here -->
+                              <table>
+                                <tr>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                </tr>
+                                <tr>
+                                  <td><input style="margin-left: 5px;" type="button" id="defineHoliday" value="Define holiday" /></td>
+                                  <td><div style="margin-left: 10px;padding-top:5px;" id="jqxHolidayWidget">calendar widget</div></td>
+                                  <td><input id="holidayName"/></td>
+                                  <td></td>
+                                  <td><div id="dateFrom"></div></td>
+                                  <td><div id="dateTo"></div></td>
+                                  <td><input style="margin-left: 5px;" type="button" id="viewDefinedHoliday" value="View Existing" /></td>
+                                </tr>
+                                </table>
+                                 <div style="padding-top:10px;"></div>
+                                 <table>
+                                    <tr>
+                                       <td colspan="5"><div id="leavePayInclusion">Include Leave Pay prior the beginning of Leave period</div></td>
+                                    </tr>
+                                  </table>
+                                  <table>
+                                    <tr>
+                                       <td><div id="leavePayInclusionChk2">Include leave Pay after</div></td>
+                                       <td><div id="leaveDays" style="margin-left:2px;"></div></td>
+                                       <td><div>Days have been taken as leave</div></td>
+                                    </tr>
+                                  </table>
+                                  <table>
+                                     <tr>
+                                       <td><div id="schemeContribToLeavePay">Include employee's contribution to misc. schemes when computing Annual Leave Pay</div></td>
+                                    </tr>
+                                    <tr>
+                                       <td><div id="rateofPay">Use employee's current rate of pay to compute Leave Pay</div></td>
+                                    </tr>
+                                 </table>
+                                 <table>
+                                    <tr>
+                                       <td><div id="rateofPay2">Use</div></td>
+                                       <td><div id="leavePayrate" style="margin-left:2px;"></div></td>
+                                       <td><div> of employee's </div></td>
+                                       <td><div id="payType"></div></td>
+                                       <td><div>to compute Leave Pay</div></td>
+                                    </tr>
+                                    <tr>
+                                       <td><div id="payFrequency">Leave pay frequency</div></td>
+                                       <td><div id="frequencyOfPay"></div></td>
+                                    </tr>
+                                    <tr>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td>
+                                          <div style="padding-top:20px;"><input type="button" id="saveHolidayBtn" value="Save" /></div>
+                                      </td>
+                                    </tr>
+                                </table>
+
+                              </div>
+                             <div>
+                                 <!--  EARNINGS TAB CODE  -->
+
+                                  <div style="padding-top:25px;"></div>
+                                  <table>
+                                      <tr>
+                                         <td><div style="margin-left: 10px;">Pay code:</div></td>
+                                         <td><div><input id="payCode" /></div></td>
+                                         <td></td>
+                                         <td><input id="paycodeDescription" /></td>
+                                         <td><div><input type="button" id="newPayCode" value="Create..." /></div></td>
+                                      </tr>
+                                      <tr>
+                                        <td><div style="margin-left: 10px;">Pay type:</div></td>
+                                        <td><div><input id="payType2" /></div></td>
+                                        <td></td>
+                                        <td><input id="payTypeDescription" /></td>
+                                        <td><div><input type="button" id="newpayTypeCode" value="Create..." /></div></td>
+                                      </tr>
+                                      <tr>
+                                         <td><div style="margin-left: 10px;">Group eligible:</div></td>
+                                         <td><div><div id="groupEligible"></div></td>
+                                         <td></td>
+                                         <td><input id="groupEligibleDescription" /></td>
+                                         <td></td>
+                                       </tr>
+                                       <tr>
+                                         <td><div style="margin-left: 10px;">Debit GL:</div></td>
+                                         <td><div><div id="debitGL"></div></td>
+                                         <td></td>
+                                         <td><input id="debitGlDescription" /></td>
+                                         <td></td>
+                                       </tr>
+                                       <tr>
+                                         <td><div style="margin-left: 10px;">Priority:</div></td>
+                                         <td><div><div id="priority"></div></td>
+                                         <td></td>
+                                         <td><input id="priorityDescription2" /></td>
+                                         <td><div><input type="button" id="earningspriorityCode" value="Create..." /></div></td>
+                                       </tr>
+                                       <tr>
+                                         <td><div style="margin-left: 10px;">Pay rate:</div></td>
+                                         <td><div id="payRate"></div></td>
+                                         <td></td>
+                                         <td>Rate derived from:<div style="float:right;" id="rateDerivedSource"></div></td>
+                                         <td><div><input type="button" id="payrateEdit" value="Edit" /></div></td>
+                                       </tr>
+                                       <tr>
+                                         <td><div style="margin-left: 10px;">Pay method:</div></td>
+                                         <td><input id="payMethod" /></td>
+                                         <td></td>
+                                         <td>Actual amount:<div style="float:right;" id="actualPayAmount"></div></td>
+                                         <td></td>
+                                       </tr>
+                                    </table>
+                                    <table>
+                                      <tr>
+                                        <td><div style="margin-left: 10px;"><div id="timesheetEntryAllowedChk">Allow Time Sheet entries</div></div></td>
+                                        <td><div id="paidAsEarningsChk">Paid as earnings</div></td>
+                                        <td><div id="taxableIncomeChk">Taxable income</div></td>
+                                        <td></td>
+                                        <td></td>
+                                      </tr>
+                                      <tr>
+                                        <td><div style="margin-left: 10px;"><div id="precedenceFactor"></div></div></td>
+                                        <td>takes higher precedence</td>
+                                        <td> when calculating the earnings</td>
+                                        <td></td>
+                                        <td></td>
+                                      </tr>
+                                    </table>
+                                    <div style="float:left;">
+                                    <table>
+                                      <tr>
+                                        <td><div style="padding-top: 20px;"><input style="margin-left: 10px;" type="button" id="viewEarningsBtn" value="View existing" /></div></td>
+                                        <td></td>
+                                      </tr>
+                                    </table>
+                                  </div>
+                                    <div style="float: right;">
+                                    <table>
+                                      <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td><div style="padding-top:20px; margin-right: 10px;"><input type="button" id="saveEarningsBtn" value="Save" /></div></td>
+                                      </tr>
+                                    </table>
+                                  </div>
+                             </div>
+                             <div>
+                                  <!--LOAN SETTINGS TAB -->
+                                  <div style="padding-top:25px;"></div>
+                                  <table>
+                                    <tr>
+                                       <td><div style="margin-left:5px;"><div id="chkAutogenerateLoanRefNum">Auto generate loan reference numbers</div></div></td>
+                                    </tr>
+                                  </table>
+                                  <div style="margin-left:5px;padding-top: 5px;">
+                                  <table>
+                                    <tr>
+                                      <td><input type="button" id="loantypeDetails" value="Loan type settings"></td>
+                                      <td></td>
+                                    </tr>
+                                  </table>
+                                  </div>
+                                <div style="margin-left:5px;padding-top: 5px;">
+                                  <table>
+                                    <tr>
+                                      <td>Maximum loan repayment period:</td>
+                                      <td><div id="maxRepaymntPeriod"></div></td>
+                                      <td>Months</td>
+                                    </tr>
+                                    <tr>
+                                      <td><div style="padding-top:10px;"><div id="chkPrecalculateloan">Enable loan precalculation</div></div>
+                                    </tr>
+                                    <tr>
+                                       <td><div style="padding-top: 12px;margin-left: 5px;"><div id="loanProcessingOption"></div></div></td>
+                                       <td><div style="float: left;">Loan processing </div></td
+
+                                    </tr>
+                                    <tr>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                    </tr>
+                                    <tr>
+                                       <td><div style="padding-top: 12px;margin-left: 5px;">Process all loans on the</div></td>
+                                       <td><div style="float:left;" id="loanProcessingDate"></div></td>
+                                       <td>th of each month</td>
+                                    </tr>
+                                  </table>
+                                  <div style="float:left;padding-top:30px;">
+                                    <table>
+                                       <tr>
+                                          <td><div style="margin-left:10px;">
+                                           <input type="button" id="loaninterestType" value="View loan types" /></div>
+                                          </td>
+                                       </tr>
+                                    </table>
+                                  </div>
+                                  <div style="float:right;padding-top:30px;">
+                                  <table>
+                                    <tr>
+                                     <td><div style="margin-right:10px;">
+                                           <input type="button" id="saveLoanSettingsBtn" value="Save settings" /></div>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                  </div>
+                                  </div>
+
+                             </div>
+
+                             <div>
+
+                              <!-- LOANS TAB -->
+                               <div style="padding-top:20px;"></div>
+                               <div style="margin-left: 5px;">
+                                <table>
+                                  <tr>
+                                    <td><div style="margin-left: 10px;">Loan type:</div></td>
+                                    <td><div style="margin-left: 15px;"><div  id="loanType"></div></div></td>
+                                    <td><div style="float:left;"><input id="loantypeDescript" /></div></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                  </tr>
+                                  </table>
+                                <table>
+                                  <tr>
+                                    <td><div style="margin-left: 10px;">Loan ref number:</div></td>
+                                    <td><div><input id="loanrefNum" /></div></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                  </tr>
+                                  <tr>
+                                    <td><div style="margin-left: 10px;">Employee:</div></td>
+                                    <td><div><input id="employeeName" /></div></td>
+                                    <td><div style="float:left;"><input id="empID" /></div></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                  </tr>
+                                  </table>
+
+                                  <table>
+                                  <tr>
+                                    <td><div style="margin-left: 10px;">Loan status:</div></td>
+                                    <td><div id="loanStatus" style="float:left;"></div></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                  </tr>
+                                  </table>
+                                  <table>
+                                  <tr>
+                                    <td><div style="margin-left: 10px;">Start date:</div></td>
+                                    <td><div id="startDate" style="margin-left:35px;"></div></td>
+                                    <td></td>
+                                    <td>Maturity date:</td>
+                                    <td><div id="maturityDate"></div></td>
+                                    <td></td>
+                                    <td></td>
+                                  </tr>
+                                </table>
+                                <hr />
+                                </div>
+                                <div>
+                                  <table>
+                                   <tr>
+                                    <td><div style="margin-left: 10px;">Interest rate:</div></td>
+                                    <td><div id="interestRate" style="float:left;"></div></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                   </tr>
+                                  </table>
+                                  </div>
+                                  <table>
+                                     <!--<tr>
+                                     <td><div style="margin-left: 10px;">Interest type:</div></td>
+                                     <td><div id="interestType"></div></td>
+                                     <td></td>
+                                     <td>Interest rate:</td>
+                                     <td><div id="interestRate"></div></td>
+                                     <td></td>
+                                     <td>Annuity method:</td>
+                                     <td><div id="annuityMethod"></div></td>
+                                     </tr>-->
+                                     <tr>
+                                     <td><div style="margin-left: 10px;">Loan amount:</div></td>
+                                     <td><div id="loanAmount"></div></td>
+                                     <td></td>
+                                     <td>Payback periods:</td>
+                                     <td><div id="paybackPeriods"></div></td>
+                                     <td></td>
+                                     <td>Total interest:</td>
+                                     <td><div id="totalInterest"></div></td>
+                                     </tr>
+                                     </table>
+                                     <table>
+                                     <tr>
+                                       <td><div style="margin-left: 10px;">Monthly repayment(interest excl.):</div></td>
+                                       <td><div id="monthlyRepayment"></div></td>
+                                       <td></td>
+                                       <td></td>
+                                       <td></td>
+                                       <td></td>
+                                       <td></td>
+                                       <td></td>
+                                     </tr>
+                                     <tr>
+                                        <td><div style="padding-top:20px;"><input style="margin-left: 10px;" type="button" id="precalculateLoan" value="Precalculate" /></div></td>
+                                        <td></td>
+                                        <td><div style="padding-top:20px;"><input style="float:right;" type="button" id="loanDetails" value="Loan details" /></div</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><div style="padding-top:20px;" ><input style="float:right;" type="button" id="saveLoanBtn" value="Save loan" /></div></td>
+                                        <td></td>
+                                        <td></td>
+                                     </tr>
+                                  </table>
+
+                             </div>
+
+                           </div>
+                         </div>
+                       </div>
+
+
+  </div>
+
+<!--<div id="jqxcalWidget"></div>-->
+
+<div id="calendarWin" style="overflow: hidden";>
+      <div></div>
+          <div style="overflow: hidden;">
+             <div id="jqxcalWidget"></div>
+          </div>
+</div>
+
+<!--<div id="window">
+
+            <div>
+                <div>
+
+                    <div>
+                       <div id="jqxTabWidget">
+                         <div style='float: left;'>
+                           <div id='jqxTabs'>
+                              <ul style='margin-left: 10px;'>
+                                  <li>Personal Info</li>
+                                  <li>Academic</li>
+                                  <li>Department</li>
+                                  <li>Wages</li>
+                                  <li>Miscellaneous</li>
+                             </ul>
+                             <div>
+                                 <table>
+                                     <tr>
+                                        <td>
+                                           <div style="margin-top:25px; padding-left: 8px;">Employement Number</div>
+                                           <input style="margin-top: 3px; margin-left: 8px;" id="empID" />
+                                         </td>
+                                         <td>
+                                            <div style="margin-top:25px; padding-left: 80px;"> Name</div>
+                                            <input style="margin-top: 3px; margin-left: 80px;" id="name" />
+                                         </td>
+                                     </tr>
+                                     <tr>
+
+                                         <td>
+                                           <div style="margin-top:8px; padding-left: 8px;">Address</div>
+                                           <input style="margin-top: 3px; margin-left: 8px;" id="address" />
+                                         </td>
+                                         <td>
+                                            <div style="margin-top:8px; padding-left: 80px;">Phone</div>
+                                            <input style="margin-top: 3px; margin-left: 80px;" id="contactNo" />
+                                         </td>
+
+                                     </tr>
+                                      <tr>
+                                        <td>
+                                           <div style="margin-top:7px; padding-left: 8px;">Gender</div>
+                                           <div style="margin-top: 3px; margin-left: 8px;" id="sex"></div>
+                                         </td>
+                                         <td>
+                                            <div style="margin-top:7px; padding-left: 80px;">Date of Birth</div>
+                                            <!--<div style="margin-top: 3px; margin-left: 80px;" id="dob"></div>
+                                         </td>
+                                     </tr>
+                                 </table>
+
+                             </div>
+                             <div></div>
+                             <div>
+                                 <table>
+                                     <tr>
+                                         <td>
+                                           <div style="margin-top:7px; padding-left: 8px;">Department</div>
+                                           <div style="margin-top: 3px; margin-left: 8px;" id="deptname"></div>
+                                         </td>
+                                          <td>
+                                            <div style="margin-top:7px; padding-left: 80px;">Job Title</div>
+                                            <div style="margin-top: 3px; margin-left: 80px;" id="jobposition"></div>
+                                         </td>
+                                     </tr>
+                                     <tr>
+                                         <td>
+                                           <div style="margin-top:7px; padding-left: 8px;">Grade</div>
+                                           <div style="margin-top: 3px; margin-left: 8px;" id="empgrade"></div>
+                                         </td>
+                                          <td>
+                                            <div style="margin-top:7px; padding-left: 80px;">Hire Date</div>
+                                            <div style="margin-top: 3px; margin-left: 80px;" id="dateHired"></div>
+                                         </td>
+                                     </tr>
+
+                                 </table>
+                                   <table>
+                                    <tr>
+                                       <td>
+                                          <div style="margin-top:7px;padding-left: 8px;">End Date</div>
+                                          <div style="margin-top: 3px; margin-left: 8px;" id="enddate"></div>
+                                       </td>
+                                       <td></td>
+                                    </tr>
+
+                                 </table>
+                             </div>
+                             <div></div>
+                             <div>
+                                 <table>
+                                    <tr>
+                                       <td>
+                                         <div style="margin-top:10px;">
+                                            <div id="onPayroll">On Payroll</div>
+                                         </div>
+                                       </td>
+                                       <td>
+                                          <div style="margin-top:10px;">
+                                            <div id="onMedicalScheme">On Medical Scheme</div>
+                                         </div>
+                                       </td>
+                                        <td>
+                                          <div style="margin-top:10px;">
+                                            <div id="Pension">Pension Contribution</div>
+                                         </div>
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td><div style="margin-top:15px; padding-left: 8px;">Medical Insurance Bill:</div></td>
+                                       <td><div style="margin-top: 15px; margin-left: 8px;"><div id="MedSchemContribAmount"></div></div></td>
+                                    </tr>
+                                     <tr>
+                                       <td><div style="margin-top:15px; padding-left: 8px;">Overtime hours:</div></td>
+                                       <td><div style="margin-top: 15px; margin-left: 8px;"><div id="overtimeHours"></div></div></td>
+                                    </tr>
+                                     <tr>
+                                       <td><div style="margin-top:15px; padding-left: 8px;">Advance Pay Deduction:</div></td>
+                                       <td><div style="margin-top: 15px; margin-left: 8px;"><div id="advanceLoan"></div></div></td>
+                                    </tr>
+
+                                 </table>
+                             </div>
+                           </div>
+                         </div>
+                       </div>
+
+                        <div id="jqxExpander" style='float: left;margin-top:5px;'>
+                        <div>
+                         <table>
+                             <tr>
+                                <td align="right"></td>
+                                <td style="padding-top: 3px;" align="right"><input style="margin-right: 5px;" type="button" id="Save" value="Save" /><input id="Cancel" type="button" value="Cancel" /></td>
+                            </tr>
+                         </table>
+                        </div>
+                             <!-- <div>
+
+                                    <div id="jqxgrid"></div>
+
+
+                              </div> -->
+                     <!-- </div>
+
+                    </div>
+                </div>
+            </div>
+      </div>-->
+
+<div id="messageNotification" style="overflow:hidden;">
+     <div></div>
+</div>
+
+  <div id="priorityCodeWindow" style="overflow: hidden";>
+           <div>Codes</div>
+            <div style="overflow: hidden; margin-left: 15px;">
+             <div style="padding-top: 15px;"></div>
+             <table>
+               <tr>
+                  <td>Code:</td>
+                  <td><input id ="prioritycodeId" /></td>
+                  <td>Description:</td>
+                  <td><input  id="priorityCodeDescription" /></td>
+                  <td><input type="button" id="prioritycodeSave" value="Save" /></td>
+
+               </tr>
+              </table>
+             <div id="prioritycodesdataGrid"></div>
+             <div style="float:right">
+              <table>
+               <tr>
+                 <td></td>
+                 <td></td>
+                 <td></td>
+                 <td></td>
+                 <td><div style="padding-top:20px;"><input type="button" id="prioritycodeOKBtn" value="OK" /></div></td>
+               </tr>
+              </table>
+              </div>
+
+            </div>
+  </div>
+
+ <!-- Loan type window -->
+  <div id="loantypeWin" style="overflow: hidden";>
+     <div></div>
+      <div style="overflow: hidden;padding-top:20px;">
+      <table>
+        <tr>
+          <td>Code:</td>
+          <td><input id="loantypeCode" /></td>
+        </tr>
+        <tr>
+          <td>Description</td>
+          <td><input id="loantypeDescript" /></td>
+        </tr>
+        <tr>
+          <td>Interest Rate</td>
+          <td><div id="loaninterestRate"></div></div></td>
+        </tr>
+        <tr>
+          <td><div style="padding-top:15px;"></div></td>
+          <td><div style="padding-top:15px;float:right;margin-right:2px;"><input type="button" id="loanTypeOKBtn" value="OK" /><input type="button" id="loanTypeCancelBtn" value="Cancel" /></div></td>
+        </tr>
+      </table>
+
+             <!--<div id="jqxcalWidget"></div>-->
+       </div>
+  </div>
+
+<!-- Loan interest window -->
+
+<!-- Payroll Payment Exceptions window -->
+
+  <div id="payrollExceptionWindow" style="overflow: hidden";>
+           <div>Payment</div>
+            <div style="overflow: hidden; margin-left: 5px;">
+             <div style="padding-top: 15px;"></div>
+             <table>
+               <tr>
+                  <td><div></div></td>
+                  <td></td>
+                  <td></td>
+                  <td><div  style="float:right;"><div id="payrollGroupEligible"></div></div></td>
+                  <td><input type="button" id="ExceptionSaveBtn" value="Save" /></td>
+
+               </tr>
+              </table>
+             <div id="exceptionsdataGrid"></div>
+             <div style="float:right">
+              <table>
+               <tr>
+                 <td></td>
+                 <td></td>
+                 <td></td>
+                 <td></td>
+                 <td><div style="padding-top:20px;"><input type="button" id="exceptionOKBtn" value="OK" /></div></td>
+               </tr>
+              </table>
+              </div>
+
+            </div>
+  </div>
+
+
+  <div id="loaninterestWin" style="overflow: hidden";>
+     <div></div>
+
+  </div>

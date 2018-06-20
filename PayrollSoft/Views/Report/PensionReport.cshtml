@@ -1,0 +1,167 @@
+﻿@{
+    ViewBag.Title = "PensionReport";
+}
+<script src="@Url.Content("~/Scripts/jquery-ui-1.8.24.min.js")" type="text/javascript"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/implement-ui-widget-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript">
+
+ var reportdata = [];
+ var reportheader =[];
+
+ var reportlist = [{name: 'Pension', category: 'generic'},
+                   {name: 'Payroll list', category: 'generic'},
+                   {name: 'Gl account', category: 'generic'},
+                   {name: 'Wages', category: 'generic'},
+                   {name: 'Loan repayments',category: 'generic'},
+                   {name: 'Salary transfer file', category: 'payroll' }];
+
+function __loadPensionReport(data){
+
+	var totalBasicSalary = 0;
+	var totalEmployerContribution = 0;
+	var totalEmployeeContribution = 0;
+	var totalAdministrationFees = 0;
+	var totalBrokerageFees = 0;
+	var totalGroupLifeAssurance = 0;
+	var groupTotal = 0;
+    
+  var tbl = '<h4><span class="label label-default">Pension Schedule Report </span></h4>';
+  tbl += '<h4><span class="label label-default">'+ data[0].EntryDate +' </span></h4>';
+	tbl += '<table class="table table-condensed" id="reportTbl">';
+  tbl +='<thead>';
+	tbl += '<tr class="active"><td>Employee Name</td><td>Basic salary</td><td>Employee contribution</td>';
+	tbl += '<td>Employer contribution</td><td>Administration fee</td><td>Brokerage fee</td>';
+	tbl += '<td>Group life assurance</td><td>Total</td></tr>';
+  tbl += '</thead>';
+  tbl += '<tbody>';
+
+	for(var x = 0; x < data.length; x ++){
+       
+    var total = parseFloat(data[x].EmployeeContribution) + parseFloat(data[x].EmployerContribution) + parseFloat(data[x].AdministrationFee) + parseFloat(data[x].BrokerageFee) + parseFloat(data[x].GroupLifeAssurance);
+	  totalBasicSalary = parseFloat(data[x].BasicSalary) + parseFloat(totalBasicSalary);
+		totalEmployerContribution = parseFloat(data[x].EmployerContribution) + parseFloat(totalEmployerContribution);
+		totalEmployeeContribution = parseFloat(data[x].EmployeeContribution) + parseFloat(totalEmployeeContribution);
+		totalAdministrationFees = parseFloat(data[x].AdministrationFee) + parseFloat(totalAdministrationFees);
+		totalBrokerageFees = parseFloat(data[x].BrokerageFee) + parseFloat(totalBrokerageFees);
+		totalGroupLifeAssurance = parseFloat(data[x].GroupLifeAssurance) + parseFloat(totalGroupLifeAssurance);
+        groupTotal = parseFloat(groupTotal) + parseFloat(total);
+
+		tbl += '<tr><td>' + data[x].EmployeeName + '</td>';
+		tbl += '<td>' + __genericFormat.format(data[x].BasicSalary) + '</td>';
+		tbl += '<td>' + __genericFormat.format(data[x].EmployeeContribution) + '</td>';
+		tbl += '<td>' + __genericFormat.format(data[x].EmployerContribution) + '</td>';
+		tbl += '<td>' + __genericFormat.format(data[x].AdministrationFee) + '</td>';
+		tbl += '<td>' + __genericFormat.format(data[x].BrokerageFee) + '</td>';
+		tbl += '<td>' + __genericFormat.format(data[x].GroupLifeAssurance) + '</td>';
+		tbl += '<td>' + __genericFormat.format(total) +'</td></tr>';
+	}
+
+    tbl += '<tr class="info"><td> Total </td>';
+    tbl += '<td>'+ __currencyFormatter.format(totalBasicSalary) + '</td>';
+    tbl += '<td>' + __currencyFormatter.format(totalEmployeeContribution) + '</td>';
+    tbl += '<td>' + __currencyFormatter.format(totalEmployerContribution) + '</td>';
+    tbl += '<td>' + __currencyFormatter.format(totalAdministrationFees) + '</td>';
+    tbl += '<td>' + __currencyFormatter.format(totalBrokerageFees) + '</td>';
+    tbl += '<td>' + __currencyFormatter.format(totalGroupLifeAssurance) + '</td>';
+    tbl += '<td>' + __currencyFormatter.format(groupTotal) + '</td></tr>';
+    tbl += '</tbody>';
+    tbl += '</table>';
+
+    document.getElementById('reportcontent').innerHTML = tbl;
+}
+ 
+function __AutoComplete(){
+   console.log('autocomplete evoked on search input');
+ }
+
+function __queryDataFromServer(){
+
+    reportdata = [];
+
+    $.ajax({
+    	    cache: false,
+    	    datatype: 'jsonp',
+    	    type: 'POST',
+    	    url: '/Report/GetPensionAccounts',
+    	    data: {mindate: '2018-04-16', maxdate: '2018-04-16'},
+    	    success: function(data,status, xhr){
+
+              for(var x = 0; x < data.length; x ++){
+                 reportdata.push({EmployeeName:         data[x].EmpName,
+                                  BasicSalary:          data[x].BasicSalary,
+                                  EmployeeContribution: data[x].EmployeeContribution,
+                                  EmployerContribution: data[x].EmployerContribution,
+                                  AdministrationFee:    data[x].AdministrationFee,
+                                  GroupLifeAssurance:   data[x].GroupLifeAssurance,
+                                  BrokerageFee:         data[x].BrokerageFee,
+                                  EntryDate:            _parseJsonDate(data[x].EntryDate)});
+              }
+              
+              if(reportdata.length > 0){
+              	__loadPensionReport(reportdata);
+              }
+    	    },
+    	    error: function(jqXHR, textStatus, errorThrown){
+                 
+    	    }
+        });
+    return reportdata.length;
+ }
+
+function __constructReport(data){
+   
+   var tbl = '<table width="100%">';
+   tbl +='<tr>';
+   for(var x = 0; x < reportheader.length; x ++){
+   	  tbl +='<td>' + reportheader[x] + '</td>';
+   }
+   tbl +='</tr>';
+
+   for(var x = 0; x < reportdata.length; x ++){
+      tbl +='<td>' + reportdata[x] + '</td>';
+   }
+   tbl += '</table>';
+ }
+
+$(document).ready(function(){
+
+   $('#reportname').autocomplete({ source: function(query, response){
+
+         $('#reportname').html('<li class="ui-autocomplete">' + response($.map(reportlist, function(item){ 
+                                                                            return item.name; })) + '</li>');
+       }     
+   });
+
+   $('#filtersearchBtn').click(function(){
+
+       if($('#reportname').val() === 'Pension'){
+        
+          var r = __queryDataFromServer();  
+       }
+   });
+
+   $('#anyword').on('keyup',function(){
+       var searchTerm = $(this).val().toLowerCase();
+       $('#reportTbl tbody tr').each(function(){
+          var lineStr = $(this).text().toLowerCase();
+          if(lineStr.indexOf(searchTerm) === -1){
+             $(this).hide();
+          } else {
+            $(this).show();
+          }
+          console.log(lineStr);
+       });
+   });
+
+ });
+
+</script>
+
+@Html.Partial("_pensionReport")

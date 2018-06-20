@@ -1,0 +1,208 @@
+<div id='jqxWidget' style="margin-top: 2px;">
+  <div id='jqxTabs'>
+   <ul>
+      <li style="margin-left: 25px;">Loan</li>
+  </ul>
+  <div>
+      <form id="loan-form" action="#">
+      <table style="margin-top: 30px; margin-left: 10px; width: 80%;">
+        <tr>
+           <td>Loan type:</td>
+           <td><div id="loanType"></div></td>
+           <td></td>
+        </tr>
+        <tr>
+          <td colspan="2"><div class="inputbox-spacing"></div></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Ref number:</td>
+          <td><input id="loanrefNum"  type="text"  class="text-input" /></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td colspan="2"><div class="inputbox-spacing"></div></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Employee:</td>
+          <td><input id="employeeName" type="text" class="text-input" /></td>
+          <td></td>
+        </tr>
+         <tr>
+          <td colspan="2"><div class="inputbox-spacing"></div></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Loan status:</td>
+          <td><div id="loanStatus" style="float:left;"></div></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td colspan="2"><div class="inputbox-spacing"></div></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Start date:</td>
+          <td><div id="startDate" style=""></div></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td colspan="2"><div class="inputbox-spacing"></div></td>
+          <td></td>
+        </tr>
+        <tr>
+            <td>Payback periods:</td>
+            <td><div id="paybackPeriods"></div></td>
+            <td></td>
+        </tr>
+        <tr>
+          <td colspan="2"><div class="inputbox-spacing"></div></td>
+          <td></td>
+        </tr>
+         <tr>
+            <td>Loan amount:</td>
+            <td><div id="loanAmount"></div></td>
+            <td></td>
+         </tr>
+         <tr>
+             <td colspan="2"><div class="inputbox-spacing"></div></td>
+             <td></td>
+         </tr>
+          <tr>
+             <td>Maturity date:</td>
+             <td><div id="maturityDate"></div><!--<input id="maturityDate" type="text" class="text-input"  />--></td>
+             <td></td>
+         </tr>
+         <tr>
+           <td colspan="2"><div class="inputbox-spacing"></div></td>
+           <td></td>
+         </tr>
+         <tr>
+             <td>Formular:</td>
+             <td><div id="formular"></div></td>
+             <td></td>
+         </tr>
+      </table>
+      <table style="margin-top:30px;float: left;">
+           <tr>
+              <td>
+                <input style="margin-left: 10px;" type="button" id="precalculateLoan" value="Precalculate" />
+              </td>
+              <td>
+                <span style="margin-left:5px;"><input type="button" id="viewExistingloan" value="Existing loans" /></span>
+              </td>
+              <td>
+                <span style="margin-left:5px;"><input type="button" id="loanDetailsBtn" value="Repayment history" /></span>
+              </td>
+            </tr>
+        </table>
+      <table style="float: right; margin-top: 30px; margin-right: 15px;">
+          <tr>
+              <td></td>
+              <td>
+                <!-- <input type="button" id="loanDetails" value="Loan details" /> -->
+              <td></td>
+              <td></td>
+              <td>
+                <input type="button" style="margin-left: 5px;" id="saveLoanBtn" value="Save loan" />
+              </td>
+          </tr>
+      </table>
+      </form>
+         <div style="margin-top: 35px; float:left;">
+          <table class="footer-text">
+            <th>
+               <td><div class="inputbox-spacing">ID No: <input id="empID" /></div></td>
+               <td><div class="inputbox-spacing">Type: <input id="loantypeDescript" type="text" /></div></td>
+               <td><div class="inputbox-spacing">Rate: <input id="interestRate" type="text" /></div></td>
+               <!--<td><div class="inputbox-spacing">Total Interest:<input id="totalInterest" type="text"/></div></td>-->
+               <td><div class="inputbox-spacing">Monthly Repayment(int. excl.): <input id="monthlyRepayment" type="text"/></div></td>
+               <td></td>
+            </th>
+          </table>
+        </div>
+  </div>
+</div>
+</div>
+
+
+  <div id="loanDetailsWindow" style="overflow: hidden";>
+    <div>Details...</div>
+        <div style="overflow: hidden; margin-left: 5px;">
+            <div style="margin-top: 10px;"></div>
+             <div id="loanHistoryGrid"></div>
+    
+      </div>
+  </div>
+  
+
+
+
+<div id="loanListingWindow" style="overflow: hidden";>
+    <div>Existing loan(s)</div>
+        <div style="overflow: hidden; margin-left: 5px;">
+            <div style="margin-top: 10px;"></div>
+
+            <div id="loansDataGrid"></div>
+
+          <div style="margin-top: 20px; float: right;">
+              <table>
+               <tr>
+                 <td><input type="button" id="loanListingCloseBtn" value="Close" /></td>
+               </tr>
+            </table>
+          </div>    
+      </div>
+</div>
+
+<div id="NextProcessinDateWindow" style="overflow: hidden;">
+   <div></div>
+   <div style="overflow: hidden; margin-left: 10px;">
+      <table style="margin-left: 5px; margin-top: 20px; width: '80%';">
+          <tr>
+            <td>Resume processing on:</td>
+            <td><div id="nextprocessingDate"></div></td>
+            <td></td>
+          </tr>
+      </table>
+      <table style="margin-top: 20px; float: right;">
+          <tr>
+            <td><input type="button" id="nextProcessingDateBtn" value="OK" /></td>
+          </tr>
+      </table>
+   </div>
+</div>
+
+
+
+
+<div id="messageNotification" style="overflow:hidden;">
+     <div></div>
+</div>
+
+
+<div id="loantypeWin" style="overflow: hidden";>
+   <div></div>
+    <div style="overflow: hidden;padding-top:20px;">
+    <table>
+      <tr>
+        <td>Code:</td>
+        <td><input id="loantypeCode" /></td>
+      </tr>
+      <tr>
+        <td>Description</td>
+        <td><input id="loantypeDescript" /></td>
+      </tr>
+      <tr>
+        <td>Interest Rate</td>
+        <td><div id="loaninterestRate"></div></div></td>
+      </tr>
+      <tr>
+        <td><div style="padding-top:15px;"></div></td>
+        <td><div style="padding-top:15px;float:right;margin-right:2px;"><input type="button" id="loanTypeOKBtn" value="OK" /><input type="button" id="loanTypeCancelBtn" value="Cancel" /></div></td>
+      </tr>
+    </table>
+
+           <!--<div id="jqxcalWidget"></div>-->
+     </div>

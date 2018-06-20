@@ -1,0 +1,60 @@
+<div id='jqxWidget' style="margin-top: 2px;">
+   <div id='jqxTabs'>
+        <ul>
+            <li style="margin-left: 30px;">Overtime</li>
+            <li>Other</li>
+         </ul>
+         <div>
+             <table style="margin-top: 30px; margin-left: 10px; width: '70%';">
+                <tr>
+                   <td>Code:</td>
+                   <td><input id="overtimeCode" type="text" class="text-input" /></td>
+                </tr>
+                <tr>
+                   <td colspan="2"><span class="inputbox-spacing"></span></td>
+                </tr>
+                <tr>
+                   <td>Description:</td>
+                   <td><input id="description" type="text" class="text-input" /></td>
+                </tr>
+                <tr>
+                   <td colspan="2"><span class="inputbox-spacing"></span></td>
+                </tr>
+                <tr>
+                   <td>Rate:</td>
+                   <td><div id="overtimeRate"></div></td>
+                </tr>
+                <tr>
+                   <td colspan="2"><span class="inputbox-spacing"></span></td>
+                </tr>
+                <tr>
+                   <td>Total allowable work days per month:</td>
+                   <td><div id="totalAllowableWorkDays"></div></td>
+                </tr>
+                <tr>
+                   <td colspan="2"><span class="inputbox-spacing"></span></td>
+                </tr>
+                <tr>
+                   <td>Total allowable work hours per day:</td>
+                   <td><div id="totalAllowableWorkHours"></div></td>
+                </tr>
+             </table>
+         </div>
+         <div>
+            <div style="margin-top: 30px; margin-left: 5px; margin-right: 5px;">
+               <div id="jqxgrid"></div>
+            </div>
+         </div>
+   </div>
+   <div>
+      <table style="margin-top: 2px; float: right;">
+      	 <tr>
+              <td><a class="btn icon-btn btn-success" href="#" id="overtimeSaveBtn"><span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle text-success"></span>Save</a></td>
+      	 </tr>
+      </table>
+   </div>
+
+	<div id="messageNotification" style="overflow:hidden;">
+		 <div></div>
+	</div>
+</div>

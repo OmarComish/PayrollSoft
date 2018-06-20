@@ -1,0 +1,176 @@
+
+<div id='jqxWidget' style="margin-top: 2px;">
+<div id='jqxTabs'>
+   <ul>
+      <li style="margin-left: 30px;">Deduction</li>
+  </ul>
+   <div>
+    <table style="margin-top: 30px; margin-left: 5px; width: 90%;">
+      <tr>
+          <td><div style="margin-left: 10px;">Pay code:</div></td>
+          <td><input id="deductpayCode" /></td>
+          <td></td>
+          <td><span class="inputbox-spacing"><input id="deductpaycodeDescription" /></span></td>
+          <td></td>
+      </tr>
+      <tr>
+        <td><div class="inputbox-spacing"></div></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+         <td><div style="margin-left: 10px;">Pay type:</div></td>
+         <td><input id="deductpayType" /></td>
+         <td></td>
+         <td><span class="inputbox-spacing"><input id="deductpayTypeDescription" /></span></td>
+         <td><span class="inputbox-spacing"><!--<input type="button" id="deductnewpayTypeCode" value="Create..." /> --></span> </td>
+     </tr>
+     <tr>
+        <td><div class="inputbox-spacing"></div></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+     <tr>
+        <td><div style="margin-left: 10px;">Group eligible:</div></td>
+        <td><div id="deductgroupEligible"></div></td>
+        <td></td>
+        <td><span class="inputbox-spacing"><input id="deductgroupEligibleDescription" /></span></td>
+        <td></td>
+     </tr>
+      <tr>
+        <td><div class="inputbox-spacing"></div></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+     <tr>
+          <td><div style="margin-left: 10px;">Credit GL:</div></td>
+          <td><div id="creditGL"></div></td>
+          <td></td>
+          <td><span class="inputbox-spacing"><input id="creditGlDescription" /></span></td>
+          <td></td>
+     </tr>
+     <tr>
+        <td><div class="inputbox-spacing"></div></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+     <tr>
+          <td><div style="margin-left: 10px;">Priority:</div></td>
+          <td><div id="deductionPriority"></div></td>
+          <td></td>
+          <td><span class="inputbox-spacing"><input id="priorityDescription" /></span></td>
+          <td><span class="inputbox-spacing"><input type="button" id="deductnewpriorityCode" value="Create..." /></span></td>
+     </tr>
+     <tr>
+        <td><div class="inputbox-spacing"></div></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+  </table>
+  <div style="padding-top:10px;"></div>
+  <table style="margin-left: 5px; width: 90%;">
+      <tr>
+         <td><div style="margin-left: 10px;"><div id="includeInretrospectPayChk">Include this deduction in retrospective payments</div></div></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+       </tr>
+       <tr>
+        <td><div class="inputbox-spacing"></div></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+       <tr>
+         <td><div style="margin-left: 10px;"><div id="deductfromEmployeeChk">Deduction taken from Employee</div></div></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+       </tr>
+   </table>
+   <div style="float: left;">
+   <table>
+       <tr>
+         <td><div style="padding-top: 20px;"><input style="margin-left: 10px; margin-bottom: 5px;" type="button" id="viewDeductionsBtn" value="View existing" /></div></td>
+        </tr>
+   </table>
+   </div>
+   <div style="float: right;">
+   <table>
+       <tr>
+        <td><div style="padding-top:20px; margin-right: 10px; margin-bottom: 5px;"><input type="button" id="saveDeductionBtn" value="Save" /></div></td>
+        <td><div style="padding-top: 20px; margin-right: 5px;"><input type="button" id="deleteDeductionBtn" value="Delete" /></div></td>
+       </tr>
+  </table>
+  </div>
+</div>
+</div>
+
+<div id="messageNotification" style="overflow:hidden;">
+     <div></div>
+</div>
+
+  <div id="priorityCodeWindow" style="overflow: hidden";>
+    <div>Codes</div>
+        <div style="overflow: hidden; margin-left: 5px;">
+          <div style="padding-top: 15px;"></div>
+            <div style="margin-bottom: 10px;">
+             <table>
+               <tr>
+                  <td>Code:</td>
+                  <td><input id ="prioritycodeId" /></td>
+                  <td></td>
+                  <td><span class="inputbox-spacing"><input  id="priorityCodeDescription" /></span></td>
+                  <td><span class="inputbox-spacing"><input type="button" id="prioritycodeSave" value="Add" /></span></td>
+
+               </tr>
+            </table>
+            </div>
+          <div id="prioritycodesdataGrid"></div>
+          <div style="float:right">
+            <table>
+               <tr>
+                 <td></td>
+                 <td></td>
+                 <td></td>
+                 <td></td>
+                 <td><div style="padding-top:20px;margin-right:5px;"><input type="button" id="prioritycodeOKBtn" value="OK" /></div></td>
+               </tr>
+            </table>
+          </div>
+
+      </div>
+  </div>
+
+<div id="deductionPaymentsWindow" style="overflow: hidden";>
+  <div>Deduction payments</div>
+      <div style="overflow: hidden;">
+        <div style="margin-top: 1px;"></div>
+        <div id="deductionpaymentsdataGrid"></div>
+        <div style="margin-top:35px;float: right; margin-right:5px;"><input type="button" id="viewDeductionOKBtn" value="OK" />
+        </div>
+      </div>
+  </div>
+
+<div id="deleteRecDialog" style="overflow: hidden";>
+      <div> Delete</div>
+        <div style="overflow: hidden; margin-left: 15px;">
+            <p>Do you want to delete this record?</p>
+               
+            <input type="button" id="DeleteDialogBtn" value="Delete" />
+            <input type="button" id="CancelDialogBtn" value="Cancel" />
+        </div>
+</div>

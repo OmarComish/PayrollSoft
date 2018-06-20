@@ -1,0 +1,38 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+
+    function _loadSecurityWin(theme, title) {
+
+        $("#securityConfigWin").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 900,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#Delete"),
+            cancelButton: $("#Cancel"),
+            modalOpacity: 0.01
+
+        });
+
+        $("#securityConfigWin").jqxWindow('open');
+
+    }
+
+    $(document).ready(function () {
+
+        _glcontroller = "Security";
+        var theme = getDemoTheme();
+        var title = 'Securtiy';
+
+        $('#jqxTabWidget').jqxTabs({ height: 350, width: 900, theme: theme });
+
+
+    });
+
+</script>
+
+@Html.Partial("_systemSecurityConfig")

@@ -1,0 +1,322 @@
+﻿@model PayrollSoft.Models.PersonnelPayslip
+
+@{
+    ViewBag.Title = "Payslips";
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/implement-ui-widget-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript">
+
+var __eventBucket = (function(){
+      
+     function ModifyBy(){
+        return true;
+     }
+
+     return {
+         getDemographics: function(){
+
+              __retrieveDemographics();
+         },
+         getEarnings: function(){
+
+            _retrieveEarningsPayslipData();
+         },
+         getDeductions: function(){
+
+           _retrieveDeductionsPayslipData();
+         }
+       };
+});
+
+function __filterReport(searchparams){
+   console.log('filter icon clicked');
+}
+
+function searchPayslip(searchparam){
+    
+  __loadReportListGrid(__payslipReportListDataAdapter(searchparam));
+
+  __retrieveDemographics();
+
+  _retrieveEarningsPayslipData(searchparam);
+  
+  _retrieveDeductionsPayslipData(searchparam);
+  
+}
+
+function __filterPayslipReports(val){
+     
+          $.ajax({
+              cache: false,
+              datatype: "jsonp",
+              url:"/Payroll/GetEmployeeOnPayrollList",
+              type: 'POST',
+              data: {prefix: val.trim()},
+              success: function (data){
+
+                for(var x = 0; x < data.length; x ++){
+
+                     var item = payslipreportList.find(x => x.EmpID === data[x].EmpID);
+                     if(item != undefined){
+                       payslipreportList.push({EmpName: data[x].EmpName,
+                                             DeptName: data[x].DeptName,
+                                                EmpID: data[x].EmpID,
+                                                 DATE: data[x].DATE,
+                                             JobTitle: data[x].JobTitle});
+
+                          __loadReportListGrid(__buildDataSource(payslipreportList));
+                        }
+                   }                   
+
+              },
+              error: function(jqXHR, textStatus, errorThrown){
+                       console.log("Error, " + errorThrown);
+              }
+         });
+}
+
+function __buildDataSource(){
+
+  console.log(payslipreportList.length);
+
+            var datasource = {
+                          datatype:'json',
+                          datafields: [{name: 'EmpName', type: 'string'},
+                                      {name: 'DeptName', type: 'string'},
+                                      {name: 'EmpID', type: 'string'},
+                                      {name: 'DATE', type: 'date'},
+                                      {name: 'JobTitle', type: 'string'}],
+                         id: 'EmpID',
+                         url: '/Report/RetrievePayslips'
+               };
+
+           return new $.jqx.dataAdapter(datasource,
+                { 
+                  formatData: function(data){
+                    data.name_startsWith = document.getElementById('searchval').value;
+                    return data;
+                  }
+                }
+            );
+}
+
+function __LoadReportData(){
+
+          $.ajax({
+                cache: false,
+                datatype: "jsonp",
+                url:"/Report/RetrievePayslipList",
+                type: 'POST',
+                data: {__date: CurrentDate(), empId: 'BHT01'},
+                success: function(data){
+                    for(var r = 0; r < data.length; r ++){
+
+                      payslipreportList.push({EmpName: data[r].EmpID,
+                                             DeptName: data[r].DeptName,
+                                             JobTitle: data[r].JobTitle,
+                                                EmpID: data[r].EmpID,
+                                                 DATE: data[r].DATE });
+                    }
+
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    console.log("Error, " + errorThrown);
+                }
+             });
+}
+
+function __loadReportListGrid(dataAdapter){
+
+     $("#grid-content").jqxGrid({
+        width: '99.5%',
+        source: dataAdapter,
+        theme: theme,
+        pageable: true,
+        autoheight: true,
+        sortable: true,
+        selectionmode: 'singlerow',
+        columns: [{text: 'Id',datafield:'EmpID',width: '8.8%'},
+                  {text: 'Name',datafield:'EmpName',width: '16.6%'},
+                  {text: 'Designation', datafield: 'JobTitle', width: '25.5%'},
+                  {text: 'Department',datafield:'DeptName',width: '20%'},
+                  {text: 'Period', datafield: 'DATE', width: '24%'},
+                  {text:  '', datafield: 'View', width: '7.77%', columntype: 'button', cellsrenderer: function(){
+                               return 'View';
+                  }, buttonclick: function(row){
+
+                                editrow = row;
+                                var dataRecord = $("#grid-content").jqxGrid('getrowdata', editrow);
+                                __loadPersonnelPayslipReports(dataRecord.EmpID);
+                      }
+                  }]
+      });
+
+     $('#grid-content').jqxGrid('updatebounddata');
+}
+
+function __loadPersonnelPayslipReports(__reportdate, __empId){
+
+      console.log('retrieving Earnings...');
+     _retrieveEarningsPayslipData(__reportdate);
+     console.log('retrieving Deductions...');
+     _retrieveDeductionsPayslipData(__reportdate);
+
+     var reportgenerator =  setTimeout(function(){
+    
+	     if(payslipreportEarningsDataSource.length > 0){
+	          console.log('Generating report...');
+             _generateReport(__empId.trim());
+	        clearTimeout(reportgenerator);
+	     }
+      }, 1000);
+
+     reportgenerator;
+ 
+}
+
+function __generateTable(data){
+
+    var table = document.createElement('TABLE');
+    var cellid = "row";
+    var currentrow = 0;
+
+    var columns = new Array();
+    columns.push(['Name','Department','Period','Employment No.','Action']);
+
+    for(var x = 0; x < data.length; x++){
+    	columns.push([''+ data[x].EmpName +'',
+    		          ''+ data[x].DeptName + '',
+    		          ''+ _parseJsonDate(data[x].DATE) +'',
+    		          '' + data[x].EmpID + '',
+    		          '']);
+    }
+ 
+    //css for the table
+    table.className = "table table-condensed";
+    table.setAttribute('id','paylist');
+
+    //header row
+    var columnCount = 5;
+    var row = table.insertRow(-1);
+    row.className = "active";
+    for(var i = 0; i < columnCount; i++){
+    	var headerCell = document.createElement("TH");
+    	headerCell.innerHTML = columns[0][i];
+    	row.appendChild(headerCell);
+    }
+
+     //Add the data rows.
+    	for (var i = 1; i < columns.length; i++) {
+            row = table.insertRow(-1);
+            var attr = "row" + i.toString();
+            currentrow = i;
+            row.setAttribute("id",attr);
+            for (var j = 0; j < columnCount; j++) {
+            	var cell = row.insertCell(-1);
+            	cell.innerHTML = (j === (columnCount - 1)? '<button type="button", id="cell'+ currentrow +'" class="btn btn-success"  onclick="__foo(this.id);"><span></span>View</button>' : columns[i][j]);
+            }
+    	}
+
+    	var grid_content = document.getElementById("grid-content");
+    	grid_content.innerHTML = "";
+    	grid_content.appendChild(table);
+
+}
+
+function __payslipReportList(){
+      
+
+        $.ajax({
+                cache: false,
+                datatype: "jsonp",
+                url:"/Report/RetrievePayslipList",
+                type: 'POST',
+                data: {__mindate: $('#minDate').val(), __maxdate: $('#maxDate').val() },
+                success: function(data){
+
+                   __generateTable(data);
+
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    console.log("Error, " + errorThrown);
+                }
+
+              });
+}
+
+function __payslipReportListDataAdapter(date){
+
+        var datasource = {
+                         datatype:'json',
+                         datafields: [{name: 'EmpName', type: 'string'},
+                                      {name: 'DeptName', type: 'string'},
+                                      {name: 'EmpID', type: 'string'},
+                                      {name: 'DATE', type: 'date'},
+                                      {name: 'JobTitle', type: 'string'}],
+                         id: 'EmpID',
+                         url: '/Report/RetrievePayslips/',
+                         data: {__date: date}
+               };
+
+       return new $.jqx.dataAdapter(datasource);
+    
+}
+
+function __initializaReportControls(){
+
+	  $("#minDate").jqxDateTimeInput({ theme: theme, width: '300px', height: '25px', formatString: 'yyyy-MM-dd' });
+    $("#maxDate").jqxDateTimeInput({ theme: theme, width: '300px', height: '25px', formatString: 'yyyy-MM-dd' })
+}
+
+function __foo(id){
+
+   //the id comes with string and number concatenated as 1, so we strip off the number
+   //and use it to identify the row that was selected, and then pick the cell that has the data
+   //we want to use for the method to generate the payslip report
+   id = id.match(/\d+$/);
+   
+   //lets retrieve our HTML object from the DOM
+   var tbl = document.getElementsByTagName('TABLE');
+
+   //var s = tbl.paylist.tBodies[0].childNodes[1].childNodes[id].innerHTML;
+   var __reportdate = tbl.paylist.tBodies[0].childNodes[id].cells[2].innerHTML;
+   var __empId = tbl.paylist.tBodies[0].childNodes[id].cells[3].innerHTML;
+
+   console.log('date: ' + __reportdate);
+   console.log('id: ' + __empId);
+
+   __loadPersonnelPayslipReports(__reportdate, __empId);
+   
+}
+
+$(document).ready(function(){
+
+	_glcontroller = "EmployeeSelfService";
+     
+   var __date = CurrentDate();
+
+   __initializaReportControls();
+
+   __retrieveDemographics();
+   //_retrieveEarningsPayslipData(__date);
+   //_retrieveDeductionsPayslipData(__date);
+
+   //__loadReportListGrid(__payslipReportListDataAdapter(__date));
+
+   $('#filterBtn').click(function(){
+        __payslipReportList();
+   });
+
+});
+
+</script>
+
+@Html.Partial("_report")

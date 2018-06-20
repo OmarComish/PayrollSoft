@@ -1,0 +1,446 @@
+<!--<div id="window">
+    <div>
+      <div>
+         <div>-->
+             <div id="jqxTabWidget">
+                <div style='float: left;'>
+                  <div id="jqxTabs">
+                  <ul style='margin-left: 10px;'>
+                      <li>Taxation</li>
+                      <li>Job Grading</li>
+                      <li>Insurance</li>
+                      <li>Earnings</li>
+                      <li>Holidays</li>
+                  </ul>
+                      <div>
+                       <!--<div style="padding-top: 35px;">
+                           <div style='margin-left: 15px;margin-right:15px;'>Add the new taxation code here.Add custom Text here. Add custom Text here. Add custom Text here.Add custom Text here.</div>
+                           <input style="margin-left: 350px;" type="button" id="NewTaxCode" value="New Tax Code" />
+                        </div> 
+                        <div style="padding-top: 38px;">
+                           <input style="margin-left: 350px;" type="button" id="EdiTaxCode" value="Edit Tax Code" />
+                        </div>-->
+
+                          <table>
+                             <tr>
+                                <td><div style="padding-top: 38px;margin-left: 10px;"><input type="button" id="NewTaxCode" value="New Taxation Code" /></div></td>
+                                 <td></td>
+                                <td><div style="padding-top: 38px; margin-right: 1px;"id="jqxTaxWidget">Elementary Widget</div></td>
+                             </tr>
+                             <tr>
+                                <td><div style="padding-top: 38px;margin-left: 10px;"><input type="button" id="EditTaxCode" value="Edit Tax Code" /></div></td>
+                                <td></td>
+                                <td></td>
+                             </tr>
+                          </table>
+                      </div>
+                      <div>
+                         <div style="padding-top: 35px;margin-left: 15px;">
+                             <label >Grade:</label><input id="empGrade" style="margin-left:70px;" />
+                             <label>Description:</label><input id="gradeDescript" style="margin-left:5px;" />
+                             <input style="margin-left: 10px;" type="button" id="existingGrade" value="Load exisiting" />
+                             <!--<input type="button" id="newGrade" value="New Grade" />-->
+                         </div>
+                         <div style="padding-top:10px;margin-left:10px;">
+                          <table>
+                             <tr>
+                                <td><label >Basic Pay:</label><input id="basicPay" style="margin-left:50px;" /></td> 
+                                <td>Allowance Code:</td>
+                                <td><div id="allowanceCode"></div></td>
+                            </tr>
+                           </table>
+                         </div>
+                         <div style="margin-top:10px;margin-left:10px;">
+                           <table>
+                              <tr>
+                                 <td><div style="padding-left:-1px;">Insurance:</div></td>
+                                 <td><div id="insuranceCode" style="margin-left:45px;"></div></td>
+ 
+                              </tr>
+                           </table>
+                          
+                         </div>
+                         <div style="margin-top:10px;margin-left:10px;">
+                         <table>
+                           <tr>
+                            <td>Pension number:</td>
+                            <td><div id="pensionNum" style="margin-left:5px;"></div></td>
+                          </tr>
+                         </table>
+                         </div>
+                         <div style="padding-top: 10px;margin-left: 15px;">
+                           <label>Overtime rate:</label><input id="overtimeRate" style="margin-left:25px;" />
+                         </div>
+                         <div style="margin-right:50px;padding-top:15px;">
+                              <input style="margin-left: 350px;" type="button" id="saveEmpGrade" value="Save" />
+                              <input type="button" id="cancelEmpGrade" value="Cancel" />
+                         </div>
+                      </div>
+                      <div>
+                         <!--<div style='padding-top:30px;margin-left:10px;'>
+                          <table>
+                             <tr>
+                                <td align="right">Insurance Ref. number:</td><td align="left"><input id="insuranceNo" /></td>
+                             </tr>
+                             <tr><td></td><td></td></tr>
+                              <tr>
+                                <td align="right">Description:</td><td align="left"><input id="insuranceDescript" /></td>
+                              </tr>
+                              <tr><td></td><td></td></tr>
+                              <tr>
+                                <td align="right"> Service Provider:</td><td align="left"><input id="serviceProvider" /></td>
+                              </tr>
+                              <tr><td></td><td></td></tr>
+                          </table>
+                          </div>
+                          <div style='padding-top:25px;margin-left:10px;'>
+                          <table>
+                              <tr><td></td><td></td></tr>
+                               <tr>
+                                  <td></td>
+                                  <td>
+                                     <input style="margin-left:270px;" type="button" id="ShowExistingInsurance" value="View existng" />
+                                     <input type="button" id="newInsuranceCode" value="New Insurance" />
+                                     <input  type="button" id="newIsuranceDetails" value="Next" />
+                                  </td>
+                               </tr>
+                            </table>
+                          </div>-->
+                      </div>
+                      <div> 
+                         <div style="margin-top:10px;" ></div>
+                         <div id="jqxTabWidget">
+                              <div style='float: left;'>
+                                  <div id='jqxPensionTab'>
+                                     <ul style='margin-left: 20px;'>
+                                          <li>Allowance</li>
+                                     </ul>
+                                    <div>
+                                         <div style="margin-top:10px; padding-left:5px;">
+                                            <label >Ref. Number:</label><input id="allowanceRefNum" style="margin-left:45px;" />
+                                         </div>
+                                        <div style="margin-top:10px; padding-left:5px;">
+                                            <label >Description:</label><input id="allowanceDescript" style="margin-left:50px;" />
+                                         </div>
+                                         <div style="margin-top:10px; padding-left:5px;">
+                                            <label >Rate:</label><input id="allowanceRate" style="margin-left:70px;" />
+                                         </div>
+                                         <div style="margin-top: 10px;margin-left:120px;">
+                                           <table>
+                                             <tr>
+                                              <td><input type="button" id="AddAllowance" value="Add" /></td>
+                                              <td><input type="button" id="ViewExisting" value="View Existing" /></td>
+                                            </tr>
+                                          </table>
+                                         </div>
+                                    </div>
+                                   </div>
+                                      
+                               </div>
+                           </div>
+                         <div style="margin-top:10px;" ></div>
+                         <div id="jqxTabWidget">
+                              <div style='float: right;'>
+                                  <div id='jqxAllowanceTab'>
+                                     <ul style='margin-left: 15px;'>
+                                          <li>Pension</li>
+                                     </ul>
+                                    <div>
+                                         <div style="margin-top:10px; padding-left:5px;">
+                                            <label >Ref. Number:</label><input id="pensionRefNum" style="margin-left:50px;" />
+                                         </div>
+                                        <div style="margin-top:10px; padding-left:5px;">
+                                            <label >Employer Contr Rate:</label><input id="empContrRate" style="margin-left:45px;" />
+                                         </div>
+                                         <div style="margin-top:10px; padding-left:5px;">
+                                            <label >Employee Contr Rate:</label><input id="emplrContrRate" style="margin-left:45px;" />
+                                         </div>
+                                         <div style="margin-top: 15px;margin-left:180px;">
+                                           <table>
+                                             <tr>
+                                              <td><input type="button" id="SavePension" value="Save" /></td>
+                                              <td><input type="button" id="editPension" value="Edit" /></td>
+                                            </tr>
+                                          </table>
+                                         </div>
+                                    </div>
+                                   </div>
+                                      
+                               </div>
+                           </div>
+                           <div style="margin-top:10px;" >
+                           <div id="jqxTabWidget">
+                              <div style='float:left;'>
+                                 <div id='jqxInsuranceTab1'>
+                                       <ul style='margin-left: 15px;'>
+                                          <li>Insurance</li>
+                                     </ul>
+                                     <div>
+                                    <div style='padding-top:5px;margin-left:10px;'>
+                                     <table>
+                                      <tr>
+                                        <td align="right">Insurance Ref. number:</td><td align="left"><input id="insuranceNo" /></td>
+                                     </tr>
+                                     <tr><td></td><td></td></tr>
+                                      <tr>
+                                        <td align="right">Description:</td><td align="left"><input id="insuranceDescript" /></td>
+                                      </tr>
+                                      <tr><td></td><td></td></tr>
+                                      <tr>
+                                        <td align="right"> Service Provider:</td><td align="left"><input id="serviceProvider" /></td>
+                                      </tr>
+                                      <tr><td></td><td></td></tr>
+                                    </table>
+                                    </div>
+                                   <div style='padding-top:4px;margin-left:10px;'>
+                                   <table>
+                                     <tr>
+                                      <td></td>
+                                   <td>
+                                     <input style="margin-left:250px;" type="button" id="ShowExistingInsurance" value="View existng" />
+                                     <input type="button" id="newInsuranceCode" value="New Insurance" />
+                                     <input  type="button" id="newIsuranceDetails" value="Next" />
+                                   </td>
+                                 </tr>
+                               </table>
+                          </div>
+                                     </div>
+                                 </div>
+                              </div>
+                              </div>
+                           </div>
+                      </div>
+
+                      <div> <!--Holidays section --> Holidays Tab</div>
+
+                </div>
+                </div>
+             </div>
+         <!--</div>
+      </div>
+    </div>
+</div>-->
+<div id="popupwindow">
+  <div>New Tax Code</div>
+      <div style="overflow: hidden;">
+         <div id="jqxTabWidgetmin">
+            <div style='float: left;'>
+               <div id="jqxTabsmin">
+                   <ul style='margin-left: 10px;'>
+                       <li>General</li>
+                       <li>Threshold A</li>
+                       <li>Threshold B</li>
+                       <li>Threshold C</li>
+                   </ul>
+                   <div>
+                      <div style='padding-top:30px;margin-left:20px;'>
+
+                    <table>
+                        <tr>
+                          <td align="right">Code:</td>
+                          <td align="left"><input id="TaxName" /></td>
+                        </tr>
+                        <tr><td></td><td></td></tr>
+                        <tr>
+                          <td align="right">Description:</td>
+                          <td align="left"><input id="Descript" /></td>
+                        </tr>
+                        <tr><td></td><td></td></tr>
+                        <tr>
+                          <td align="right">Date Issued:</td>
+                          <td align="left"><div id="dateIssued"></div></td>
+                        </tr>
+                        <tr><td></td><td></td></tr>
+                        <tr>
+                          <td align="right">Active</td>
+                          <td align="left"><div id="RateStatus"></div></td>
+                        </tr>
+                     </table>
+                     
+                      </div>
+                   </div>
+                   <div>
+                      <div style='padding-top:30px;margin-left:20px;'>
+                      <table>
+                         <tr>
+                            <td style="margin-left:10px;">First:</td>
+                            <td style="margin-right:20px;"><div id="minAmount"></div></td>
+                         </tr>
+                          <tr><td></td><td></td></tr>
+                         <tr>
+                            <td style="margin-left:20px;">Maxmum Amount:</td>
+                            <td style="margin-right:20px;"><div id="maxAmount"></div></td>
+                         </tr> 
+                         <tr><td></td><td></td></tr>
+                         <tr>
+                            <td style="margin-left:20px;">Rate:</td>
+                            <td style="margin-right:20px;"><div id="rate1"></div></td>
+                         </tr>
+                      </table>
+                      </div>
+                   </div>
+                   <div>
+                      <div style='padding-top:30px;margin-left:20px;'>
+                      <table>
+                         <tr>
+                            <td style="margin-left:10px;">Next:</td>
+                            <td style="margin-right:20px;"><div id="minAmount2"></div></td>
+                         </tr>
+                        <tr><td></td><td></td></tr>
+                         <tr>
+                            <td style="margin-left:20px;">Maxmum Amount:</td>
+                            <td style="margin-right:20px;"><div id="maxAmount2"></div></td>
+                         </tr>
+                         <tr><td></td><td></td></tr>
+                         <tr>
+                            <td style="margin-left:20px;">Rate:</td>
+                            <td style="margin-right:20px;"><div id="rate2"></div></td>
+                         </tr>
+                      </table>
+                      </div>
+                   </div>
+                   <div>
+                     <div style='padding-top:30px;margin-left:20px;'>
+                      <table>
+                         <tr>
+                            <td style="margin-left:10px;">Excess Amount:</td>
+                            <td style="margin-right:20px;"><div id="minAmount3"></div></td>
+                         </tr>
+                       <tr><td></td><td></td></tr>
+                         <tr>
+                            <td style="margin-left:20px;">Maximum Amount:</td>
+                            <td style="margin-right:20px;"><div id="maxAmount3"></div></td>
+                         </tr> 
+                         <tr><td></td><td></td></tr>
+                         <tr>
+                            <td style="margin-left:20px;">Rate:</td>
+                            <td style="margin-right:20px;"><div id="rate3"></div></td>
+                         </tr>
+                      </table>
+                      </div>
+                   </div>
+                </div>
+                 <div>
+                   <div style="padding-top:10px;margin-left:340px;">
+                    <table>
+                       <tr>
+                          <td>
+                              <input type="button" id="Save" value="Save" />
+                              <input type="button" id="Cancel" value="Cancel" />
+                          </td>
+                          <td></td>
+                       </tr>
+                     </table>
+                     </div>
+                 </div>
+            </div>
+         </div>
+   </div>
+</div>
+<div id="insurancePopUpWin">
+   <div>Insurance Details</div>
+    <div style="overflow: hidden;">
+       <div id="jqxTabWidgetInsurance">
+         <div style="float: left;">
+          <div id="jqxTabsInsuranceCat">
+             <ul style='margin-left: 10px;'>
+                <li>Details</li>
+             </ul>
+             <div>
+                 <div style='padding-top:30px;margin-left:15px;'>
+                    <table>
+                      <tr>
+                        <td align="right">Category ID:</td>
+                          <td align="left"><input id="insCatID" /></td>
+                        </tr>
+                      <tr><td></td><td></td></tr>
+                      <tr>
+                         <td align="right">Description:</td>
+                         <td align="left"><input id="CatDescript" /></td>
+                      </tr>
+                      <tr><td></td><td></td></tr>
+                      <tr>
+                        <td align="right">Monthly Rate:</td>
+                        <td align="left"><div id="insuranceRate"></div></td>
+                      </tr>
+                    </table> 
+                    <div style="padding-top:45px;margin-left:245px;">
+                    <table>
+                       <tr>
+                          <td>
+                              <input type="button" id="AddInsuranceCat" value="Save" />
+                              <input type="button" id="CancelInsuranceCat" value="Close" />
+                          </td>
+                          <td></td>
+                       </tr>
+                     </table>
+                 </div>
+                </div>
+             </div>
+          </div>
+         </div>
+       </div>
+    </div>
+</div>
+<div id="newGradePopUpWin">
+</div>
+
+<!-- <div>New Tax Code</div>
+    <div style="overflow: hidden;">
+
+
+    <div id="jqxTaxationTabs">
+      <ul style='margin-left: 10px;'>
+            <li>General</li>
+            <li>Details</li>
+      </ul>
+      <div>
+          <div style='padding-top:30px'>
+          <table>
+                <tr>
+                    <td align="right">Code:</td>
+                    <td align="left"><input id="TaxName" /></td>
+                </tr>
+                <tr><td></td><td></td></tr>
+                <tr>
+                   <td align="right">Description:</td>
+                    <td align="left"><input id="Descript" /></td>
+                </tr>
+                <tr><td></td><td></td></tr>
+                <tr>
+                    <td align="right">Date Issued:</td>
+                    <td align="left"><div id="dateIssued"></div></td>
+                </tr>
+                <tr><td></td><td></td></tr>
+                <tr>
+                    <td align="right">Active</td>
+                     <td align="left"><div id="RateStatus"></div></td>
+                </tr>
+            </table>
+          </div>
+      </div>
+      <div>
+
+        <table>
+           <tr>
+              <td>Maxmum Amount:</td>
+              <td><div id="maxAmount"></div></td>
+          </tr>
+          <tr>
+              <td style="margin-left:20px;">Rate:</td>
+              <td style="margin-right:20px;"><div id="rate1"></div></td>
+          </tr>
+        </table>
+
+      </div>
+   </div>
+       
+  </div>
+</div>-->
+
+
+
+
+<div id="messageNotification" style="overflow:hidden;">
+     <div></div>
+</div>

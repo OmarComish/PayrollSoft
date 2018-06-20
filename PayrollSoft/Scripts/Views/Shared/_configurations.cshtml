@@ -1,0 +1,331 @@
+
+  <!-- <div class="wrap-x1">
+            <p>Personal Info</p>
+            <div style="margin-top:7px; padding-left: 3px;">Employement Number</div>
+            <input style="margin-top: 3px; margin-left: 8px;" id="empID" />
+            <div style="margin-top:7px; padding-left: 5px;"> Name</div>
+            <input style="margin-top: 3px; margin-left: 8px;" id="name" />
+            <div style="margin-top:7px; padding-left: 8px;">Phone</div>
+            <input style="margin-top: 3px; margin-left: 8px;" id="contactNo" />
+            <div style="margin-top:7px; padding-left: 8px;">Gender</div>
+            <div style="margin-top: 3px; margin-left: 8px;" id="sex"></div>
+            <div style="margin-top:7px; padding-left: 8px;">Date of Birth</div>
+            <div style="margin-top: 3px; margin-left: 8px;" id="dob"></div>
+   </div>
+   <div class="wrap-x1">
+            <p>Department</p>
+             <div style="margin-top:7px; padding-left: 8px;">Department</div>
+             <div style="margin-top: 3px; margin-left: 8px;" id="deptname"></div>
+             <div style="margin-top:7px; padding-left: 5px;">Job Title</div>
+             <div style="margin-top: 3px; margin-left: 8px;" id="jobposition"></div>
+             <div style="margin-top:7px; padding-left: 8px;">Grade</div>
+             <div style="margin-top: 3px; margin-left: 8px;" id="empgrade"></div>
+             <div style="margin-top:7px; padding-left: 8px;">Hire Date</div>
+             <div style="margin-top: 3px; margin-left: 8px;" id="dateHired"></div>
+  </div>-->
+
+  <div>
+        <div id="jqxTabWidget">
+                <div style='float: left;'>
+                    <div id='jqxTabs'>
+                         <ul style='margin-left: 10px;'>
+                                  <li>Insurance</li>
+                                  <li>Pension</li>
+                                  <li>Taxation</li>
+                                  <li>Holidays</li>
+                                  <li>Earnings</li>
+                             </ul>
+                             <div>
+                                 <!--<table>
+                                     <tr>
+                                        <td>
+                                           <div style="margin-top:25px; padding-left: 8px;">Employement Number</div>
+                                           <input style="margin-top: 3px; margin-left: 8px;" id="empID" />
+                                         </td>
+                                         <td>
+                                            <div style="margin-top:25px; padding-left: 80px;"> Name</div>
+                                            <input style="margin-top: 3px; margin-left: 80px;" id="name" />
+                                         </td>
+                                     </tr>
+                                     <tr>
+
+                                         <td>
+                                           <div style="margin-top:8px; padding-left: 8px;">Address</div>
+                                           <input style="margin-top: 3px; margin-left: 8px;" id="address" />
+                                         </td>
+                                         <td>
+                                            <div style="margin-top:8px; padding-left: 80px;">Phone</div>
+                                            <input style="margin-top: 3px; margin-left: 80px;" id="contactNo" />
+                                         </td>
+                                        
+                                     </tr>
+                                      <tr>
+                                        <td>
+                                           <div style="margin-top:7px; padding-left: 8px;">Gender</div>
+                                           <div style="margin-top: 3px; margin-left: 8px;" id="sex"></div>
+                                         </td>
+                                         <td>
+                                            <div style="margin-top:7px; padding-left: 80px;">Date of Birth</div>
+                                            <div style="margin-top: 3px; margin-left: 80px;" id="dob"></div>
+                                         </td>
+                                     </tr>
+                                 </table>-->
+                               
+                             </div>
+                             <div></div>
+                             <div>
+                                 <!--<div style="padding-top: 35px;">
+                                   <div style='margin-left: 15px;margin-right:15px;'>Add the new taxation code here.Add custom Text here. Add custom Text here. Add custom Text here.Add custom Text here.</div>
+                                  <input style="margin-left: 350px;" type="button" id="NewTaxCode" value="New Tax Code" />
+                                </div>
+                                  <div style="padding-top: 38px;">
+                                     <input style="margin-left: 350px;" type="button" id="EdiTaxCode" value="Edit Tax Code" />
+                                  </div>-->
+                                  <table>
+                                     <tr>
+                                       <td><div style="padding-top: 38px;"><input style="margin-left: 10px;" type="button" id="NewTaxCode" value="New Taxation Code" /></div></td>
+                                       <td>
+
+                                            <div id="jqxTaxWidget">Elementary Widget</div>
+
+                                       </td>
+                                       <td></td>
+                                     </tr>
+                                  </table>
+                             </div>
+                            <div> 
+                              <div style="padding-top:25px;"></div>
+                              <table>
+                                <tr>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                </tr>
+                                <tr>
+                                  <td><input style="margin-left: 5px;" type="button" id="defineHoliday" value="Define holiday" /></td>
+                                  <td><div style="margin-left: 10px;padding-top:5px;" id="jqxHolidayWidget">calendar widget</div></td>
+                                  <td><input id="holidayName"/></td>
+                                  <td></td>
+                                  <td><div id="dateFrom"></div></td>
+                                  <td><div id="dateTo"></div></td>
+                                  <td><input style="margin-left: 5px;" type="button" id="viewDefinedHoliday" value="View Existing" /></td>
+                                </tr>
+                                </table>
+                                 <div style="padding-top:10px;"></div>
+                                 <table>
+                                    <tr>
+                                       <td><div id="leavePayInclusion">Include Leave Pay prior the beginning of Leave period</div></td>
+                                    </tr>
+                                     <tr>
+                                       <td><div id="schemeContribToLeavePay">Include employee's contribution to misc. schemes when computing Annual Leave Pay</div></td>
+                                    </tr>
+                                    <tr><td><div id="rateofPay">Use employee's current rate of pay to compute Leave Pay</div></td></tr>
+                                 </table>
+                              </div>
+                             <div>
+                                 <!--<table>
+                                    <tr>
+                                       <td>
+                                         <div style="margin-top:10px;">
+                                            <div id="onPayroll">On Payroll</div>
+                                         </div>
+                                       </td>
+                                       <td>
+                                          <div style="margin-top:10px;">
+                                            <div id="onMedicalScheme">On Medical Scheme</div>
+                                         </div>
+                                       </td>
+                                        <td>
+                                          <div style="margin-top:10px;">
+                                            <div id="Pension">Pension Contribution</div>
+                                         </div>
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td><div style="margin-top:15px; padding-left: 8px;">Medical Insurance Bill:</div></td>
+                                       <td><div style="margin-top: 15px; margin-left: 8px;"><div id="MedSchemContribAmount"></div></div></td>
+                                    </tr>
+                                     <tr>
+                                       <td><div style="margin-top:15px; padding-left: 8px;">Overtime hours:</div></td>
+                                       <td><div style="margin-top: 15px; margin-left: 8px;"><div id="overtimeHours"></div></div></td>
+                                    </tr>
+                                     <tr>
+                                       <td><div style="margin-top:15px; padding-left: 8px;">Advance Pay Deduction:</div></td>
+                                       <td><div style="margin-top: 15px; margin-left: 8px;"><div id="advanceLoan"></div></div></td>
+                                    </tr>
+
+                                 </table>-->
+                             </div>
+                           </div>
+                         </div>
+                       </div>
+
+                     
+  </div>
+
+<!--<div id="jqxcalWidget"></div>-->
+
+<div id="calendarWin" style="overflow: hidden";>
+      <div></div>
+          <div style="overflow: hidden;">
+             <div id="jqxcalWidget"></div>
+          </div>
+</div>
+
+<!--<div id="window">
+           
+            <div>
+                <div>
+                    
+                    <div>
+                       <div id="jqxTabWidget">
+                         <div style='float: left;'>
+                           <div id='jqxTabs'>
+                              <ul style='margin-left: 10px;'>
+                                  <li>Personal Info</li>
+                                  <li>Academic</li>
+                                  <li>Department</li>
+                                  <li>Wages</li>
+                                  <li>Miscellaneous</li>
+                             </ul>
+                             <div>
+                                 <table>
+                                     <tr>
+                                        <td>
+                                           <div style="margin-top:25px; padding-left: 8px;">Employement Number</div>
+                                           <input style="margin-top: 3px; margin-left: 8px;" id="empID" />
+                                         </td>
+                                         <td>
+                                            <div style="margin-top:25px; padding-left: 80px;"> Name</div>
+                                            <input style="margin-top: 3px; margin-left: 80px;" id="name" />
+                                         </td>
+                                     </tr>
+                                     <tr>
+
+                                         <td>
+                                           <div style="margin-top:8px; padding-left: 8px;">Address</div>
+                                           <input style="margin-top: 3px; margin-left: 8px;" id="address" />
+                                         </td>
+                                         <td>
+                                            <div style="margin-top:8px; padding-left: 80px;">Phone</div>
+                                            <input style="margin-top: 3px; margin-left: 80px;" id="contactNo" />
+                                         </td>
+                                        
+                                     </tr>
+                                      <tr>
+                                        <td>
+                                           <div style="margin-top:7px; padding-left: 8px;">Gender</div>
+                                           <div style="margin-top: 3px; margin-left: 8px;" id="sex"></div>
+                                         </td>
+                                         <td>
+                                            <div style="margin-top:7px; padding-left: 80px;">Date of Birth</div>
+                                            <!--<div style="margin-top: 3px; margin-left: 80px;" id="dob"></div>
+                                         </td>
+                                     </tr>
+                                 </table>
+                               
+                             </div>
+                             <div></div>
+                             <div>
+                                 <table>
+                                     <tr>
+                                         <td>
+                                           <div style="margin-top:7px; padding-left: 8px;">Department</div>
+                                           <div style="margin-top: 3px; margin-left: 8px;" id="deptname"></div>
+                                         </td>
+                                          <td>
+                                            <div style="margin-top:7px; padding-left: 80px;">Job Title</div>
+                                            <div style="margin-top: 3px; margin-left: 80px;" id="jobposition"></div>
+                                         </td>
+                                     </tr>
+                                     <tr>
+                                         <td>
+                                           <div style="margin-top:7px; padding-left: 8px;">Grade</div>
+                                           <div style="margin-top: 3px; margin-left: 8px;" id="empgrade"></div>
+                                         </td>
+                                          <td>
+                                            <div style="margin-top:7px; padding-left: 80px;">Hire Date</div>
+                                            <div style="margin-top: 3px; margin-left: 80px;" id="dateHired"></div>
+                                         </td>
+                                     </tr>
+                                  
+                                 </table>
+                                   <table>
+                                    <tr>
+                                       <td>
+                                          <div style="margin-top:7px;padding-left: 8px;">End Date</div>
+                                          <div style="margin-top: 3px; margin-left: 8px;" id="enddate"></div>
+                                       </td>
+                                       <td></td>
+                                    </tr>
+                                  
+                                 </table>
+                             </div>
+                             <div></div>
+                             <div>
+                                 <table>
+                                    <tr>
+                                       <td>
+                                         <div style="margin-top:10px;">
+                                            <div id="onPayroll">On Payroll</div>
+                                         </div>
+                                       </td>
+                                       <td>
+                                          <div style="margin-top:10px;">
+                                            <div id="onMedicalScheme">On Medical Scheme</div>
+                                         </div>
+                                       </td>
+                                        <td>
+                                          <div style="margin-top:10px;">
+                                            <div id="Pension">Pension Contribution</div>
+                                         </div>
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td><div style="margin-top:15px; padding-left: 8px;">Medical Insurance Bill:</div></td>
+                                       <td><div style="margin-top: 15px; margin-left: 8px;"><div id="MedSchemContribAmount"></div></div></td>
+                                    </tr>
+                                     <tr>
+                                       <td><div style="margin-top:15px; padding-left: 8px;">Overtime hours:</div></td>
+                                       <td><div style="margin-top: 15px; margin-left: 8px;"><div id="overtimeHours"></div></div></td>
+                                    </tr>
+                                     <tr>
+                                       <td><div style="margin-top:15px; padding-left: 8px;">Advance Pay Deduction:</div></td>
+                                       <td><div style="margin-top: 15px; margin-left: 8px;"><div id="advanceLoan"></div></div></td>
+                                    </tr>
+
+                                 </table>
+                             </div>
+                           </div>
+                         </div>
+                       </div>
+                    
+                        <div id="jqxExpander" style='float: left;margin-top:5px;'>
+                        <div>
+                         <table>
+                             <tr>
+                                <td align="right"></td>
+                                <td style="padding-top: 3px;" align="right"><input style="margin-right: 5px;" type="button" id="Save" value="Save" /><input id="Cancel" type="button" value="Cancel" /></td>
+                            </tr>
+                         </table>
+                        </div>
+                             <!-- <div>
+                                    
+                                    <div id="jqxgrid"></div>
+                                   
+                                   
+                              </div> -->
+                     <!-- </div>
+                        
+                    </div>
+                </div>
+            </div>
+      </div>-->
+
+<div id="messageNotification" style="overflow:hidden;">
+     <div></div>
+</div>

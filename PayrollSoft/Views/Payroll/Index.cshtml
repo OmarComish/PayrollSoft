@@ -1,0 +1,928 @@
+@model IEnumerable<PayrollSoft.Models.Payroll>
+
+@{
+    ViewBag.Title = "Options";
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/datagrid_datasource.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+
+<script type="text/javascript">
+
+function _createPayment(record){
+
+ //_verifyDataBeforePosting(record);
+
+    $.ajax({
+           cache: false,
+        datatype: "jsonp",
+             url: "/Payroll/CreatePayment/",
+            type: "POST",
+            data: record,
+         success: function (data, status, xhr) {
+              
+              if(data.Status === "success"){
+                 _populatePaymentList(record.empNumber);
+              }
+            
+           },
+          error: function (jqXHR, textStatus, errorThrown) {
+
+                _notificationMessage("error", errorThrown);
+
+          }
+
+        });
+}
+
+function _removePayment(record){
+
+     $.ajax({
+           cache: false,
+           datatype: "jsonp",
+           url: "/Payroll/DeletePayment",
+           type: "POST",
+           data: record,
+           success: function (data, status, xhr) {
+
+                _populatePaymentList($('#EmpID').val());
+           },
+           error: function (jqXHR, textStatus, errorThrown) {
+               //_notificationMessage("error", errorThrown);
+           }
+      });
+ }
+   
+function _reloadDataGrid(data){
+
+     var source = {
+                   localdata: data,
+                   datatype: "array",
+                   datafields: [
+                               {name:'payCode', type:'string'},
+                               {name:'ActualAmount', type:'decimal'},
+                               {name:'paymentNumber', type:'string'},
+                               {name:'LogId', type:'integer'}
+                             ]
+                 };
+
+      return new $.jqx.dataAdapter(source);
+}
+
+function _logCurrentUserSession(userid){
+
+    var record = {EmpName:'',EmpID: userid,groupEligible:'',MinSalary:1000};
+     $.ajax({
+           cache: false,
+           datatype: "jsonp",
+           url: "/Payroll/SetSession",
+           type: "POST",
+           data: record,
+           success: function (data, status, xhr) {
+
+           },
+           error: function (jqXHR, textStatus, errorThrown) {
+               //_notificationMessage("error", errorThrown);
+           }
+      });
+}
+
+function _populatePaymentList(id){
+
+       var records = new Array();
+
+       $.ajax({
+             cache: false,
+             datatype: "jsonp",
+             url: "/Payroll/GetPayrollPayments",
+             type: "POST",
+             data: {empid: id},
+             success: function (data, status, xhr) {
+
+               for(var x = 0; x < data.length; x++){
+
+                 records.push({payCode:       data[x].payCode, 
+                               ActualAmount:  data[x].ActualAmount, 
+                               paymentNumber: data[x].paymentNumber,
+                               LogId:         data[x].LogId });
+                }
+                
+               _loaddetailGrid(_reloadDataGrid(records));
+
+                $("#detailgrid").jqxGrid('updatebounddata');
+             },
+             error: function (jqXHR, textStatus, errorThrown) {
+
+                 _notificationMessage("error", errorThrown);
+
+             }
+        });
+}
+
+function _createFormElements(title, theme, dataAdapter) {
+
+
+                $("#jqxgrid").jqxGrid({
+                    width: 890,
+                    source: dataAdapter,
+                    theme: theme,
+                    pageable: true,
+                    autoheight: true,
+                    sortable: true,
+                    selectionmode: 'none',
+                    columns: [
+                                       { text: 'Name', datafield: 'EmpName', width: 180 },
+                                       { text: 'Designation', datafield: 'JobTitle', width: 250 },
+                                       { text: 'Department', datafield: 'DeptName', width: 250 },
+                                       { text: 'Grade/Level', datafield: 'GradeID', width: 100 },
+                                       /*{ text: 'Action', datafield: 'Edit', columntype: 'button', cellsrenderer: function () {
+                                           return "Edit";
+                                       }, buttonclick: function (row) {
+
+                                           editrow = row;
+                                           var offset = $("#jqxgrid").offset();
+                                           $("#popupwindow").jqxWindow({ position: { x: parseInt(offset.left) + 60, y: parseInt(offset.top) + 60} });
+                                           var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
+                                           $("#EmpID").val(dataRecord.EmpID);
+                                           $("#overtimeHours").val(dataRecord.overtimeHours);
+                                           $("#insuranceBill").val(dataRecord.insuranceBill);
+                                           $("#salaryAdvanceDeduction").val(dataRecord.salaryAdvanceDeduction);
+                                           var title = 'Edit';
+                                           document.getElementById("popupwindow").style.visibility = "visible";
+                                           //show the popup Window
+                                           _popupWin(theme, title);
+                                       }
+                                       },*/
+                                       {text: 'Action', data : 'Details', columntype: 'button', cellsrenderer: function(){
+                                           return "Details";
+                                         }, buttonclick: function(row){
+
+                                           editrow = row;
+                                           var offset = $("#jqxgrid").offset();
+                                           $("#popupwindow").jqxWindow({ position: { x: parseInt(offset.left) + 60, y: parseInt(offset.top) + 60} });
+                                           var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
+                                           $('#emp').val(dataRecord.EmpName);
+                                           $('#empGroup').val(dataRecord.GradeID);
+                                           $("#EmpID").val(dataRecord.EmpID);
+
+                                            _logCurrentUserSession(dataRecord.EmpID);
+
+                                           var title ="Details";
+                                           document.getElementById("detailspopupwindow").style.visibility ="visible";
+
+                                             //popup window...
+                                             _popupWin(theme, title);
+                                         }
+                                       }
+                            ]
+
+                });
+
+}
+
+function _loaddetailGrid(datasource){
+
+        $('#detailgrid').jqxGrid({
+                    width: 690,
+                    source: datasource,
+                    theme: theme,
+                    pageable: true,
+                    autoheight: true,
+                    sortable: true,
+                    selectionmode: 'none',
+                    columns: [{text:'Pay Code', datafield:'payCode', width:150},
+                              {text:'Amount', datafield:'ActualAmount', width:185},
+                              {text:'payment Number', datafield:'paymentNumber', width:185},
+                              {text:'Log Id', datafield:'LogId', width:100},
+                              {text:'Action',datafield: 'Remove',columntype:'button',cellsrenderer: function(){
+                                    return "Remove";
+                                },buttonclick:function(row){
+
+                                   editrow = row;
+
+                                  // var dataRecord = $("#detailgrid").jqxGrid('getrowdata', editrow);
+
+                                   //console.log(dataRecord.payCode + "will be removed from the payment list...");
+
+                                   //call the delete action from the server
+                                   // _removePayment(dataRecord);
+
+                                   //after the delete action, refresh the grid to reflect the changes
+                                   //_populatePaymentList();
+                                }
+                              }
+                             ]
+        });
+
+        $("#detailgrid").jqxGrid('updatebounddata');
+}
+
+function _loadtimesheetGrid(datasource){
+
+
+        $('#timesheetGrid').jqxGrid({
+                    width: 590,
+                    source: datasource,
+                    theme: theme,
+                    pageable: true,
+                    autoheight: true,
+                    sortable: true,
+                    selectionmode: 'none',
+                    columns: [{text:'Date', datafield:'Date', width:120 },
+                              {text:'Time in', datafield:'Timein', width:160 },
+                              {text:'Time out', datafield:'Timeout',width:160 },
+                              {text:'Overtime hours',datafield:'overtimeHours',width:150 }
+                             ]
+        });
+
+        $("#timesheetGrid").jqxGrid('updatebounddata');
+}
+
+function _deleteRecord(row,controller) {
+
+         //alert("Delete record?");
+         $.ajax({
+             cache: false,
+             datatype: "jsonp",
+             url: "/Payroll/Delete/" + row.EmpID,
+             type: "POST",
+             success: function (data, status, xhr) {
+                   //alert(status);
+                  //Notify the user
+
+                  //NOTE: _addNewRecord() method is called immediately after the delete record
+                  //       to recreate the deleted record. Traditional Edit method in the controller
+                  //       is throwing an exception, which we haven't figured the work around yet
+                  //EXCEPTION DETAILS:
+                  //DATE:04-SEP-2015
+                  //TIME:14:30
+                 _addNewRecord(row,controller);
+
+                 $("#jqxgrid").jqxGrid('updatebounddata');
+
+                 _notificationMessage("success", "Record Saved Successfully!");
+             },
+             error: function (jqXHR, textStatus, errorThrown) {
+                 alert(errorThrown);
+                 //commit(false);
+             }
+
+         });
+         console.log("Delete action invoked");
+}
+
+
+function _popupWin(theme, title) {
+
+      if(title=="Edit"){
+
+         $("#popupwindow").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 350,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#Delete"),
+            cancelButton: $("#Cancel"),
+            modalOpacity: 0.01
+
+        });
+
+        $("#popupwindow").jqxWindow('open');
+      }
+
+      if(title =="Details"){
+
+          $("#detailspopupwindow").jqxWindow({
+            theme: theme,
+            resizable: true,
+            width: 800,
+            height: 400,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#detailsOKBtn"),
+            cancelButton: $("#detailsCancelBtn"),
+            modalOpacity: 0.01,
+            initContent: function(){
+
+
+            }
+
+        });
+
+        $("#detailspopupwindow").jqxWindow('open');
+      }
+
+      if(title=="Timesheet"){
+
+          $("#timesheetWindow").jqxWindow({
+            theme: theme,
+            resizable: true,
+            width: 1000,
+            height: 450,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            cancelButton: $("#timesheetCancelBtn"),
+            modalOpacity: 0.01,
+            initContent: function(){
+
+                //_loadtimesheetGrid(data);
+            }
+
+          });
+
+          $("#timesheetWindow").jqxWindow('open');
+
+      }
+      if(title =="overtime"){
+
+        $("#overtimeWindow").jqxWindow({
+            theme: theme,
+            resizable: true,
+            width: 530,
+            height: 250,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            cancelButton:$('#overtimeCancelBtn'),
+            modalOpacity: 0.01
+        });
+
+        $("#overtimeWindow").jqxWindow('open');
+    }
+}
+
+$(document).ready(function () {
+
+   _getUserAccessRights();
+
+  _winID = "Options";
+  var theme = getDemoTheme();
+  var url = '/Payroll/PayrollList';
+  var editrow = -1;
+
+  document.getElementById("popupwindow").style.visibility = "hidden";
+  document.getElementById("detailspopupwindow").style.visibility ="hidden";
+  document.getElementById("timesheetWindow").style.visibility = "hidden";
+  document.getElementById("overtimeWindow").style.visibility = "hidden";
+
+  var source = {
+      datatype: "json",
+      datafields: [
+                              { name: 'EmpID', type: 'string' },
+                              { name: 'EmpName', type: 'string' },
+                              { name: 'GradeID', type: 'string' },
+                              { name: 'DeptName', type: 'string' },
+                              { name: 'JobTitle', type: 'string' }
+                  ],
+      id: "EmpId",
+      url: url
+  };
+
+  var griddataSource = {
+                  datatype: "json",
+                  datafields:[{name:'Date',type: 'string'},
+                              {name:'Timein',type: 'string'},{name:'Timeout',type: 'string'},{name:'Timeout',type: 'string'},
+                              {name:'overtimeHours',type: 'string'}],
+                  id:'logNum',
+                  url: '/Settings/getattendanceLog'
+
+  };
+
+
+  //Populate the data source objects
+  var _payCode = { datatype: 'json',
+                   datafields: [{ name: 'payCode', type: 'string'},
+                                {name:'Description',type:'text'}],
+                   id: 'payCode',
+                   url: '/Payments/getpaymentCode'};
+
+  var _earningpayCode = { datatype: 'json',
+                   datafields: [{ name: 'payCode', type: 'string'},
+                                {name:'Description',type:'text'},{name:'payRate',type:'decimal'}],
+                   id: 'payCode',
+                   url: '/Payments/getearningpaymentCode'};
+
+
+
+  var payCodeDataSource = new $.jqx.dataAdapter(_payCode);
+  var earningpayCodeDataSource = new $.jqx.dataAdapter(_earningpayCode);
+
+
+  $("#popupwindow").on('open', function () {
+      $("#EmpID").jqxInput('selectAll');
+  });
+
+  $("#EmpID").jqxInput({ theme: theme, height: '20px', disabled: true });
+  //  $("#empName").jqxInput({ theme: theme, height: '20px', disabled: true });
+  $("#overtimeHours").jqxNumberInput({ height: '20px', spinButtons: true, theme: theme });
+  $("#insuranceBill").jqxNumberInput({ height: '20px', spinButtons: true, theme: theme });
+  $("#salaryAdvanceDeduction").jqxNumberInput({ height: '20px', spinButtons: true, theme: theme });
+  $("#onPayroll").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+
+
+  $("#emp").jqxInput({theme: theme, height: '25px',width: '250px'});
+  //$("#empGroup").jqxInput({theme: theme, height: '25px',width: '180px'});
+  $("#payCode").jqxDropDownList({
+                  theme: theme, source: payCodeDataSource,
+                  selectedIndex: -1, width: '180px', height: '20px',dropDownHeight: "95px",
+                  displayMember:"payCode",valueMember:"payCode" });
+
+
+  $("#paycodeDescription").jqxInput({placeHolder:"Pay code description", theme: theme, height: '25px',width: '240px'});
+  $("#empGroup").jqxInput({placeHolder:"Employee Group", theme: theme, height: '25px',width: '180px'});
+  $("#Amount").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+  $('#enterTimesheetData').jqxButton({ theme: theme });
+  $('#sysdefinedFormulaChk').jqxCheckBox({ theme: theme, width: '135px', checked: true });
+
+  $('#periodFrom').jqxDateTimeInput({ theme: theme, width: '220px', height: '25px', formatString: 'dd-MM-yyyy' });
+  $('#periodTo').jqxDateTimeInput({ theme: theme, width: '220px', height: '25px', formatString: 'dd-MM-yyyy' });
+  $("#workingHours").jqxNumberInput({ width: '250px', height: '25px', spinButtons: true });
+  //$('#timesheetOkBtn').jqxButton({theme: theme});
+  $('#timesheetSaveBtn').jqxButton({theme: theme});
+  $('#timesheetCancelBtn').jqxButton({theme: theme});
+  $('#timesheet').jqxButton({theme: theme});
+  $('#wrkingdayMon').jqxCheckBox({ theme: theme, width: '135px', checked: true });
+  $('#wrkingdayTue').jqxCheckBox({ theme: theme, width: '135px', checked: true });
+  $('#wrkingdayWed').jqxCheckBox({ theme: theme, width: '135px', checked: true });
+  $('#wrkingdayThur').jqxCheckBox({ theme: theme, width: '135px', checked: true });
+  $('#wrkingdayFri').jqxCheckBox({ theme: theme, width: '135px', checked: true });
+  $('#wrkingdaySat').jqxCheckBox({ theme: theme, width: '135px', checked: true });
+  $('#wrkingdaySun').jqxCheckBox({ theme: theme, width: '135px', checked: true });
+  $("#Timein").jqxInput({placeHolder:"00:00", theme: theme, height: '25px',width: '150px'});
+  $("#Timeout").jqxInput({placeHolder:"00:00", theme: theme, height: '25px',width: '150px'});
+
+  $('#overtimeFormula').jqxDropDownList({theme:theme,source: earningpayCodeDataSource,
+                                         selectedIndex:-1,width: '150px',height:'20px',
+                                         dropDownHeight: '95px',displayMember: 'payCode',valueMember: 'payCode'});
+  $("#overtimeFormularDescript").jqxInput({placeHolder:"Formular Name", theme: theme, height: '25px',width: '200px'});
+
+  $("#Hours").jqxNumberInput({ width: '150px', height: '25px', spinButtons: true });
+  $("#overtimeRate").jqxInput({placeHolder:"Rate", theme: theme, height: '25px',width: '200px'});
+
+  $("#overtimePreviewBtn").jqxButton({theme:theme});
+  $("#overtimeBtn").jqxButton({theme:theme});
+  $('#overtimeSaveBtn').jqxButton({theme:theme});
+  $('#overtimeCancelBtn').jqxButton({theme:theme});
+  $("#Cancel").jqxButton({ theme: theme });
+  $("#Save").jqxButton({ theme: theme });
+  $('#addItemtoPayment').jqxButton({theme: theme});
+  $('#finishBtn').jqxButton({theme: theme});
+  $('#refreshList').jqxButton({theme: theme});
+
+  $('#overtimeFormula').on('select',function(event){
+      if(event.args){
+          var index = $('#overtimeFormula').jqxDropDownList('selectedIndex');
+          $("#overtimeFormularDescript").val(earningpayCodeDataSource.records[index].Description);
+          $("#overtimeRate").val(earningpayCodeDataSource.records[index].payRate + '% of Basic Pay /Hour');
+      }
+  });
+
+  $('#overtimePreviewBtn').click(function(){
+
+          //$('#previewResultsPanel').val("Total overtime pay:" + "");
+          //put the logic for calculating the Overtime Pay here and output to the usrr
+          console.log("Total overtime pay:" );
+  });
+
+  $('#overtimeSaveBtn').click(function(){
+
+    //if(createRole === true){
+
+      _glfunctionInvoked ="overtimeSaveBtn";
+      _glcontroller="Settings";
+
+      //console.log("overtime save button clicked");
+      var record = {EmpID:$("#EmpID").val(),overtimeHours:$("#Hours").val(),payCode:$('#overtimeFormula').val()};
+      console.log("EmpId: " + record.EmpID);
+      console.log("Overtime: " + record.overtimeHours);
+      console.log("PayCode: " + record.payCode);
+
+      _addNewRecord(record,_glcontroller);
+
+    //}else {
+     // _notificationMessage("error","Permission denied! You have insufficient rights to complete this action");
+    //}
+
+
+
+  });
+
+  $('#Timein').on('change',function(event){
+
+      var timein = $('#Timein').val();
+
+      var isNumber = /^\d+$/.test(timein);
+
+      if((isNumber)&&(timein.length == 4)&&(timein >= 0)&&(timein <= 2359)){
+
+           console.log("input validation.Valid digit?: " + isNumber);
+
+           if(timein <= 1200){
+
+             console.log("AM hours");
+             var x1 = timein.substring(0,timein.length -2);
+             var x2 = timein.substring(2,timein.length);
+             $('#Timein').val(x1 + ":" + x2 + ":" + "00" + " " + "AM");
+
+           }else{
+
+              console.log("PM hours");
+             var x1 = timein.substring(0,timein.length -2);
+             var x2 = timein.substring(2,timein.length);
+             $('#Timein').val(x1 + ":" + x2 + ":" + "00" + " " + "PM");
+           }
+
+
+      }else{
+          console.log("input validation.Valid digit?: " + false);
+      }
+
+
+  });
+
+  $('#Timeout').on('change',function(){
+
+      var timeout = $('#Timeout').val();
+
+      var isNumber = /^\d+$/.test(timeout);
+
+      if((isNumber)&&(timeout.length == 4)&&(timeout >= 0)&&(timeout <= 2359)){
+
+           console.log("input validation.Valid digit?: " + isNumber);
+
+           if(timeout<=1200){
+
+             console.log("AM hours");
+             var x1 = timeout.substring(0,timeout.length -2);
+             var x2 = timeout.substring(2,timeout.length);
+             $('#Timeout').val(x1 + ":" + x2 + ":" + "00" + " " + "AM");
+
+           }else{
+
+              console.log("PM hours");
+             var x1 = timeout.substring(0,timeout.length -2);
+             var x2 = timeout.substring(2,timeout.length);
+             $('#Timeout').val(x1 + ":" + x2 + ":" + "00" + " " + "PM");
+           }
+
+
+      }else{
+          console.log("input validation.Valid digit?: " + false);
+      }
+  });
+
+  $("#timesheetSaveBtn").click(function(){
+   
+            _glfunctionInvoked ="timesheetSaveBtn";
+            _glcontroller = "Settings";
+
+            var  dataRecord ={EmpID:$("#EmpID").val(),Timein:$('#Timein').val(),Timeout: $('#Timeout').val()};
+
+            _addNewRecord(dataRecord,_glcontroller);
+
+  });
+
+  $('#timesheet').click(function(){
+
+            //populate the timesheet datagrid
+
+            console.log("timesheet log button clicked");
+
+            var timesheetdata = {datatype: "json",
+                                 datafields:[{name:'Date',type:'string'},
+                                             {name:'Timein',type: 'decimal'},
+                                             {name:'Timeout',type:'decimal'},
+                                             {name:'overtimeHours',type:'decimal'}],
+                                id: 'EmpId',
+                                url:"/Settings/getattendancelog/" + $('#EmpID').val()
+                               };
+            var timesheetDataSource = new $.jqx.dataAdapter(timesheetdata);
+
+            _loadtimesheetGrid(timesheetDataSource);
+
+
+  });
+
+ $("#onPayroll").on('change', function (event) {
+             //var onPayroll = event.args.checked;
+              _glOnPayroll = event.args.checked;
+ });
+
+ $('#finishBtn').click(function(){
+
+    $("#detailspopupwindow").jqxWindow('close');
+});
+
+ $("#payCode").on('select',function(event){
+     console.log(payCodeDataSource);
+       if(event.args){
+
+            var index = $("#payCode").jqxDropDownList('selectedIndex');
+            $("#paycodeDescription").val(payCodeDataSource.records[index].Description);
+
+       }
+});
+
+$('#enterTimesheetData').click(function(){
+
+        _popupWin(theme, "Timesheet");
+        document.getElementById("timesheetWindow").style.visibility = "visible";
+
+});
+
+$('#overtimeBtn').click(function(){
+
+          _popupWin(theme, "overtime");
+           document.getElementById("overtimeWindow").style.visibility = "visible";
+});
+
+$('#refreshList').click(function(){
+
+  _populatePaymentList($("#EmpID").val());
+
+  document.getElementById('detailgrid').style.visibility = 'visible';
+
+ });
+
+
+$('#addItemtoPayment').click(function(){
+
+   var row = {EmpID: $('#EmpID').val(), payrollRunDate: CurrentDate(), PayrollCode: 'PAY-'+ $("#EmpID").val()};
+              
+   //_addNewRecord(row,"Payroll");
+           
+   var paymentrec = {id:              $('#payCode').val(),
+                     gradeName:       $("#empGroup").val(),
+                     empNumber:       $('#EmpID').val(),
+                     actualPayAmount: $("#Amount").val() };
+
+   _createPayment(paymentrec);
+
+    var DateTimeNow = CurrentDate();
+
+});
+
+
+$("#Save").click(function () {
+
+            _glcontroller = "Payroll";
+
+            var row = { EmpID: $("#EmpID").val(),
+                overtimeHours: parseInt($("#overtimeHours").jqxNumberInput('decimal')),
+                insuranceBill: parseFloat($("#insuranceBill").jqxNumberInput('decimal')),
+                salaryAdvanceDeduction: parseFloat($("#salaryAdvanceDeduction").jqxNumberInput('decimal')),
+                PayrollCode: 'PAY-'+ $("#EmpID").val()
+            };
+
+            var rowID = $('#jqxgrid').jqxGrid('getrowid', editrow);
+            //alert(row.Salary);
+
+            $("#popupwindow").jqxWindow('hide');
+
+            _deleteRecord(row,_glcontroller);
+
+
+});
+
+  var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+      if (value < 20) {
+      return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #ff0000;">' + value + '</span>';
+     }
+     else {
+         return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #008000;">' + value + '</span>';
+          }
+    }
+
+    var dataAdapter = new $.jqx.dataAdapter(source);
+
+    _createFormElements(_winID, theme, dataAdapter);
+
+});
+
+</script>
+
+<div></div>
+<div>
+    <div id="jqxgrid"></div>
+</div>
+
+
+ <div id="popupwindow" style="overflow: hidden";>
+           <div>Edit</div>
+            <div style="overflow: hidden;">
+              <table>
+                    <tr>
+                        <td align="right">ID:</td>
+                        <td align="left"><input id="EmpID" type="text" /></td>
+                    </tr>
+               @*      <tr>
+                        <td align="right">Employee:</td>
+                        <td align="left"><div id="empName"></div></td>
+                    </tr>*@
+                     <tr>
+                        <td align="right">Overtime Hours:</td>
+                        <td align="left"><div id="overtimeHours"></div></td>
+                    </tr>
+                    <tr>
+                        <td align="right">Insurance Bill:</td>
+                        <td align="left"><div id="insuranceBill"></div></td>
+                    </tr>
+                     <tr>
+                        <td align="right">Salary Advance:</td>
+                        <td align="left"><div id="salaryAdvanceDeduction"></div></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><div style="margin-left: 2px;">
+                        <div id="onPayroll">On Payroll</div>
+                       </div></td>
+
+                    </tr>
+                     <tr>
+                        <td align="right"></td>
+                        <td style="padding-top: 10px;" align="right"><input style="margin-right: 5px;" type="button" id="Save" value="Save" /><input id="Cancel" type="button" value="Cancel" /></td>
+                    </tr>
+                </table>
+            </div>
+     </div>
+
+<div id="detailspopupwindow" style="overflow: hidden";>
+    <div>Deductions/Earning</div>
+    <div style="overflow: hidden;">
+        <table>
+            <tr>
+                <td><span style="margin-left:10px">Employee:</span></td>
+                <td><input id="emp" class="text-input" /></td>
+                <td><span class="inputbox-spacing"><input id="empGroup"/></span></td>
+            </tr>
+            <tr>
+              <td><div class="inputbox-spacing"></div></td>
+              <td colspan="2"></td>
+            </tr>
+            <tr>
+                <td><span style="margin-left: 10px;">Pay code:</span></td>
+                <td><div id="payCode"></div></td>
+                <td><input id="paycodeDescription" class="text-input" /></td>
+            </tr>
+            <tr>
+              <td><div class="inputbox-spacing"></div></td>
+              <td colspan="2"></td>
+            </tr>
+            <tr>
+                <td><span style="margin-left: 10px;">Deduction/Earning amount:</span></td>
+                <td><div id="Amount"></div></td>
+                <td></td>
+            </tr>
+            <tr>
+              <td><div class="inputbox-spacing"></div></td>
+              <td colspan="2"></td>
+            </tr>
+        </table>
+     <div style="float:left;">
+          <table>
+            <tr>
+                <td><div style="margin-left: 10px;"><input type="button" value="Timesheet data" id="enterTimesheetData"/></div></td>
+                <td></td>
+            </tr>
+          </table>
+    </div>
+    <div style="float:right;">
+        <table>
+            <tr>
+              <td><input style="margin-right: 10px;float: right;" type="button" id="overtimeBtn" value="Overtime" /></td>
+              <td></td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="margin-left: 10px;padding-top: 35px;">
+        <div id="sysdefinedFormulaChk">Use system predefined values to compute Deduction/Earning Amount</div>
+    </div>
+    <div style="margin-top: 10px;"></div>
+        <div style="float:left;margin-left: 10px;">
+        <table>
+            <tr>
+               <input type="button" value="Refresh list" id="refreshList" />
+            </tr>
+        </table>
+        </div>
+        <table style="float:right;margin-right: 10px;">
+            <tr>
+                <td><input type="button" value="Add" id="addItemtoPayment" /></td>
+                <td><input type="button" value="Finish" id="finishBtn" /></td>
+            </tr>
+        </table>
+
+        <div style="margin-left:10px;">
+            <div id="detailgrid"></div>
+        </div>
+    </div>
+
+</div>
+
+<div id="timesheetWindow" style="overflow: hidden";>
+   <div>Timesheet</div>
+    <div>
+      <div style="padding-top:10px;"></div>
+       <table>
+           <tr>
+               <td><div style="margin-left: 10px;padding-top: 5px;">Report period:</div></td>
+               <td><div style="margin-left:10px;"><div id="periodFrom"></div></div></td>
+               <td><div id="periodTo"></div></td>
+           </tr>
+           <tr>
+               <td><div style="margin-left: 10px;">Working hours:</div></td>
+               <td><div style="margin-left: 10px;"><div id="workingHours"></div></td>
+               <td>Hour(s)/day</td>
+           </tr>
+           <tr>
+               <td><div style="margin-left: 10px;">Working days:</div></td>
+               <td><div id="wrkingdayMon" style="margin-left:5px;">Mon</div></td>
+               <td><div id="wrkingdayTue" style="margin-left:-175px;">Tue</div></td>
+               <td><div id="wrkingdayWed" style="margin-left:-320px;">Wed</div></td>
+               <td><div id="wrkingdayThur" style="margin-left:-255px;">Thur</div></td>
+               <td><div id="wrkingdayFri" style="margin-left:-190px;">Frid</div></td>
+               <td><div id="wrkingdaySat" style="margin-left:-115px;">Sat</div></td>
+               <td><div id="wrkingdaySun" style="margin-left:-70px;">Sun</div></td>
+           </tr>
+           <tr>
+               <td><div style="margin-left:10px;padding-top: 5px;">Time in:</div></td>
+               <td><div><input id="Timein"/></div></td>
+
+           </tr>
+           <tr>
+               <td><div style="margin-left:10px;">Time out:</div></td>
+               <td><div><input id="Timeout" /></div></td>
+           </tr>
+       </table>
+      <div style="padding-top: 15px;margin-left:10px;">
+          <input style="margin-left: 10px;" type="button" id="timesheet" value="Timesheet log" />
+          <input style="margin-right: 10px; float: right;" type="button" id="timesheetCancelBtn" value="Cancel" />
+          <input style="margin-right: 10px; float: right;"type="button" id="timesheetSaveBtn" value="Save" />
+      </div>
+
+       <div style="padding-top: 10px;margin-left:10px;">
+           <div id="timesheetGrid"></div>
+       </div>
+
+       <div style="float: right; margin-left:10px;">
+         <table>
+            <tr>
+              <td>
+               <div style="padding-top: 20px;">
+
+
+                </div>
+              </td>
+            </tr>
+         </table>
+        </div>
+    </div>
+</div>
+
+<div id="overtimeWindow" style="overflow: hidden";>
+   <div>Overtime</div>
+   <div>
+    <div style="padding-top:10px;"></div>
+     <table>
+          <tr>
+             <td><div style="margin-left: 10px;padding-top: 5px;">Calculation method:</div></td>
+             <td><div id="overtimeFormula"></div></td>
+             <td><input id="overtimeFormularDescript" /></td>
+          </tr>
+          <tr>
+              <td><div style="margin-left: 10px;padding-top: 5px;">Hours:</div></td>
+              <td><div id="Hours"></div></td>
+              <td><input id="overtimeRate" /></td>
+          </tr>
+     </table>
+     <div style="padding-top:60px;">
+         <input style="margin-left: 10px; float: left;" type="button" id="overtimePreviewBtn" value="Preview overtime pay" />
+         <input style="margin-right: 10px; float: right;" type="button" id="overtimeCancelBtn" value="Cancel" />
+         <input style="float: right;margin-right: 10px;" type="button" id="overtimeSaveBtn" value="Save" />
+     </div>
+     <div id="previewResultsPanel"></div>
+   </div>
+</div>
+
+<div id="messageNotification" style="overflow:hidden;">
+     <div></div>
+</div>

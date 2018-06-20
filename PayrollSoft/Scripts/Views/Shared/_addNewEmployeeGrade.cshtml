@@ -1,0 +1,79 @@
+﻿   <div>
+      <div>
+           <div>
+               <table>
+                       <tr>
+                           <td><div style="margin-top:25px; padding-left: 8px;">Grade ID:</div></td>
+                           <td><input style="margin-top:25px; margin-left: 8px;" id="gradeID" /></td>
+                           <td><div style="margin-top:25px;padding-left:8px;">Grade Name:</div></td>
+                           <td><input style="margin-top: 25px;margin-left:8px;" id="gradeName" /></td>
+                        </tr>
+                      
+                         <tr>
+                            <td><div style="margin-top:15px; padding-left: 8px;">Salary:</div></td>
+                            <td><div style="margin-top: 15px; margin-left: 8px;" id="wages"></div></td>
+                            <td><div style="margin-top:15px; padding-left: 8px;">Allowance Code:</div></td>
+                            <td><div style="margin-top: 15px; margin-left: 8px;" id="allowanceCode"></div></td>
+                         </tr>
+                          <tr>
+                            <td><div style="margin-top:10px; padding-left: 8px;">Med. Insurance Provider:</div></td>
+                            <td><div style="margin-top: 10px; margin-left: 8px;"id="insuranceCode"></div></td>
+                            <td><div style="margin-top:10px; padding-left: 8px;">Insurance Category:</div></td>
+                            <td>
+                              <div style="margin-top:24px; margin-left: 8px;" id="insuranceCategory"></div>
+                              <!--<div style="margin-top: 15px; margin-left: 8px;" id="insuranceCategory"></div>
+                              <input style="margin-top:25px; margin-left: 8px;" id="insuranceCategory" />
+                              <input style="margin-right: 5px;" type="button" id="InsuranceCategoryList" value="categoryList" />-->
+                            </td>
+                          </tr>
+                           <tr>
+                            <td><div style="margin-top:10px; padding-left: 8px;">PAYE code:</div></td>
+                            <td><div style="margin-top: 10px; margin-left: 8px;"id="payeThreshold"></div></td>
+                            <td><div style="margin-top:10px; padding-left: 8px;">Overtime rate/hour:</div></td>
+                            <td><div style="margin-top: 15px; margin-left: 8px;" id="overtimeRate"></div></td>
+                          </tr>
+                          <tr>
+                            <td><div style="margin-top:10px; padding-left: 8px;">Payment frequency:</div></td>
+                            <td><div style="margin-top: 10px; margin-left: 8px;" id="paymentFreq"></div></td>
+                            <td></td>
+                            <td></td>
+                          </tr>
+                          <tr>
+                            <td><div style="margin-top:10px; padding-left: 8px;">Pension Code:</div></td>
+                            <td><div style="margin-top: 10px; margin-left: 8px;" id="pensionCode"></div></td>
+                            <td></td>
+                            <td></td>
+                          </tr>
+                       
+                          <tr>
+                             <td align="right"></td>
+                             <td align="right"></td>
+                             <td align="right"></td>
+                             <td style="padding-top: 10px;" align="right">
+                                <input style="margin-right: 5px;" type="button" id="Save" value="Save" /><input id="Cancel" type="button" value="Cancel" />
+                              </td>
+                          </tr>
+                  </table>
+                    <div id="jqxExpander">
+                         <div>
+                        
+                          <div id="jqxgrid"></div>
+                  
+                        </div>
+                   </div>
+           </div>
+      </div>
+   </div>
+
+<div id="InsuranceCatpopWin">
+<div>
+  <div>
+     <div>
+         <div id="jqxgridInsuranceCatList"></div>
+     </div>
+    </div>
+</div>
+</div>
+<div id="messageNotification" style="overflow:hidden;">
+     <div></div>
+</div>

@@ -1,0 +1,17 @@
+@{
+    ViewBag.Title = "Options";
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript">
+ $(document).ready(function(){
+     
+     $('#jqxTabs').jqxTabs({ width: '500', height: 200, position: 'top', theme: theme });
+ });
+</script>
+
+@Html.Partial("_SeveranceSettings")

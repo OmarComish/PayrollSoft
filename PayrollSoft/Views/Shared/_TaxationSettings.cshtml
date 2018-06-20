@@ -1,0 +1,144 @@
+<div id='jqxWidget' style="margin-top: 2px;">
+  <div id='jqxTabs'>
+        <ul>
+            <li style="margin-left: 30px;">General</li>
+            <li>1st Threshold</li>
+            <li>2nd Threshold</li>
+            <li>3rd Threshold</li>
+            <li>4th Threshold</li>
+         </ul>
+         <div>
+            <form id="taxation-form">
+             <table style="margin-top: 30px; margin-left: 5px; width: '70%';">
+                 <tr>
+                    <td><span style="margin-left:10px">Code:</span></td>
+                    <td><input id="TaxName" class="text-input" /></td>
+                 </tr>
+                 <tr>
+                   <td colspan="2"><div class="inputbox-spacing"></div></td>
+                 </tr>
+                 <tr>
+                    <td><span style="margin-left: 10px;">Description:</span></td>
+                    <td><input id="Descript" class="text-input" /></td>
+                 </tr>
+                  <tr>
+                    <td colspan="2"><div class="inputbox-spacing"></div></td>
+                  </tr>
+                  <tr>
+                     <td><span style="margin-left:10px;">Date Issued:</span></td>
+                     <td><div class="text-input"><div id="dateIssued"></div></div></td>
+                  </tr>
+                  <tr>
+                    <td colspan="2"><div class="inputbox-spacing"></div></td>
+                  </tr>
+                  <tr>
+                      <td><span style="margin-left:10px;">Active:</span></td>
+                      <td><span class="text-input"><div id="RateStatus"></div></span></td>
+                  </tr>
+              </table>
+            </form>
+         </div>
+         <div>
+            <table style="margin-top: 30px; margin-left: 5px;">
+                <tr>
+                    <td><div style="margin-left:10px;">1st Threshold min amount:</div></td>
+                    <td><div id="firstThresholdMinAmt"></div></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><div class="inputbox-spacing"></div></td>
+                </tr>
+                <tr>
+                    <td><div style="margin-left:10px;">1st Threshold max amount:</div></td>
+                    <td><div id="firstThresholdMaxAmt"></div></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><div class="inputbox-spacing"></div></td>
+                </tr>
+                <tr>
+                    <td><span style="margin-left: 10px;">Rate:</span></td>
+                    <td><div id="firstThresholdRate"></div></td>
+                </tr>
+            </table>
+         </div>
+         <div>
+            <table style="margin-top: 30px; margin-left: 5px;">
+                <tr>
+                  <td><div style="margin-left:10px;">2nd Threshold min amount:</div></td>
+                  <td><div id="secondThresholdMinAmt"></div></td>
+                </tr>
+                <tr>
+                  <td colspan="2"><div class="inputbox-spacing"></div></td>
+                </tr>
+                <tr>
+                  <td><div style="margin-left:10px;">2nd Threshold max amount:</div></td>
+                  <td><div id="secondThresholdMaxAmt"></div></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><div class="inputbox-spacing"></div></td>
+                </tr>
+                <tr>
+                  <td><span style="margin-left: 10px;">Rate:</span></td>
+                  <td><div id="secondThresholdRate"></div></td>
+                </tr>
+            </table>         
+         </div>
+         <div>
+           <table style="margin-top: 30px; margin-left: 5px;">
+              <tr>
+                <td><div style="margin-left:10px;">3rd Threshold min amount:</div></td>
+                <td><div id="thirdThresholdMinAmt"></div></td>
+              </tr>
+              <tr>
+                <td colspan="2"><div class="inputbox-spacing"></div></td>
+              </tr>
+              <tr>
+                <td><div style="margin-left:10px;">3rd Threshold max amount:</div></td>
+                <td><div id="thirdThresholdMaxAmt"></div></td>
+              </tr>
+              <tr>
+                <td colspan="2"><div class="inputbox-spacing"></div></td>
+              </tr>
+              <tr>
+                <td><span style="margin-left: 10px;">Rate:</span></td>
+                <td><div id="thirdThresholdRate"></div></td>
+              </tr>
+           </table>
+         </div>
+         <div>
+           <table style="margin-top: 30px; margin-left: 5px;">
+              <tr>
+                <td><div style="margin-left:10px;">4th Threshold min amount:</div></td>
+                <td><div id="fourthThresholdMinAmt"></div></td>
+              </tr>
+              <tr>
+                <td colspan="2"><div class="inputbox-spacing"></div></td>
+              </tr>
+              <tr>
+                <td><div style="margin-left:10px;">4th Threshold max amount:</div></td>
+                <td><div id="fourthThresholdMaxAmt"></div></td>
+              </tr>
+              <tr>
+                <td colspan="2"><div class="inputbox-spacing"></div></td>
+              </tr>
+              <tr>
+                <td><span style="margin-left: 10px;">Rate:</span></td>
+                <td><div id="fourthThresholdRate"></div></td>
+              </tr>
+           </table>
+         </div>
+
+  </div>
+  <div style="float: right; margin-top: 2px;">
+    <table style="margin-top: 10px; float: right;">
+       <tr>
+          <!--<td><input type="button" value= "Save settings" id="SaveTaxBtn" /></td>-->
+          <a class="btn icon-btn btn-success" href="#" id="SaveTaxBtn"><span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle text-success"></span>Save</a>
+      </tr>
+   </table>
+   </div>
+     <div id="messageNotification" style="overflow:hidden;">
+         <div></div>
+    </div>
+
+</div>
+

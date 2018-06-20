@@ -1,0 +1,258 @@
+﻿@model IEnumerable<PayrollSoft.Models.Department>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<!--<h2>Index</h2>-->
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript">
+
+    function _createFormElements(theme, title, dataAdapter, popupWinTitle) {
+
+        $('#window').jqxWindow({
+            theme: theme,
+            resizable: true,
+            width: 410,
+            height: 370,
+            minWidth: 300,
+            minHeight: 300,
+            title: title,
+            initContent: function () {
+                $("#jqxgrid").jqxGrid({
+
+                    width: 400,
+                    source: dataAdapter,
+                    theme: theme,
+                    pageable: true,
+                    autoheight: true,
+                    sortable: true,
+                    altrows: true,
+                    enabletooltips: true,
+                    editable: false,
+                    selectionmode: 'none',
+                    columns: [
+                         { text: 'Department Name', datafield: 'DeptName', width: 225 },
+                         { text: 'Department ID', datafield: 'DeptID', width: 100 },
+                         { text: 'Action', datafield: 'Edit', columntype: 'button', cellsrenderer: function () {
+                             return "Delete";
+                         }, buttonclick: function (row) {
+                             editrow = row;
+                             var offset = $("#jqxgrid").offset();
+                             $("#popupwindow").jqxWindow({ position: { x: parseInt(offset.left) + 60, y: parseInt(offset.top) + 60} });
+                             var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
+                             $("#deptID").val(dataRecord.DeptID);
+                             $("#Dept").val(dataRecord.DeptName);
+                             var title = 'Confirm Delete';
+                             //show the popup Window
+                             _popupWin(theme, title);
+
+                         }
+                         }
+                        ]
+                });
+
+            }
+        });
+
+        $('#window').jqxWindow('focus');
+    }
+
+    function _popupWin(theme, title) {
+
+        $("#popupwindow").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 260,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#Delete"),
+            cancelButton: $("#Cancel"),
+            modalOpacity: 0.01
+
+        });
+
+        $("#popupwindow").jqxWindow('open');
+
+    }
+
+    function _updateData(row, rowid) {
+
+        alert('update function reached');
+        row.DeptID = rowid;
+
+        $.ajax({
+            cache: false,
+            datatype: "json",
+            url: '/Department/Edit',
+            data: row,
+            type: 'POST',
+            success: function (data, status, xhr) {
+                alert(status);
+                //commit(true);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+                //commit(false);
+            }
+        });
+    }
+
+    function _deleteRecord(rowid) {
+
+        alert("Delete record?");
+        $.ajax({
+            cache: false,
+            datatype: "jsonp",
+            url: "/Department/Delete/"+ rowid,
+            type: "POST",
+            success: function (data, status, xhr) {
+                alert(status);
+                $("#jqxgrid").jqxGrid('updatebounddata');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+                //commit(false);
+            }
+
+
+
+        });
+    }
+
+    $(document).ready(function () {
+
+        var theme = getDemoTheme();
+        var title = 'Department Details';
+        var popupWinTitle = 'Edit';
+        var url = '/Department/GetDepartments';
+        var editrow = -1;
+
+
+        //data source for the grid control widget
+        var dataSource = {
+
+            datatype: "json",
+            datafields: [
+                               { name: 'DeptName', type: 'string' },
+                               { name: 'DeptID', type: 'string' }
+                       ],
+            id: 'DeptID',
+            url: url,
+            updaterow: function (rowid, rowdata, commit) {
+
+                //alert('Updaterow function reached');
+                //rowdata.DeptID = rowid;
+                $.ajax({
+                    cache: false,
+                    datatype: "json",
+                    url: '/Department/Edit',
+                    data: rowdata,
+                    type: 'POST',
+                    success: function (data, status, xhr) {
+                        alert(status);
+                        //commit(true);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert(errorThrown);
+                        //commit(false);
+                    }
+                });
+            }
+
+
+        };
+
+
+
+        $("#popupwindow").on('open', function () {
+            $("#Dept").jqxInput('selectAll');
+        });
+        $("#deptID").jqxInput({ theme: theme, height: '20px',disabled: true });
+        $("#Dept").jqxInput({ theme: theme, height: '20px',disabled: true });
+        $("#Cancel").jqxButton({ theme: theme });
+        $("#Delete").jqxButton({ theme: theme });
+
+        // update the edited row when the user clicks the 'Save' button.
+        $("#Delete").click(function () {
+
+            var row = { DeptID: $("#deptID").val(), Department: $("#Dept").val() };
+            var rowID = $('#jqxgrid').jqxGrid('getrowid', editrow);
+            //alert(row.DeptID);
+            $("#popupwindow").jqxWindow('hide');
+
+            _deleteRecord(row.DeptID);
+
+        });
+
+
+        var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+            if (value < 20) {
+                return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #ff0000;">' + value + '</span>';
+            }
+            else {
+                return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #008000;">' + value + '</span>';
+            }
+        }
+
+        var dataAdapter = new $.jqx.dataAdapter(dataSource);
+        /*
+        , {
+        downloadComplete: function (data, status, xhr) { },
+        loadComplete: function (data) { },
+        loadError: function (xhr, status, error) { }
+        }
+        */
+
+        //call the method to load the window
+
+        _createFormElements(theme, title, dataAdapter, popupWinTitle);
+
+    });
+
+</script>
+
+<div id="window">
+     <div>
+       <div id="windowHeader"></div>
+         <div>
+           <div id="jqxgrid"></div>
+         </div>
+       
+         
+     </div>
+     
+</div>
+  <div id="popupwindow" style="overflow: hidden";>
+           <div>Edit</div>
+            <div style="overflow: hidden;">
+              <table>
+                    <tr>
+                        <td align="right">Department:</td>
+                        <td align="left"><input id="Dept" /></td>
+                    </tr>
+                     <tr>
+                        <td align="right">ID:</td>
+                        <td align="left"><input id="deptID" /></td>
+                    </tr>
+                     <tr>
+                        <td align="right"></td>
+                        <td style="padding-top: 10px;" align="right"><input style="margin-right: 5px;" type="button" id="Delete" value="Delete" /><input id="Cancel" type="button" value="Cancel" /></td>
+                    </tr>
+                </table>
+            </div>
+     </div>

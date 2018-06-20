@@ -1,0 +1,534 @@
+@{
+    ViewBag.Title = "Index";
+}
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/implement-ui-widget-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript">
+
+function _loadprioritycodeGrid(dataAdapter){
+
+   $("#prioritycodesdataGrid").jqxGrid({
+        width: 625,
+        source: dataAdapter,
+        theme: theme,
+        pageable: true,
+        autoheight: true,
+        sortable: true,
+        selectionmode: 'singlerow',
+        columns: [{text:'Code',datafield:'PriorityCode',width:100},
+                  {text:'Description',datafield:'Description',width:370},
+                  {text: '', datafield: 'Edit', width: 77, columntype: 'button', cellsrenderer: function(){
+                            return 'Edit';
+                   }, buttonclick: function(row){
+
+                      editrow = row;
+                      var dataRecord = $("#prioritycodesdataGrid").jqxGrid('getrowdata', editrow);
+
+                      document.getElementById('prioritycodeSave').value = "Save";
+                      _glfunctionInvoked ="prioritycodeEdit";
+
+                      $("#prioritycodeId").val(dataRecord.PriorityCode);
+                      $("#priorityCodeDescription").val(dataRecord.Description);
+                   }
+                  },
+                  {text: '', datafield: 'Delete', width: 77, columntype: 'button', cellsrenderer: function(){
+                             return 'Delete';
+                   }, buttonclick: function(row){
+
+                        _glfunctionInvoked = "prioritycodeDelete";
+                    
+                        document.getElementById('deleteRecDialog').style.visibility = "visible";
+
+                        editrow = row;
+                        var dataRecord = $("#prioritycodesdataGrid").jqxGrid('getrowdata', editrow);
+                        $("#prioritycodeId").val(dataRecord.PriorityCode);
+
+                        _deleterecordDialog("sample text");
+                   }
+                  }
+                ]
+   });
+}
+
+function _queryDataforGrid(){
+
+   var source = {
+                datatype: "json",
+                datafields: [
+                               {name: 'payCode', type:'string'},
+                               {name: 'payType', type:'string'},
+                               {name: 'payCodeDescription', type: 'string'},
+                               {name: 'payTypeDescription', type: 'string'},
+                               {name: 'groupEligible', type: 'string'},
+                               {name: 'groupEligibleDescription', type: 'string'},
+                               {name: 'debitGL', type: 'string'},
+                               {name: 'debitGlDescription', type: 'string'},
+                               {name: 'payRate', type: 'decimal'},
+                               {name: 'rateDerivedSource', type: 'string'},
+                               {name: 'actualPayAmount', type: 'decimal'},
+                               {name: 'payMethod', type: 'string'},
+                               {name: 'timesheetEntryAllowed', type: 'integer'},
+                               {name: 'paidAsEarnings', type: 'integer'},
+                               {name: 'taxableIncome', type: 'integer'},
+                               {name: 'priority', type: 'integer'},
+                               {name: 'higherPrecedenceFactor', type:'integer'}
+                             ],
+                id: 'payCode',
+                url:'/Earning/getEarningPayments'
+   };
+
+   return new $.jqx.dataAdapter(source);
+
+}
+
+function _clearInputFields(){
+  
+    $("#payCode").val("");
+    $("#payType2").val("");
+    $("#paycodeDescription").val("");
+    $("#payTypeDescription").val("");
+    $("#groupEligible").val("");
+    $("#groupEligibleDescription").val("");
+    $("#debitGL").val("");
+    $("#debitGlDescription").val("");
+    $("#payRate").val("");
+    $("#rateDerivedSource").val("");
+    $("#payMethod").val("");
+
+}
+
+function _loadearningpaymentGrid(dataAdapter){
+   
+    $("#earningpaymentsdataGrid").jqxGrid({
+        width: 790,
+        source: dataAdapter,
+        theme: theme,
+        pageable: true,
+        autoheight: true,
+        sortable: true,
+        selectionmode: 'singlerow',
+        columns :[
+                   {text: 'Pay Code', datafield:'payCode', width:100},
+                   {text: 'Description', datafield: 'payCodeDescription', width: 200},
+                   {text: 'Rate derived source', datafield:'rateDerivedSource', width:120},
+                   {text: 'Group eligible', datafield:'groupEligible', width:100},
+                   {text: 'Pay method', datafield:'payMethod', width:100},
+                   {text: 'Action', datafield: 'Details',columntype:'button',cellsrenderer: function(){
+                             return 'Details';
+                        },buttonclick: function(row){
+
+                           editrow = row;
+                           var dataRecord = $("#earningpaymentsdataGrid").jqxGrid('getrowdata', editrow);
+                           console.log("row id: " + row);
+                           $('#payCode').val(dataRecord.payCode);
+                           $('#paycodeDescription').val(dataRecord.payCodeDescription);
+                           $('#payType2').val(dataAdapter.records[row].payType);
+                           $('#payTypeDescription').val(dataAdapter.records[row].payTypeDescription);
+                           $('#groupEligible').val(dataRecord.groupEligible);
+                           $('#groupEligibleDescription').val(dataAdapter.records[row].groupEligibleDescription);
+                           $("#debitGL").val(dataAdapter.records[row].debitGL);
+                           $("#debitGlDescription").val(dataAdapter.records[row].debitGlDescription);
+                           $("#priority").val(dataAdapter.records[row].priority);
+                           $("#priorityDescription2").val(dataAdapter.records[row].priorityCodeDescription);
+                           $("#payRate").val(dataAdapter.records[row].payRate);
+                           $("#rateDerivedSource").val(dataRecord.rateDerivedSource);
+                           $("#timesheetEntryAllowedChk").val(dataAdapter.records[row].timesheetEntryAllowedChk);
+                           $("#paidAsEarningsChk").val(dataAdapter.records[row].paidAsEarnings);
+                           $("#taxableIncomeChk").val(dataAdapter.records[row].taxableIncome);
+                           $("#actualPayAmount").val(dataAdapter.records[row].actualPayAmount);
+                           $("#precedenceFactor").val(dataAdapter.records[row].higherPrecedenceFactor);
+                           $('#payMethod').val(dataAdapter.records[row].payMethod);
+
+
+                           $("#earningPaymentsWindow").jqxWindow('close'); 
+                           
+                          ///<SUMMARY>
+                          /// the below input fields are disabled to avoid changing the Primary Key fields
+                          /// The deleteEarningBtn is enabled when this action is invoked.
+                          ///<SUMMARY>
+
+                          $("#payCode").jqxInput({ disabled: true});
+                          $("#payType2").jqxInput({ disabled: true});
+                          $("#paycodeDescription").jqxInput({disabled: true});
+                          $("#payTypeDescription").jqxInput({disabled: true});
+                          $('#deleteEarningBtn').jqxButton({disabled: false});
+
+
+                    }
+                   }
+        ]
+    });
+
+    $("#earningpaymentsdataGrid").jqxGrid('updatebounddata');
+}
+
+function _earningsWindow(title, data){
+
+    $('#earningPaymentsWindow').jqxWindow({
+        theme: theme,
+        resizable: true,
+        width: 900,
+        minHeight: 350,
+        isModal: true,
+        autoOpen: false,
+        title: title,
+        cancelButton: $('#viewEarningOKBtn'),
+        modalOpacity: 0.01,
+        initContent: function(){
+
+            _loadearningpaymentGrid(data);
+        }
+    });
+
+     $("#earningPaymentsWindow").jqxWindow('open'); 
+}
+
+function _priorityCodeWin(title, data){
+
+    $('#priorityCodeWindow').jqxWindow({
+        theme: theme,
+        resizable: true,
+        width: 650,
+        minHeight: 350,
+        isModal: true,
+        autoOpen: false,
+        title: title,
+        //okButton: $('#prioritycodeSave'),
+        cancelButton: $('#prioritycodeOKBtn'),
+        modalOpacity: 0.01,
+        initContent: function(){
+
+            _loadprioritycodeGrid(data);
+        }
+    });
+
+     $("#priorityCodeWindow").jqxWindow('open');
+}
+
+$(document).ready(function(){
+
+       ///<summary>
+       /// _glcontroller holds the value Settings instead of Deduction
+       /// This is to avoid changing the code in the jscript-common-function.js file under
+       /// Later, during code reviews/Unit testing , Create an If branch section in the code to handle
+       /// method invocation from this view(Deduction) to handle deduction actions
+       ///</summary>
+
+       _getUserAccessRights();
+
+      _glcontroller = "Settings";
+      var theme = getDemoTheme();
+      var title = 'Earnings payment';
+
+
+      document.getElementById('priorityCodeWindow').style.visibility="hidden";
+      document.getElementById('earningPaymentsWindow').style.visibility = "hidden";
+      document.getElementById('deleteRecDialog').style.visibility = "hidden";
+
+
+      var _jobGrade = { datatype: 'json',
+                        datafields: [{ name: 'GradeId', type: 'string' },
+                                     { name: 'GradeName', type: 'string'}],
+                         id: 'GradeId',
+                         url: '/EmployeeGrade/GetGrades' };
+
+     var jobGradeDataSource = new $.jqx.dataAdapter(_jobGrade);
+
+     var source ={datatype: 'json',
+                  datafields:[{name:'PriorityCode',type: 'string'},{name:'Description',type: 'string'}],
+                  id: 'PriorityCode',
+                  url: '/Settings/getPriorityCodes'};
+
+     var dataAdapter = new $.jqx.dataAdapter(source);
+
+      $('#jqxTabs').jqxTabs({ height: '450px', width: '100%', theme: theme });
+      $("#payCode").jqxInput({placeHolder: 'e.g ADVPay',theme: theme, height: '25px',width: '130px'});
+      $("#prioritycodeId").jqxInput({theme: theme, height: '25px',width: '130px'});
+      $("#payType2").jqxInput({placeHolder: 'e.g SAL',theme: theme, height: '25px',width: '130px'});
+
+      $("#groupEligible").jqxDropDownList({
+                              theme: theme, source:jobGradeDataSource,
+                              selectedIndex: -1, width: '130px', height: '25px',dropDownHeight: "80px",
+                              displayMember:"GradeId",valueMember:"GradeName" });
+
+     $("#precedenceFactor").jqxDropDownList({
+                              theme: theme, source:['Actual amount','Pay rate'],
+                              selectedIndex: -1, width: '130px', height: '25px',dropDownHeight: "50px"});
+
+    $("#debitGL").jqxDropDownList({ source:['draccgl','craccgl'],theme: theme, width: '130px', height: '25px',
+                                    selectedIndex: -1, dropDownHeight: '50px' });
+
+    $("#payMethod").jqxDropDownList({ source: ['Cash','Cheque','Other'], theme: theme, width: '130px',
+                                      height: '25px', selectedIndex: -1, dropDownHeight: '80px' });
+
+    $("#paycodeDescription").jqxInput({placeHolder:"Pay code description", theme: theme, height: '25px',width: '500px'});
+    $("#payTypeDescription").jqxInput({placeHolder:"Pay type description", theme: theme, height: '25px',width: '500px'});
+    $("#groupEligibleDescription").jqxInput({placeHolder:"Pay type description", theme: theme, height: '25px',width: '500px'});
+    $("#debitGlDescription").jqxInput({placeHolder:"GL Account name", theme: theme, height: '25px',width: '500px'});
+    $("#priorityDescription2").jqxInput({placeHolder:"Priority Description", theme: theme, height: '25px',width: '500px'});
+    $("#priorityCodeDescription").jqxInput({placeHolder:"Priority Description", theme: theme, height: '25px',width: '400px'});
+
+    $("#rateDerivedSource").jqxDropDownList({
+                   theme: theme, source:['HAL','TAL','FAL','SAL'],
+                   selectedIndex: -1, width: '130px', height: '25px',dropDownHeight: "100px"});
+
+    $("#payRate").jqxNumberInput({ width: '130px', height: '25px', symbol: '%', spinButtons: true });
+    $("#actualPayAmount").jqxNumberInput({ width: '250px', height: '20px', symbol: '', spinButtons: true });
+
+    $('#viewEarningOKBtn').jqxButton({ theme: theme });
+    $('#prioritycodeSave').jqxButton({theme: theme});
+    $('#prioritycodeOKBtn').jqxButton({theme: theme});
+    $('#earningspriorityCode').jqxButton({ theme:theme });
+    $('#deleteEarningBtn').jqxButton({theme: theme});
+    $('#payrateEdit').jqxButton({theme:theme});
+    $('#viewEarningsBtn').jqxButton({theme:theme});
+    $('#saveEarningsBtn').jqxButton({theme:theme});
+    $('#DeleteDialogBtn').jqxButton({theme:theme});
+    $('#CancelDialogBtn').jqxButton({theme:theme});
+
+    $("#timesheetEntryAllowedChk").jqxCheckBox({ theme: theme, width: '185px'});
+    $("#paidAsEarningsChk").jqxCheckBox({ theme: theme, width: '185px'});
+    $("#taxableIncomeChk").jqxCheckBox({ theme: theme, width: '185px'});
+
+    $('#deleteEarningBtn').jqxButton({disabled: true});
+
+    $("#priority").jqxDropDownList({placeHolder:'Payment priority', theme: theme, source:dataAdapter,
+                   selectedIndex: -1, width: '130px', height: '25px',dropDownHeight: "80px",
+                   valueMember: 'PriorityCode',displayMember:'PriorityCode'});
+
+    $("#priority").on('select',function(event){
+        if(event.args){
+            var index = $("#priority").jqxDropDownList('selectedIndex');
+            $("#priorityDescription2").val(dataAdapter.records[index].Description);
+        }
+    });
+
+    $("#debitGL").on('select',function(event){
+        if(event.args){
+
+           var index = $("#debitGL").jqxDropDownList('selectedIndex');
+
+           if(index === 0){
+              $("#debitGlDescription").val("Debit GL account");
+           } else {
+               $("#debitGlDescription").val("Credit GL account");
+           }
+        }
+    });
+
+     $("#groupEligible").on('select',function(event){
+         if(event.args){
+            var index = $("#groupEligible").jqxDropDownList('selectedIndex');
+             $("#groupEligibleDescription").val(jobGradeDataSource.records[index].GradeName)
+
+         }
+      });
+
+      $('#earningspriorityCode').click(function(){
+
+          title ="Priority Code";
+
+          //Unhide the priorityCodeWindow now..
+          document.getElementById('priorityCodeWindow').style.visibility="visible";
+
+         _priorityCodeWin(title,dataAdapter);
+
+      });
+
+    $('#prioritycodeSave').click(function(){
+        
+        if(__authorised("Earnings", userPrivilegdes, "Create") === true){
+
+              if (_glfunctionInvoked === "prioritycodeEdit"){
+
+                  _glfunctionInvoked = "prioritycodeEdit"
+
+              } else {
+
+                _glfunctionInvoked = "prioritycodeSave";
+
+              }
+
+              var datarow = { PriorityCode: parseInt($("#prioritycodeId").val()),
+                              Description: $('#priorityCodeDescription').val() };
+
+              _addNewRecord(datarow,_glcontroller);
+            
+              $("#prioritycodeId").val("");
+              $('#priorityCodeDescription').val("");
+              $("#prioritycodesdataGrid").jqxGrid('updatebounddata');
+              
+             document.getElementById('prioritycodeSave').value = "Add";
+
+             if(_glfunctionInvoked === "prioritycodeEdit"){
+
+               _glfunctionInvoked ="prioritycodeSave"
+
+             }
+        } else {
+
+            _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+        }
+       
+    });
+
+    $('#viewEarningsBtn').click(function(){
+       
+       if(__authorised("Earnings", userPrivilegdes, "Read") === true){
+
+          _earningsWindow('Earnings', _queryDataforGrid());
+
+          document.getElementById('earningPaymentsWindow').style.visibility = "visible";
+
+           _glfunctionInvoked = "editEarningsBtn";
+       
+       } else {
+            
+            _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+       }
+
+    });
+
+    $('#deleteEarningBtn').click(function(){
+
+        _glfunctionInvoked = "deleteEarningBtn";
+
+        document.getElementById('deleteRecDialog').style.visibility = "visible"
+
+        _deleterecordDialog("sample text");
+
+
+    });
+
+    $('#DeleteDialogBtn').click(function(){
+
+        ///<SUMMARY>
+        /// This code snippet is essentially changing the status of the
+        /// record in the database to voided. If you trace this code that
+        /// calls the  _addNewRecord() method, the Delete method in the controller,
+        /// is simply updating the state of the record NOT literally deleting it
+        ///</SUMMARY>
+
+          if(__authorised("Earnings", userPrivilegdes, "Delete") === true){
+
+              if (_glfunctionInvoked === "prioritycodeDelete"){
+
+                  var datarow = { PriorityCode: parseInt($("#prioritycodeId").val()),
+                                 Description: $('#priorityCodeDescription').val() };
+
+                  _addNewRecord(datarow,_glcontroller);
+
+              } else {
+
+                  _deleteRecord($("#payCode").val(), "Earnings");
+
+                  $("#prioritycodesdataGrid").jqxGrid('updatebounddata');
+
+                  _clearInputFields();
+
+              }
+
+          } else {
+
+              _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+          }
+
+    });
+
+    $('#saveEarningsBtn').click(function(){
+       
+         if(__authorised("Earnings", userPrivilegdes, "Create") === true){
+
+          if ((_glfunctionInvoked ==="saveEarningsBtn") || (_glfunctionInvoked === null)){
+
+                if (_glfunctionInvoked === null) {
+                  _glfunctionInvoked ="saveEarningsBtn";
+                }
+
+                  var datarow = {
+                          payCode: $('#payCode').val(),
+                          payType: $('#payType2').val(),
+                          payCodeDescription: $('#paycodeDescription').val(),
+                          payTypeDescription: $('#payTypeDescription').val(),
+                          groupEligible: $('#groupEligible').val(),
+                          groupEligibleDescription: $('#groupEligibleDescription').val(),
+                          debitGL: $('#debitGL').val(),
+                          debitGlDescription: $('#debitGlDescription').val(),
+                          payRate: $('#payRate').val(),
+                          rateDerivedSource: $('#rateDerivedSource').val(),
+                          actualPayAmount: parseFloat($('#actualPayAmount').val() == 0 ? 0.0 : $("#actualPayAmount").val()),
+                          payMethod: $('#payMethod').val(),
+                          timesheetEntryAllowed: parseInt($('#timesheetEntryAllowedChk').val() == true ? 1 : 0),
+                          paidAsEarnings: parseInt($('#paidAsEarningsChk').val() === true ? 1 : 0),
+                          taxableIncome: parseInt($('#taxableIncomeChk').val() === true ? 1 : 0),
+                          priority: $('#priority').val(),
+                          higherPrecedenceFactor: $('#precedenceFactor').val()
+                      };
+                
+
+               _addNewRecord(datarow,_glcontroller);
+
+               _clearInputFields();
+              
+          } else if(_glfunctionInvoked ==="editEarningsBtn"){
+
+                  var datarow = {
+                          payCode: $('#payCode').val(),
+                          payType: $('#payType2').val(),
+                          payCodeDescription: $('#paycodeDescription').val(),
+                          payTypeDescription: $('#payTypeDescription').val(),
+                          groupEligible: $('#groupEligible').val(),
+                          groupEligibleDescription: $('#groupEligibleDescription').val(),
+                          debitGL: $('#debitGL').val(),
+                          debitGlDescription: $('#debitGlDescription').val(),
+                          payRate: $('#payRate').val(),
+                          rateDerivedSource: $('#rateDerivedSource').val(),
+                          actualPayAmount: parseFloat($('#actualPayAmount').val() == 0 ? 0.0 : $("#actualPayAmount").val()),
+                          payMethod: $('#payMethod').val(),
+                          timesheetEntryAllowed: parseInt($('#timesheetEntryAllowedChk').val() == true ? 1 : 0),
+                          paidAsEarnings: parseInt($('#paidAsEarningsChk').val() === true ? 1 : 0),
+                          taxableIncome: parseInt($('#taxableIncomeChk').val() === true ? 1 : 0),
+                          priority: $('#priority').val(),
+                          higherPrecedenceFactor: $('#precedenceFactor').val()
+                      };
+
+              _addNewRecord(datarow,_glcontroller);
+
+              _clearInputFields();
+              
+          } else {
+
+              return;
+          }
+          
+          ///<SUMMARY>
+          /// Set _glfunctionInvoked to null
+          ///</SUMMARY>
+
+          _glfunctionInvoked = null;
+
+        } else {
+
+           _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+        }
+
+     });
+
+});
+
+</script>
+
+@Html.Partial("_Earning")

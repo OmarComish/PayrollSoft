@@ -1,0 +1,577 @@
+@{
+    ViewBag.Title = "TimeSheet";
+}
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/implement-ui-widget-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript">
+
+   var tracker = [];
+   var weeklytracker = [];
+   var daycolumnNames = new Array();
+   daycolumnNames.push(["Activity", "Begin Time", "Finish Time", "Duration","Action"]);
+   var weeklyTimesheetTableHeaders = ['','Mon','Tue','Wed','Thu','Fri','Sat','Sun','Total'];
+   var cell_address = {'cell0' : 'Activity/Task','cell1' : 'Begin time','cell2' : 'Finish time', 'cell3' : 'Duration', 'Button' : 'cell4'};
+   var durationHrs = 0;
+   var durationMins = 0;
+   var sentinel = 6;
+   var columns = 5;
+   var cellid = "row";
+   var currentrow = 0;
+   var table = document.createElement("TABLE");
+   
+   function __GetDayofWeek(date){
+
+     var d = new Date(_parseJsonDate(date));
+     return d.getDay();
+   }
+
+   function __RetrieveWeeklyTimesheetEntries(){
+       
+        $.ajax({
+           cache: false,
+           datatype: "json",
+           url: "/EmployeeSelfService/GetWeeklyTimeSheet",
+           type: "POST",
+           data: {__mindate: '2018-06-14', __maxdate: '2018-06-15'},
+           success: function (data, status, xhr) {
+            
+            for(var x = 0; x < data.length; x ++){
+
+             weeklytracker.push({Activity:  data[x].Activity,
+                           Duration:  data[x].Duration,
+                           Day:       __GetDayofWeek(data[x].DateCreated) });
+            }
+            
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+               
+             _notificationMessage("error", errorThrown); 
+          }
+        });
+   }
+
+   function WeeklyTimeSheetTbl(data, cols){
+
+        var columnCount = cols.length;
+        var cellLoc = new Array();
+        var sumMon = 0;
+        var sumTue = 0;
+        var sumWed = 0;
+        var sumThu = 0;
+        var sumFri = 0;
+        var sumSat = 0;
+        var sumSun = 0;
+
+        for(var r = 0; r < data.length; r ++){
+
+            currentrow ++;
+            var _row = table.insertRow(-1);
+
+            for(var s = 0; s < columnCount; s ++){
+
+                var cell = _row.insertCell(-1);
+                var attr = 'cell' + s + '-row' + currentrow;
+                cell.setAttribute('id',attr);
+                cellLoc.push([attr]);
+                if(s === 0){
+                  cell.innerHTML = data[r].Activity;
+                }
+                if(s === data[r].Day){
+
+                  var value = FormatTime(data[r].Duration.Hours + '' + (data[r].Duration.Minutes === 0 ? '00' : data[r].Duration.Minutes));
+                  cell.innerHTML = value;
+
+                  if(s === 1){
+                     sumMon = (sumMon === 0? '00:00' : sumMon);
+                     sumMon = TotalTime(value, sumMon);
+                     console.log('Total duration for Monday: ' + sumMon ); 
+                     document.getElementById('MonTotal').innerHTML = sumMon;
+                  }
+
+                  if(s === 2){
+                     sumTue = (sumTue === 0? '00:00' : sumTue);
+                     sumTue = TotalTime(value, sumTue);
+                     document.getElementById('TuesTotal').innerHTML = sumTue;
+                  }
+
+                  if(s === 3){
+                    sumWed = (sumWed === 0? '00:00' : sumWed);
+                    sumWed = TotalTime(value, sumWed);
+                    document.getElementById('WedTotal').innerHTML = sumWed;
+                  }
+
+                  if(s === 4){
+                    sumThu = (sumThu === 0? '00:00' : sumThu);
+                    sumThu = TotalTime(value, sumThu);
+                    document.getElementById('ThursTotal').innerHTML = sumThu;
+                  }
+                  if(s === 5){
+
+                    sumFri = (sumFri === 0? '00:00' : sumFri);
+                    sumFri = TotalTime(value,sumFri);
+                    document.getElementById('FriTotal').innerHTML = sumFri;
+                  } 
+
+                  if(s === 6){
+
+                    sumSat = (sumSat === 0? '00:00' : sumSat);
+                    sumSat = TotalTime(value,sumSat);
+                    document.getElementById('SatTotal').innerHTML = sumSat;
+                  }
+
+                  if(s === 7){
+                     sumSun = (sumSun === 0? '00:00' : sumSat);
+                     sumSun = TotalTime(value, sumSun);
+                     document.getElementById('SunTotal').innerHTML = sumSun;
+                  }
+
+
+                } 
+                if(s > 0 && s != data[r].Day && s != (columnCount -1)){
+                  cell.innerHTML = '00:00';
+                }
+            }
+
+            //console.log(sumThu);
+        }
+   }
+
+   function __PopulateWeeklyTimeSheet(){
+         
+        table.className = "table table-condensed";
+        table.setAttribute('id','weeklytimesheet');
+        var columnNames = ['','Mon','Tue','Wed','Thu','Fri','Sat','Sun','Total'];
+        //Get the count of columns.
+       var columnCount = columnNames.length;
+       
+           //Add the header row.
+        var row = table.insertRow(-1);
+        row.className = "active";
+        for (var i = 0; i < columnCount; i++) {
+            var headerCell = document.createElement("TH");
+            headerCell.innerHTML = columnNames[i];
+            row.appendChild(headerCell);
+        }
+
+        var dvTable = document.getElementById('weeklyTable');
+        dvTable.innerHTML = "";
+        dvTable.appendChild(table);
+   }
+
+   function __RetrieveSavedTimeSheetEntries(){
+
+        $.ajax({
+           cache: false,
+           datatype: "json",
+           url: "/EmployeeSelfService/GetTimeSheet",
+           type: "GET",
+           success: function (data, status, xhr) {
+            
+            for(var x = 0; x < data.length; x ++){
+
+             tracker.push({Activity:   data[x].Activity,
+                           BeginTime:  data[x].BeginTime,
+                           FinishTime: data[x].FinishTime,
+                           Duration:   data[x].Duration});
+            }              
+            
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+               
+             _notificationMessage("error", errorThrown); 
+          }
+        });
+
+   }
+
+   function __PopulateTable(){
+
+       for(var r = 0; r < tracker.length; r ++){
+            currentrow ++;
+          var row = table.insertRow(-1);
+
+           for(var cols = 0; cols < columns; cols ++){
+
+             var cell = row.insertCell(-1);
+
+              if(cols === 0){
+     
+                cell.innerHTML ='<input type="text"  id="cell' + cols + '-row' + currentrow +'" class="form-control" placeholder="Task /Activity" name="task"/>';
+                var cellid = 'cell' + cols + '-row' + currentrow;
+                document.getElementById(cellid).value = tracker[r].Activity;
+                
+              }
+              if(cols === 1){
+
+                cell.innerHTML = '<input type="text" class="form-control" id="cell'+ cols + '-row'+ currentrow +'" onblur="__TimeTrack(this.id);" name="time" placeholder="00:00"/>';
+                var cellid = 'cell' + cols + '-row' + currentrow;
+                document.getElementById(cellid).value = FormatTime(tracker[r].BeginTime.Hours + '' + (tracker[r].BeginTime.Minutes === 0 ? '00' : tracker[r].BeginTime.Minutes));
+                
+              }
+              if(cols === 2){
+
+                cell.innerHTML = '<input type="text" class="form-control" id="cell'+ cols + '-row'+ currentrow +'" onblur="__TimeTrack(this.id);" name="time" placeholder="00:00"/>';
+                var cellid = 'cell' + cols + '-row' + currentrow;
+                document.getElementById(cellid).value = FormatTime(tracker[r].FinishTime.Hours + '' + (tracker[r].FinishTime.Minutes === 0 ? '00' : tracker[r].FinishTime.Minutes));
+              }
+              if(cols === 3){
+
+                cell.innerHTML = '<input type="text" class="form-control" id="cell'+ cols + '-row'+ currentrow +'" onblur="__TimeTrack(this.id);" name="time" placeholder="00:00"/>';
+                var cellid = 'cell' + cols + '-row' + currentrow;
+                document.getElementById(cellid).value = FormatTime(tracker[r].Duration.Hours + '' + (tracker[r].Duration.Minutes === 0 ? '00' : tracker[r].Duration.Minutes));
+    
+              }
+              if(cols === (columns - 1)){
+                 cell.innerHTML =  '<button type="button", id="cell' + cols + '-row' + currentrow +'" class="btn btn-primary btn-sm"  onclick="__addTimeSheetEntry(this.id);"><i class="glyphicon glyphicon-floppy-disk"></i></button>';
+              }
+           }
+       }
+     
+   }
+
+   function TotalTime(firstVal, secondVal){
+
+      var firstValHrs = firstVal.split(':')[0];
+      var firstValMins = firstVal.split(':')[1];
+      var secondValHrs = secondVal.split(':')[0];
+      var secondValMins = secondVal.split(':')[1];
+      var totalHrs = 0;
+
+      var totalmins = parseInt(firstValMins) + parseInt(secondValMins);
+
+      if(totalmins >= 60){
+         totalmins = totalmins - 60;
+         totalHrs ++;
+      }
+       
+      totalHrs = parseInt(totalHrs) + parseInt(firstValHrs) + parseInt(secondValHrs);
+      
+      var duration = totalHrs.toString() + (totalmins == 0? '00' : totalmins).toString();
+      
+      return FormatTime(duration);
+
+   }
+
+   function Duration(begintime, finishtime, rownumber){
+
+     var begintimeHrs = begintime.split(':')[0];
+     var begintimeMins = begintime.split(':')[1];
+     var finishtimeHrs = finishtime.split(':')[0];
+     var finishtimeMins = finishtime.split(':')[1];
+
+     if(parseInt(begintimeHrs) > parseInt(finishtimeHrs)){
+
+        console.log('begin hours cannot be greater than finish hours');
+        var cellid = 'cell3-row' + rownumber.toString();
+        //document.getElementById(cellid).onfocus = true;
+        $('#'+ cellid).focus();
+        return false;
+
+     } else {
+
+       if(finishtimeMins < begintimeMins){
+
+          durationMins = parseInt(finishtimeMins + 60) - parseInt(begintimeMins);
+          durationHrs = parseInt(finishtimeHrs - 1) - parseInt(begintimeHrs);
+
+       } else {
+
+          var durationHrs = parseInt(finishtimeHrs) - parseInt(begintimeHrs);
+          var durationMins = parseInt(finishtimeMins) - parseInt(begintimeMins);
+       }
+        
+     }
+
+     //<summary>
+     ///Format the time
+     //</summary>
+
+     durationHrs = durationHrs.toString().length === 1? '0' + durationHrs.toString() : durationHrs.toString();
+     durationMins = durationMins.toString().length === 1? '0' + durationMins.toString() : durationMins.toString();
+     
+     return durationHrs + ':' + durationMins;
+   }
+
+   function FormatTime(time){
+
+      var hrs = 0;
+      var mins = 0;
+
+     if((!isNaN(time)) && (time.length >= 3)){
+         
+         if(!time.match(/:/)){
+                      
+            if(time.length === 3){
+
+               hrs = time.substr(0,1);
+               mins = time.substr(1,2);
+               time = '0' + hrs + ':' + mins;
+               
+            } else {
+              
+               hrs = time.substr(0,2);
+               mins = time.substr(2,2);
+               time = hrs + ':' + mins;
+            }           
+         }          
+     }
+
+      return time; 
+   }
+
+   function __ValidateTime(time){
+
+        var hrs = 0;
+        var mins = 0;
+        time = time.toString(); //stringify the time before processing
+
+        if(time.match(/:/)){
+
+           hrs = parseInt(time.split(':')[0]);
+           mins = parseInt(time.split(':')[1]);
+        } else {
+
+           if(time.toString().length === 3){
+
+              strtime = time.toString();
+              hrs = strtime.substr(0,1);
+              mins = strtime.substr(1,2);
+
+           } else {
+             
+              strtime = time.toString();
+              hrs = strtime.substr(0,2);
+              mins = strtime.substr(2,2);
+           }
+        }
+
+        if(isNaN(hrs) || isNaN(mins)){
+           console.log('Error: Time cannot contain characters');
+           return false;
+        }
+
+        if (parseInt(hrs) < 0 || parseInt(hrs) > 24 ){
+          console.log('Error: Hours must be between 0 and 24'); 
+          return false;
+        }
+
+        if (parseInt(mins) < 0 || parseInt(mins) > 59){
+          console.log('Error: Minutes must be between 0 and 59');
+           return false;
+        } 
+        
+        return true;
+   }
+
+   function __TimeTrack(id){
+      
+      ///<summay>
+      /// Algorithm for the function __TimeTrack();
+      //  1. identify from which row is the input
+      //  2. identify category e.g task, begin-time or end-time
+      //  3. validate input
+      //  4. push to Array
+      //  5. if begin-time and end time are present and valid, 
+      //  6. calculate duration
+      ///<summary>
+
+      var row = id.substr(6,5);
+      var row_num = row.match(/\d+$/);
+      var cell = id.substr(0,5);
+      var cell_num = cell.match(/\d+$/);
+      var infocus = ['Activity','BeginTime','FinishTime','Duration','Action'];
+      var buttonId = cell_address['Button'] + '-row' + row_num.toString();
+
+      var data = document.getElementById(id).value;
+
+      document.getElementById(id).value = FormatTime(data.toString()); //format time to user friendly way
+
+      if(parseInt(cell_num) === 1){
+        
+        if(__ValidateTime(data)){
+
+           var begintimeCell = 'cell1-row' + row_num.toString();
+           var finishtimeCell = 'cell2-row' + row_num.toString();
+           var durationCell = 'cell3-row' + row_num.toString();
+
+           var begintime = document.getElementById(begintimeCell).value;
+           var finishtime = document.getElementById(finishtimeCell).value;
+
+           if(document.getElementById(finishtimeCell).value.length != 0){
+
+              document.getElementById(durationCell).value = Duration(begintime, finishtime, row_num);
+              document.getElementById(buttonId).disabled = false; //enable Add button
+
+           }
+        } else {
+
+           $('#' + id).focus();
+        }
+      } 
+
+      if(parseInt(cell_num) === 2){
+
+        if(__ValidateTime(data)){
+
+           var begintimeCell = 'cell1-row' + row_num.toString();
+           var finishtimeCell = 'cell2-row' + row_num.toString();
+           var durationCell = 'cell3-row' + row_num.toString();
+
+           var begintime = document.getElementById(begintimeCell).value;
+           var finishtime = document.getElementById(finishtimeCell).value;
+
+           if(document.getElementById(begintimeCell).value.length != 0){
+
+              document.getElementById(durationCell).value = Duration(begintime, finishtime, row_num);
+              document.getElementById(buttonId).disabled = false; //enable Add button
+           }
+        } 
+      } 
+      
+   }
+
+   function __addTimeSheetEntry(id){
+
+      var row = id.substr(6,5);
+      var row_num = row.match(/\d+$/);
+      var cell = id.substr(0,5);
+      var cell_num = cell.match(/\d+$/);
+      var activityCell = 'cell0-row' + row_num.toString();
+      var begintimeCell = 'cell1-row' + row_num.toString();
+      var finishtimeCell = 'cell2-row' + row_num.toString();
+      var durationCell = 'cell3-row' + row_num.toString();
+      
+       if($('#'+ activityCell).val() && $('#'+ begintimeCell).val() && $('#'+ finishtimeCell).val() && $('#' + durationCell).val()){
+
+         tracker.push({Activity: $('#' + activityCell).val(),
+                       BeginTime: $('#' + begintimeCell).val(),
+                      FinishTime: $('#' + finishtimeCell).val(),
+                      Duration: $('#' + durationCell).val()});
+  
+          var index = tracker.length - 1;
+
+          __POSTWrapper(tracker[index], 'addTimeSheetEntryBtn');
+         
+          ///<summary>
+          /// disable the row that has been saved to secure the data
+          ///</summary>
+
+       } else {
+         
+         console.log('Some data is missing in row ' + row_num + '. Time or activity cell cannot be empty');
+       }
+   }
+
+   function __submitTimeSheet(){
+
+   }
+
+   function __generateTable(columnNames, tableId, containerId){
+        
+        table.className = "table table-condensed";
+        table.setAttribute('id',tableId);
+
+        //Get the count of columns.
+       var columnCount = columnNames[0].length;
+       
+           //Add the header row.
+  	    var row = table.insertRow(-1);
+        row.className = "active";
+  	    for (var i = 0; i < columnCount; i++) {
+  	        var headerCell = document.createElement("TH");
+  	        headerCell.innerHTML = columnNames[0][i];
+  	        row.appendChild(headerCell);
+  	    }
+
+  	    var loc = document.getElementById(containerId);
+  	    loc.innerHTML = "";
+  	    loc.appendChild(table);
+   }
+
+   function __addRow(){
+
+        sentinel ++;
+        currentrow ++;
+        row = table.insertRow(-1);
+        var attr = "row" + currentrow.toString();
+        row.setAttribute("id",attr);
+
+        for(var j = 0; j < columns; j++){
+
+        	 var cell = row.insertCell(-1);
+           if(j === (columns - 1)){
+            
+             cell.innerHTML =  '<button type="button", id="cell' + j + '-row' + currentrow +'" class="btn btn-primary btn-sm"  onclick="__addTimeSheetEntry(this.id);"><i class="glyphicon glyphicon-floppy-disk"></i></button>';
+             buttonId = 'cell4-row' + currentrow.toString();
+             document.getElementById(buttonId).disabled = true; //create the button with a disabled state
+
+           } else {
+
+             cell.innerHTML = (parseInt(j) === 0 ? '<input type="text"  id="cell' + j + '-row' + currentrow +'" class="form-control" placeholder="Task /Activity" name="task"/>': '<input type="text" class="form-control" id="cell'+ j + '-row'+ currentrow +'" onblur="__TimeTrack(this.id);" name="time" placeholder="00:00"/>');
+           }               
+          
+        }
+
+	      var dvTable = document.getElementById("dvTable");
+	      dvTable.innerHTML = "";
+	      dvTable.appendChild(table);
+   }
+
+  $(document).ready(function(){
+
+    var tableid = 'daytimesheet';
+    var containerId = 'dvTable';
+    __PopulateWeeklyTimeSheet();
+
+    if(__RetrieveSavedTimeSheetEntries()){
+         __generateTable(daycolumnNames, tableid, containerId);
+        
+    }
+    
+    $('#jqxTabs').jqxTabs({ height: '500px', width: '100%', theme: theme });
+    $("#timesheetDate").jqxDateTimeInput({ theme: theme, width: '200px', height: '25px', formatString: 'yyyy/MM/dd' });
+    $("#weeklytimesheetDate").jqxDateTimeInput({ theme: theme, width: '200px', height: '25px', formatString: 'yyyy/MM/dd' });
+
+    $('#timesheetDate').on('change',function(event){
+
+        if(event.args){
+           
+           __RetrieveSavedTimeSheetEntries();
+
+        }
+        
+        __PopulateTable();
+    });
+
+    $('#weeklytimesheetDate').on('change', function(event){
+        
+          if(event.args){
+
+             __RetrieveWeeklyTimesheetEntries();
+             //__PopulateWeeklyTimeSheet(weeklyTimesheetTableHeaders,'weeklytimesheet','weeklyTable');
+            // __PopulateWeeklyTimeSheet();
+             //
+          }
+          WeeklyTimeSheetTbl(weeklytracker,weeklyTimesheetTableHeaders);
+          console.log('code is getting here too! and the structure has ' + weeklytracker.length);
+
+          
+    });
+
+  });
+
+</script>
+@Html.Partial("_timeSheet")

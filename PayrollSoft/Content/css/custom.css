@@ -1,0 +1,196 @@
+/* my custom CSS */
+
+.position-searchbar {
+   padding-top: 8px;
+   padding-left: 15px;
+   float: right;
+}
+
+.content_panel {
+	position: inherit;
+	padding-top: 15px !important;
+	margin-top: 35px !important;
+	width: 1350px !important;
+}
+.menu_bar > button
+{
+	width: 200px;
+}
+.sub_menu_btn
+{
+	height: 40px !important;
+	width: 220px !important;
+	text-align: inherit;
+	padding-left: 20px;
+}
+.glyphicon
+{
+	padding-right: 20px !important;
+
+}
+#payrollBtn, #reportsBtn, #settingsBtn, #customerBtn, #homeBtn, #payrollBtn, #paymentsBtn, #personnelBtn
+{
+	text-align: inherit;
+	padding-left: 20px !important;
+}
+.sub_menu_with_accordion a
+{
+	text-decoration: none;
+	color: #000;
+}
+.sub_menu_with_accordion .panel-heading
+{
+
+}
+.inputbox-spacing
+{
+  margin-left: 5px;
+  margin-top: 8px;
+}
+.text-input
+{
+ height: 21px;
+ width: 150px;
+ margin-left: 10px;
+ margin-top: 5px;
+}
+ .window-table
+{
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+.window-table td, 
+.window-table tr
+{
+  margin-left: 10px;
+  padding: 2px;
+  border-spacing: 0px;
+  border-collapse: collapse;
+  font-family: Verdana;
+  font-size: 12px;
+}
+.footer-text {
+   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+   font-weight: bold;
+   font-size: 13px;
+}
+.ui-autocomplete {
+    position: absolute;
+    z-index: 1000;
+    cursor: default;
+    padding: 0;
+    margin-top: 2px;
+    list-style: none;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    -webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+            border-radius: 5px;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+       -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+.ui-autocomplete > li {
+  padding: 3px 30px;
+}
+.ui-autocomplete > li:hover {
+  color: #7386D5;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.ui-autocomplete > li.ui-state-focus {
+  background-color: #DDD;
+}
+.ui-helper-hidden-accessible {
+  display: none;
+}
+.dropdown.dropdown-lg .dropdown-menu {
+    margin-top: -1px;
+    padding: 6px 20px;
+}
+.input-group-btn .btn-group {
+    display: flex !important;
+}
+.btn-group .btn {
+    border-radius: 0;
+    margin-left: -1px;
+}
+
+.btn-group .btn:last-child {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+.btn-group .form-horizontal .btn[type="submit"] {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+.form-horizontal .form-group {
+    margin-left: 0;
+    margin-right: 0;
+}
+.form-group .form-control:last-child {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+@media screen and (min-width: 768px) {
+    #adv-search {
+        width: 500px;
+        margin: 0 auto;
+    }
+    .dropdown.dropdown-lg {
+        position: static !important;
+    }
+    .dropdown.dropdown-lg .dropdown-menu {
+        min-width: 500px;
+    }
+}
+
+.btn-glyphicon { 
+      padding:8px; background:#ffffff; 
+      margin-right:4px; 
+}
+
+.icon-btn { 
+     padding: 1px 15px 3px 2px; 
+     border-radius:50px;
+}
+
+.thumbnail {
+    position: relative;
+    padding: 0px;
+    margin-bottom: 20px;
+}
+
+.thumbnail > h4 {
+    padding: 7px 5px 0px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align:center;
+}
+.thumbnail h4 .info {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    font-size: 0.6em;
+    padding-left: 15px;
+    border-top-right-radius: 3px;
+    border-bottom-left-radius: 4px;
+    border-radius: 0px;
+    border-bottom-left-radius: 5px;
+    cursor:  pointer;
+}
+
+.thumbnail h4 .info > span {
+    margin-right: 10px;
+}
+
+.thumbnail img {
+    width: 100%;
+}
+.thumbnail a.btn {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}

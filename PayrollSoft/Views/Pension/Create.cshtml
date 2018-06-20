@@ -1,0 +1,96 @@
+@model PayrollSoft.Models.Pension
+
+@{
+    ViewBag.Title = "Pension";
+}
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxvalidator.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/implement-ui-widget-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript">
+
+ function __retrievePensionSettings(){
+   
+        $.ajax({
+                cache: false,
+                datatype: "jsonp",
+                url: "/Settings/GetPensionSettings",
+                type: "GET",
+                success: function (data, status, xhr) {
+
+                 if(data.length > 0){
+
+                    for(var d = 0; d < data.length; d ++){
+
+                       $("#pensionCode").val(data[d].PensionRefNum);
+                       $("#employee-contrib").val(data[d].EmployeeContrRate);
+                       $("#employer-contrib").val(data[d].EmployerContrRate);
+                       $('#group-life-assurance').val(data[d].GroupLifeAssuranceRate);
+                       $('#admin-fee').val(data[d].AdminiFeeRate);
+                       $('#brokerage-fee').val(data[d].BrokerageFeeRate);
+
+                   }
+                 }
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    _notificationMessage(textStatus, errorThrown);
+                   
+                }
+            });
+ }
+
+function __createFormElements(){
+
+     $('#jqxTabs').jqxTabs({ height: '380px', width: '99.5%', theme: theme });
+     $("#pensionCode").jqxInput({ theme: theme, width: '500px', height: '25px' });
+     $("#employee-contrib").jqxNumberInput({ width: '500px', height: '25px', symbol: '%', spinButtons: true });
+     $("#employer-contrib").jqxNumberInput({ width: '500px', height: '25px', symbol: '%', spinButtons: true });
+     $("#group-life-assurance").jqxNumberInput({ width: '500px', height: '25px', symbol: '%', spinButtons: true });
+     $("#admin-fee").jqxNumberInput({ width: '500px', height: '25px', symbol: '%', spinButtons: true });
+     $("#brokerage-fee").jqxNumberInput({ width: '500px', height: '25px', symbol: '%', spinButtons: true });
+ 
+}
+
+$(document).ready(function(){
+
+   var theme = getDemoTheme();
+   _glcontroller = "Pension";
+
+
+   __createFormElements();
+
+   __retrievePensionSettings();
+
+   $('#pensionSaveBtn').click(function(){
+
+        var record = {
+                    PensionRefNum: $('#pensionCode').val(),
+                    EmployerContrRate: $('#employer-contrib').val(),
+                    EmployeeContrRate: $('#employee-contrib').val(),
+                    GroupLifeAssuranceRate: $('#group-life-assurance').val(),
+                    AdminiFeeRate: $('#admin-fee').val(),
+                    BrokerageFeeRate: $('#brokerage-fee').val()
+                };
+     
+      _addNewRecord(record, _glcontroller);
+   });
+
+
+});
+
+</script>
+
+@Html.Partial("_pensionSettings")

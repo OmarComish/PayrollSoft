@@ -1,0 +1,303 @@
+﻿@model IEnumerable<PayrollSoft.Models.EmployeeGrade>
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<!--<h2>Create</h2>-->
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+
+<script type="text/javascript">
+
+    function _createFormElements(title, theme, dataAdapter, payeThresholdDataSource,insuranceDataAdapter,allowanceDataAdapter,pensionDataAdapter,serviceProviderDataAdapter) {
+
+        /*$('#window').jqxWindow({
+            theme: theme,
+            resizable: true,
+            width: 600,
+            height: 470,
+            minWidth: 430,
+            minHeight: 300,
+            title: title,
+            cancelButton:$("#Cancel"),
+            initContent: function () {*/
+
+                $("#gradeID").jqxInput({ theme: theme, width: '130px', height: '20px' });
+                $("#gradeName").jqxInput({ theme: theme, width: '170px', height: '20px' });
+                $("#insuranceCategory").jqxInput({ theme: theme, width: '170px', height: '20px' });
+                $("#wages").jqxNumberInput({ width: '130px', height: '20px', spinButtons: true, theme: theme });
+                $("#overtimeRate").jqxNumberInput({ width: '130px', height: '20px', spinButtons: true, theme: theme });
+
+                $("#allowanceCode").jqxDropDownList({
+                    theme: theme, source: allowanceDataAdapter,
+                    selectedIndex: -1, width: '170px', height: '20px',
+                    promptText: "Allowance CODE..", dropDownHeight: "50px",
+                    displayMember:"CategoryID",valueMember:"CategoryID"
+                });
+
+                $("#insuranceCode").jqxDropDownList({
+                    theme: theme, source: serviceProviderDataAdapter,
+                    selectedIndex: -1, width: '170px', height: '20px',
+                    promptText: "Medical Insurance", dropDownHeight: "80px",
+                    displayMember:"ServiceProvider",valueMember:"InsuranceCode"
+                });
+
+               $("#insuranceCategory").jqxDropDownList({
+                   theme: theme, source: insuranceDataAdapter,
+                   selectedIndex: -1, width: '170px', height: '20px',
+                   promptText: "Medical Insurance", dropDownHeight: "50px",
+                   displayMember:"Description",valueMember:"CategoryID"
+               });
+
+                $("#pensionCode").jqxDropDownList({
+                    theme: theme, source: pensionDataAdapter,
+                    selectedIndex: -1, width: '170px', height: '20px',
+                    promptText: "Pension Code..", dropDownHeight: "50px",
+                    displayMember:"PensionRefNum",valueMember:"PensionRefNum"
+                });
+
+                 $("#paymentFreq").jqxDropDownList({
+                    theme: theme, source: pensionDataAdapter,
+                    selectedIndex: -1, width: '170px', height: '20px',
+                    promptText: "Pension Code..", dropDownHeight: "50px",
+                    displayMember:"PensionRefNum",valueMember:"PensionRefNum"
+                });
+
+                $("#payeThreshold").jqxDropDownList({
+                    theme: theme, source: payeThresholdDataSource,
+                    selectedIndex: -1, width: '170px', height: '20px',
+                    promptText: "PAYE", dropDownHeight: "50px",
+                    displayMember: "ThresholdID", valueMember: "ThresholdID"
+                });
+
+                $("#Save").jqxButton({ theme: theme });
+                $("#Cancel").jqxButton({ theme: theme });
+
+                $("#jqxgrid").jqxGrid({
+                    width: 940,
+                    source: dataAdapter,
+                    theme: theme,
+                    pageable: true,
+                    autoheight: true,
+                    sortable: true,
+                    selectionmode: 'multiplecellsadvanced',
+                    columns: [
+                                       { text: 'Description', datafield: 'GradeName', width: 130 },
+                                       { text: 'Salary', datafield: 'MinSalary', width: 120 },
+                                       { text: 'Grade ID', datafield: 'GradeId', width: 120 },
+                                       { text: 'Allowance Code', datafield: 'AllowanceRefNum', width: 120 },
+                                       { text: 'Insurance Code', datafield: 'InsuranceCode' ,width: 120},
+                                       { text: 'Pension Ref. Num', datafield: 'PensionRefNum', width: 120},
+                                       { text: 'Overtime Rate', datafield: 'OvertimeRate', width: 120 },
+                                       { text: 'Threshold ID', datafield: 'ThresholdID', width: 120 }
+
+
+
+                            ]
+
+                });
+            
+            //}
+        //});
+
+       // $("#window").jqxWindow('focus');
+    }
+
+    function _loadDataSource(columnId) {
+
+      var data;
+
+      $.ajax({
+             cache: false,
+             datatype:"jsonp",
+             url:'/Insurance/GetInsuranceCategory/' + columnId,
+             type: 'POST',
+             success: function(data,status,xhr){
+                data = data;
+             },
+             error: function(jqXHR, textStatus, errorThrown){
+               alert(errorThrown);
+             }
+      });
+       
+       
+        var _dataSource= { 
+            localdata: data,
+            datatype: "json",
+            datafields: [{ name: 'InsuranceCode', type: 'string' },
+                         { name: 'Description', type: 'string' },
+                         { name: 'MonthlyRate', type: 'string'}],
+
+            id: "InsuranceCode",
+            //url: '/Insurance/GetInsuranceCategory/' + columnId
+        };
+
+        var _dataAdapter = new $.jqx.dataAdapter(_dataSource);
+
+
+        return _dataAdapter;
+        
+    }
+
+    function _addRecord(row) {
+
+        $.ajax({
+            cache: false,
+            datatype: "jsonp",
+            url: "/EmployeeGrade/Create",
+            type: "POST",
+            data: row,
+            success: function (data, status, xhr) {
+                //alert(status);
+                $("#jqxgrid").jqxGrid('updatebounddata');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+                //commit(false);
+            }
+
+
+
+        });
+
+
+    }
+
+    function _popupWinInsuranceCategory(title,gridDataSource) {
+
+        $("#InsuranceCatpopWin").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 350,
+            height: 250,
+            isModal: false,
+            autoOpen: false,
+            title: title,
+            okButton: $("#Delete"),
+            cancelButton: $("#Cancel"),
+            modalOpacity: 0.01,
+            initContent: function () {
+
+                //content to be loaded when the parent window loads
+                $("#jqxgridInsuranceCatList").jqxGrid({
+                    width: 340,
+                    source: gridDataSource,
+                    theme: theme,
+                    pageable: true,
+                    autoheight: true,
+                    sortable: true,
+                    selectionmode: 'multiplecellsadvanced',
+                    columns: [
+                                       { text: 'Insurance Code', datafield: 'InsuranceCode', width: 80 },
+                                       { text: 'Description', datafield: 'Description', width: 180 },
+                                       { text: 'Monthly Rate', datafield: 'MonthlyRate', width: 80 }
+                            ]
+
+                });
+            }
+
+        });
+
+        $("#InsuranceCatpopWin").jqxWindow('open');
+    
+    
+    }
+
+    $(document).ready(function () {
+      
+        _glcontroller ="EmployeeGrade";
+        var gridDataSource;
+        var theme = getDemoTheme();
+        var title = 'Create Grade';
+        var url = '/EmployeeGrade/GetGrades';
+        var source = {
+            datatype: "json",
+            datafields: [
+                                    { name: 'GradeId', type: 'string' },
+                                    { name: 'GradeName', type: 'string' },
+                                    { name: 'MinSalary', type: 'decimal' },
+                                    { name: 'AllowanceRefNum', type:'string'},
+                                    { name: 'InsuranceCode', type:'sting'},
+                                    { name: 'PensionRefNum',type:'string'},
+                                    { name: 'OvertimeRate',type:'string'},
+                                    { name: 'ThresholdID',type:'string'}
+                        ],
+            id: "GradeId",
+            url: url
+        };
+
+        var ThresholdDataSource = { datatype: "json", datafields: [{ name: 'ThresholdID', type: 'string'}], id: "ThresholdID", url: '/TaxationThreshold/GetTaxThreshold' };
+        var insuranceDataSource = { datatype: "json", datafields: [{ name: 'CategoryID', type: 'string' }, { name: 'Description', type: 'string'},{name:'InsuranceCode',type:'string'},{name:'ServiceProvider',type:'string'}], id: "CategoryID", url: '/Insurance/GetInsuranceCode' };
+        var allowanceDataSource = {datatype:"json",datafields:[{name:'CategoryID',type:'string'}],id:"CategoryID",url:'/Allowance/getAllowanceCategoryCode'};
+        var pensionDataSource = {datatype:"json",datafields:[{name:'PensionRefNum',type:'string'}],id:"PensionRefNum",url:'/Pension/getPensionCode'};
+        var serviceProviderDataSource = {datatype:"json",datafields:[{name:'ServiceProvider',type:'string'}],id:"InsuranceCode",url:'/Insurance/GetServiceProvider'};
+
+        var payeThresholdDataAdapter = new $.jqx.dataAdapter(ThresholdDataSource);
+        var dataAdapter = new $.jqx.dataAdapter(source);
+        var insuranceDataAdapter = new $.jqx.dataAdapter(insuranceDataSource);
+        var allowanceDataAdapter = new $.jqx.dataAdapter(allowanceDataSource);
+        var pensionDataAdapter = new $.jqx.dataAdapter(pensionDataSource);
+        var serviceProviderDataAdapter = new $.jqx.dataAdapter(serviceProviderDataSource);
+
+        _createFormElements(title, theme, dataAdapter, payeThresholdDataAdapter, insuranceDataAdapter,allowanceDataAdapter,pensionDataAdapter,serviceProviderDataAdapter);
+       // _createFormElements(title, theme, dataAdapter, payeThresholdDataSource,insuranceDataAdapter,allowanceDataAdapter,pensionDataAdapter,serviceProviderDataAdapter);
+
+        $("#Save").click(function () {
+
+            var rowdata = { GradeID: $("#gradeID").val(),
+                GradeName: $("#gradeName").val(),
+                MinSalary: parseFloat($("#wages").jqxNumberInput('decimal')),
+                AllowanceRefNum: $("#allowanceCode").val(),
+                InsuranceCode: $("#allowanceCode").val(),
+                PensionRefNum: $("#pensionCode").val(),
+                OvertimeRate: parseFloat($("#overtimeRate").jqxNumberInput('decimal')),
+                ThresholdID: $("#payeThreshold").val(),
+                InsuranceCode: $("#insuranceCategory").val()
+            };
+
+            _addRecord(rowdata);
+
+
+
+        });
+
+        $("#insuranceCode").on('select', function (event) {
+
+            var args = event.args;
+            if (args) {
+                //var item = args.item;
+                console.log(args.item.index);
+                console.log($("#insuranceCategory").val());
+
+                //$("#insuranceCategory").jqxDropDownList({source:_loadDataSource(item.value)});
+                //gridDataSource = _loadDataSource(item.value);
+
+            }
+
+        });
+
+        $("#insuranceCategory").click(function () {
+            //alert("You clicked the insurance CATEGORY inputbox");
+            //var title = "Insurance categories";
+            //_popupWinInsuranceCategory(title,gridDataSource);
+        });
+    });
+
+</script>
+
+ @Html.Partial("_addNewEmployeeGrade")
+
+

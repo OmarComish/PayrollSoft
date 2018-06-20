@@ -1,0 +1,33 @@
+﻿@model PayrollSoft.Models.TaxationThreshold
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<fieldset>
+    <legend>TaxationThreshold</legend>
+
+    <div class="display-label">Tax_Ref_Code</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Tax_Ref_Code)
+    </div>
+
+    <div class="display-label">MinimumAmount</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.MinimumAmount)
+    </div>
+
+    <div class="display-label">MaximumAmount</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.MaximumAmount)
+    </div>
+</fieldset>
+@using (Html.BeginForm()) {
+    <p>
+        <input type="submit" value="Delete" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}

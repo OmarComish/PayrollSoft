@@ -1,0 +1,25 @@
+﻿@model PayrollSoft.Models.Settings
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Settings</legend>
+
+    <div class="display-label">ObjectName</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.ObjectName)
+    </div>
+
+    <div class="display-label">ActionInvoked</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.ActionInvoked)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.ObjectID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

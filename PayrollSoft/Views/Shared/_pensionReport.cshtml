@@ -1,0 +1,41 @@
+<div class="input-group">
+<input type="text" class="form-control" placeholder="Type report name..." id="reportname" onchange="__AutoComplete()" />
+	<div class="input-group-btn">
+      <div class="btn-group" role="group">
+        <div class="dropdown dropdown-lg">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span>  Filter options</button>
+            <div class="dropdown-menu dropdown-menu-right" role="menu">
+                <form class="form-horizontal" role="form">
+                  <div class="form-group">
+                    <label for="filter">Filter by</label>
+                    <select class="form-control">
+                        <option value="0" selected>All </option>
+                        <option value="1">Department</option>
+                        <option value="2">Most popular</option>
+                        <option value="3">Top rated</option>
+                        <option value="4">Most commented</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="contain">Contains the words</label>
+                    <input class="form-control" type="text" id="anyword"/>
+                  </div>
+                  <div class="form-group">
+                    <label for="contain">Period from</label>
+                    <input class="form-control" type="text" />
+                  </div>
+                   <div class="form-group">
+                    <label for="contain">Period to</label>
+                    <input class="form-control" type="text" />
+                  </div>
+                  <!--<button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>-->
+                </form>
+                     </div>
+                </div>
+             <button type="button" class="btn btn-primary" id="filtersearchBtn"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+       </div>
+  </div>
+</div>
+<div id="reportcontent" style="margin-top: 10px;">
+	
+</div>

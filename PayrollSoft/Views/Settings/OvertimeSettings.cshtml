@@ -1,0 +1,116 @@
+﻿@{
+    ViewBag.Title = "OvertimeSettings";
+    
+}
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxvalidator.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/implement-ui-widget-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript">
+
+ function __loadUIElements(){
+
+	 $('#jqxTabs').jqxTabs({ width: '99.5%', height: 350, position: 'top', theme: theme });
+	 $("#overtimeCode").jqxInput({ theme: theme, height: '25px',width:'500px', disabled: false });
+     $("#description").jqxInput({ theme: theme, height: '30px', width: '500px', disabled: false });
+     $("#overtimeRate").jqxNumberInput({ width: '500px', height: '25px', spinButtons: true, min: 0});
+     $("#totalAllowableWorkDays").jqxNumberInput({ width: '500px', height: '25px', spinButtons: true, min: 0});
+     $("#totalAllowableWorkHours").jqxNumberInput({ width: '500px', height: '25px', spinButtons: true, min: 0});
+     
+      __loadExistingOvertime();
+ }
+
+ function __loadExistingOvertime(){
+     
+     var datasource = __fetchData();
+
+ 	     $("#jqxgrid").jqxGrid({
+                    width: '99.5%',
+                    source: datasource,
+                    theme: theme,
+                    pageable: true,
+                    autoheight: true,
+                    sortable: true,
+                    selectionmode: 'none',
+                    columns: [
+                             {text: 'Code', datafield: 'Code', width: '15%'},
+                             {text: 'Description', datafield: 'Description', width: '30%'},
+                             {text: 'Rate', datafield: 'Rate', width: '15%'},
+                             {text: 'Allowable Work Days', datafield: 'AllowableWorkDays', width: '15%'},
+                             {text: 'Allowable Work Hours', datafield: 'AllowableWorkHours', width: '15%'},
+                             {text: 'Action', datafield: 'Edit', width: '10%', columntype: 'button', cellsrenderer: function(){
+                                      return 'Edit';
+                                },buttonclick: function(row){
+                                     editrow = row;
+                                     var offset = $("#jqxgrid").offset();
+                                     var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
+                                     //$('#jqxTabs').jqxTabs('selectedItem',1);
+                                     //console.log('switch tabs')
+                                }
+                             }
+                    ]
+                });
+ }
+ 
+ function __fetchData(){
+
+     var source = { datatype: 'json',
+                   datafields: [{ name: 'Code', type: 'string'},
+                                { name: 'Description', type:'text'},
+                                { name: 'Rate',type:'decimal'},
+                                { name: 'AllowableWorkDays', type:'number'},
+                                { name: 'AllowableWorkHours', type:'number'}],
+                   id: 'Code',
+                   url: '/Settings/getOvertimeSettings'};
+
+      return new $.jqx.dataAdapter(source);
+ }
+
+ $(document).ready(function(){
+
+ 	_glcontroller = "Settings";
+    __loadUIElements();
+    
+    $("#overtimeSaveBtn").click(function(){
+
+    	_glfunctionInvoked = "overtimeSaveBtn";
+
+    	 var record = {Code: $('#overtimeCode').val(),
+    	               description: $('#description').val(),
+    	               Rate: $('#overtimeRate').val(),
+    	               AllowableWorkDays: $('#totalAllowableWorkDays').val(),
+    	               AllowableWorkHours: $('#totalAllowableWorkHours').val()};
+
+    	  _addNewRecord(record, _glcontroller);
+    });
+
+
+
+
+    // var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+    //   if (value < 20) {
+    //   return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #ff0000;">' + value + '</span>';
+    // }
+    // else {
+    //      return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #008000;">' + value + '</span>';
+    //       }
+    // }
+
+
+ });
+
+</script>
+
+@Html.Partial("_OvertimeSettings")

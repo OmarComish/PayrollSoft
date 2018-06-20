@@ -1,0 +1,30 @@
+﻿@model PayrollSoft.Models.TaxationThreshold
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>TaxationThreshold</legend>
+
+    <div class="display-label">Tax_Ref_Code</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Tax_Ref_Code)
+    </div>
+
+    <div class="display-label">MinimumAmount</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.MinimumAmount)
+    </div>
+
+    <div class="display-label">MaximumAmount</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.MaximumAmount)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.ThresholdID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,156 @@
+﻿@model IEnumerable<PayrollSoft.Models.Department>
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<!--<h2>Create</h2>-->
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript">
+
+    function _createFormElements(title, theme, dataAdapter) {
+
+        $('#window').jqxWindow({
+            theme: theme,
+            resizable: true,
+            width: 480,
+            height: 370,
+            minWidth: 300,
+            minHeight: 300,
+            title: title,
+            initContent: function () {
+
+                //add code here to be initialized when the window loads..
+                $("#deptID").jqxInput({ theme: theme, width: '300px', height: '25px' });
+                $("#deptName").jqxInput({ theme: theme, width: '300px', height: '25px' });
+                $("#Save").jqxButton({ theme: theme });
+                $("#Cancel").jqxButton({ theme: theme });
+
+
+                $("#jqxgrid").jqxGrid({
+                    width: 460,
+                    source: dataAdapter,
+                    theme: theme,
+                    pageable: true,
+                    autoheight: true,
+                    sortable: true,
+                    selectionmode: 'multiplecellsadvanced',
+                    columns: [
+                                       { text: 'Department Name', datafield: 'DeptName', width: 300 },
+                                       { text: 'Department ID', datafield: 'DeptID', width: 158 }
+                            ]
+
+                });
+
+            }
+        });
+
+        $('#window').jqxWindow('focus');
+    }
+
+    function _addRecord(row) {
+
+        $.ajax({
+            cache: false,
+            datatype: "jsonp",
+            url: "/Department/Create",
+            type: "POST",
+            data: row,
+            success: function (data, status, xhr) {
+                alert(status);
+                $("#jqxgrid").jqxGrid('updatebounddata');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+                //commit(false);
+            }
+
+
+
+        });
+
+
+    }
+
+
+    $(document).ready(function () {
+
+        var theme = getDemoTheme();
+        var title = 'Create Department';
+        var url = '/Department/GetDepartments';
+        var source = {
+            datatype: "json",
+            datafields: [
+                               { name: 'DeptName', type: 'string' },
+                               { name: 'DeptID', type: 'string' }
+                          ],
+            id: 'DeptID',
+            url: url
+
+        };
+
+        var dataAdapter = new $.jqx.dataAdapter(source);
+
+        _createFormElements(title, theme, dataAdapter);
+
+        $("#Save").click(function () {
+            var rowdata = { DeptID: $("#deptID").val(), DeptName: $("#deptName").val() };
+            _addRecord(rowdata);
+
+            //clear the input fields
+
+
+
+        });
+
+
+
+    });
+</script>
+<div id="window">
+           
+            <div>
+                <div>
+                    
+                    <div>
+                      <table>
+                            <tr>
+                              <td><div style="margin-top:25px; padding-left: 8px;">Department ID:</div></td>
+                              <td><input style="margin-top:25px; margin-left: 8px;" id="deptID" /></td>
+                            </tr>
+                            <tr>
+                               <td><div style="margin-top:15px; padding-left: 8px;">Department Name:</div></td>
+                               <td><input style="margin-top: 15px; margin-left: 8px;" id="deptName" /></td>
+                            </tr>
+                            <tr>
+                                <td align="right"></td>
+                                <td style="padding-top: 10px;" align="right"><input style="margin-right: 5px;" type="button" id="Save" value="Save" /><input id="Cancel" type="button" value="Cancel" /></td>
+                            </tr>
+                        </table>
+                        
+                        <div id="jqxExpander">
+                               <div>
+                        
+                                    <div id="jqxgrid"></div>
+                                   
+                                   
+                              </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+      </div>

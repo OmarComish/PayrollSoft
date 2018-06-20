@@ -1,0 +1,281 @@
+@model PayrollSoft.Models.Payroll
+
+@{
+    ViewBag.Title = "Initiate Payroll";
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxprogressbar.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript">
+
+ /* function calculateProgress(){
+
+     var progress = document.getElementById('progress');
+    
+   
+
+      if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari  
+
+          xmlhttp=new XMLHttpRequest();     
+
+        }else{// code for IE6, IE5    
+
+          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");                           
+        }       
+
+        xmlhttp.onreadystatechange=function() { 
+                                      
+          if (xmlhttp.readyState==4 && xmlhttp.status==200) {    
+
+            var results = xmlhttp.responseText; 
+
+            if(results == 'undefined' || results == '' || results == '"did not create"') {  
+                             
+              return;   
+
+            }else{ 
+                                                    
+              progress.innerHTML = count;
+
+              if(count < records) {
+
+                count++;
+
+                calculateProgress();
+              }
+            }                                                                       
+          }                                                                         
+        }                                                                           
+        xmlhttp.open("GET","/Payroll/PayrollListRecordCount/",true);           
+        xmlhttp.send();
+  }
+
+  function checkProgress(){
+
+        count = 1;
+
+        calculateProgress();
+
+  }*/
+
+  function _changePaymentState(){
+      
+        $.ajax({
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            url: '/Payroll/ChangePaymentState',
+            data: "{}",
+            dataType: 'json',
+            success: function (data) {
+                       
+            },
+            error: function (result) {
+
+              //_notificationMessage("error", "Could not retrive data from server");
+
+            }
+
+
+      });
+
+  }
+
+    function _customizePayroll(theme, title) {
+
+        $("#customizePayrollWin").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 600,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#Delete"),
+            cancelButton: $("#Cancel"),
+            modalOpacity: 0.01
+
+        });
+
+        $("#customizePayrollWin").jqxWindow('open');
+
+    }
+
+ function estimateProgress(buffer_size, total_processed){
+
+   var value = parseInt((total_processed / buffer_size) * 100 );
+
+   if (total_processed === buffer_size){
+
+     $("#process-status").jqxProgressBar({value: 100});
+
+       console.log("current value is " + total_processed);
+
+       _changePaymentState();
+
+     _notificationMessage("success", "Payroll process completed");
+
+   } else {
+
+   $("#process-status").jqxProgressBar({value: value,showText: true});
+
+     total_processed ++;
+
+     console.log("total processed " + total_processed);
+     //console.log("buffer size " + buffer_size);
+     //console.log("buffer size " + buffer_size);
+
+   }
+   
+
+ }
+
+
+  $(document).ready(function(){
+
+    document.getElementById("confirmActionDialog").style.visibility = "hidden";
+
+       _winID = "Customize";
+       var theme = getDemoTheme();
+
+       $("#initPayrollProc").jqxButton({theme: theme});
+       $("#initPayrollCustomize").jqxButton({theme:theme});
+
+       $("#process-status").jqxProgressBar({animationDuration: 0, renderText: renderText, width: 890, height: 30, value: 0});
+
+       var count = 1;
+       var records = 0;
+
+       var renderText = function(text, value){
+
+           if(text < 55){
+
+             return "<span style='color: #333;'>"+ text +"</span>";
+           }
+
+           return "<span style='color: #fff;'>"+ text +"</span>";
+       }
+
+       var values = {};
+       var addInterval = function(id, intervalStep){
+
+           values[id] = {value: 0};
+           values[id].interval = setInterval(function(){
+
+                values[id].value++;
+
+                if (values[id].value == 50){
+
+                   clearInterval(values[id].interval);
+                }
+
+            $("#" + id).val(values[id].value);
+
+            }, intervalStep); 
+
+       }
+
+       
+       //addInterval("progress",30);
+
+       document.getElementById("messageNotification").style.visibility = false;
+       document.getElementById("process-status").style.visibility = "hidden";
+
+       $("#initPayrollCustomize").click(function(){
+           
+        $.ajax({
+                cache: false,
+                datatype: "jsonp",
+                url: "/Payroll/TestMethod",
+                type: "POST",
+                data: {val: 100000},
+                success: function (data, status, xhr) {
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    _notificationMessage(textStatus, errorThrown);
+                   
+                }
+            });
+       });
+
+
+       //$("#progress").jqxProgressBar({animationDuration: 0, showText: true, renderText: renderText, width: 890, height: 30, value: 0})
+       
+
+       $("#initPayrollProc").click(function(){
+
+             document.getElementById("confirmActionDialog").style.visibility = "visible";
+             
+             var dialogtext = "This process is irreversible. Are you sure you want to proceed?";
+
+             _confirmActionDialog(dialogtext);
+            
+       });
+
+       $("#proceedBtn").click(function(){
+
+          document.getElementById("process-status").style.visibility = "visible";
+          
+          $.ajax({
+                    type: "GET",
+                    contentType: "application/json;charset=utf-8",
+                    url: '/Payroll/PayrollList',
+                    data: "{}",
+                    dataType: 'json',
+                    success: function (data) {
+
+                        var record = data.length;
+
+                        for (var x = 0; x < data.length; x++) {
+
+                          console.log(data[x].EmpName + " " + data[x].EmpID + " " + data[x].GradeID);
+
+                             $.ajax({
+                                  cache: false,
+                                  datatype: 'jsonp',
+                                  url: '/Payroll/RunPayroll/',
+                                  type: "POST",
+                                  data: {id: data[x].EmpID, groupEligible: data[x].GradeID},
+                                 success: function (data) {
+                                  
+                                    if(data.status === "success"){
+
+                                        estimateProgress(record ,count);
+                                        count ++;
+                                     }
+
+                                  },
+                                  error: function (jqXHR, textStatus, errorThrown) {
+                                    
+                                        //_notificationMessage("error",errorThrown);
+                                 }
+
+                              });
+
+                        }
+                        
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+
+                        ///_notificationMessage("error", errorThrown);
+                    }
+
+                });  
+       });
+  });
+
+</script>
+
+@Html.Partial("_initiatePayroll")

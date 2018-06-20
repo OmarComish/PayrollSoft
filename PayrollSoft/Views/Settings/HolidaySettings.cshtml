@@ -1,0 +1,90 @@
+@model PayrollSoft.Models.Settings
+
+@{
+    ViewBag.Title = "Holiday settings";
+}
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+<script type="text/javascript">
+
+function _jobGrades(){
+
+        var _jobGrade = { datatype: 'json',
+                        datafields: [{ name: 'GradeId', type: 'string' },
+                                     { name: 'GradeName', type: 'string'}],
+                         id: 'GradeId',
+                         url: '/EmployeeGrade/GetGrades' };
+
+        return new $.jqx.dataAdapter(_jobGrade);
+}
+
+function _paymentCode(){
+
+     var paymentcode = { datatype: 'json',
+                         datafields: [{name: 'payCode', type: 'string'},
+                                      {name: 'Description', type: 'string'}],
+                         id: 'payCode',
+                         url: '/Payments/getpaymentCode'};
+
+      return new $.jqx.dataAdapter(paymentcode);
+}
+
+function _initializeUIElements(){
+
+   $('#jqxTab').jqxTabs({theme: theme, width: '100%', height: 400});
+   $('#leaveType').jqxInput({placeHolder:"leave type", theme: theme, height: '25px',width: '380px'});
+   $('#entitlement').jqxNumberInput({ width: '380px', height: '25px', spinButtons: true });
+   $('#groupEligible').jqxDropDownList({
+                              theme: theme, source: _jobGrades(),
+                              selectedIndex: -1, width: '380px', height: '25px',dropDownHeight: "80px",
+                              displayMember:"GradeId",valueMember:"GradeName" });
+
+   $('#payCalculationFormular').jqxDropDownList({
+                   theme: theme, source: _paymentCode(),
+                   selectedIndex: -1, width: '380px', height: '25px',dropDownHeight: "80px",
+                   displayMember: 'Description', valueMember: 'payCode'});
+
+   $('#frequencyOfPay').jqxDropDownList({
+                   theme: theme, source:['Weekly','Monthly','Annually'],
+                   selectedIndex: -1, width: '380px', height: '25px',dropDownHeight: "80px"});
+   $('#emailAlerts').jqxCheckBox({ theme: theme, width: '185px'});
+
+   $('#leavesettingsAddBtn').jqxButton({theme: theme});
+   $('#cancelsettingsBtn').jqxButton({theme: theme});
+}
+
+$(document).ready(function(){
+  
+    _glcontroller = "Settings";
+    _initializeUIElements();
+
+    $('#leavesettingsAddBtn').click(function(){
+
+       var rowdata = {LeaveTypeId: $('#leaveType').val().substr(0,4) + "-" + AutogenerateCode().toString().substr(0,3),
+                  Description: $('#leaveType').val(),
+                  AnnualEntitlement:  $('#entitlement').val(),
+                  GroupEligible: $('#groupEligible').val(),
+                  EmailAlerts: ($('#emailAlerts').val() === true ? 1 : 0),
+                  PaymentClaculationFormular: $('#payCalculationFormular').val(),
+                  LeavePayFrequency: $('#frequencyOfPay').val() };
+
+          __POSTWrapper(rowdata, 'leavesettingsAddBtn');
+    });
+   
+});
+
+</script>
+
+@Html.Partial("_holidaySettings")

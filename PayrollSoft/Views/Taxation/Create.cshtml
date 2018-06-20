@@ -1,0 +1,636 @@
+﻿@model IEnumerable<PayrollSoft.Models.Taxation>
+
+@{
+    ViewBag.Title = "Create";
+}
+
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+
+
+<script type="text/javascript">
+
+    function _createFormElements(theme, title,popUpWinTitle,insuranceWinTitle) {
+
+  /*      $('#window').jqxWindow({
+            theme: theme,
+            resizable: true,
+            width: 615,
+            height: 470,
+            minWidth: 500,
+            minHeight: 300,
+            title: title,
+            initContent: function () {*/
+
+                $('#jqxTabs').jqxTabs({ height: 420, width: 750, theme: theme });
+                $('#jqxPensionTab').jqxTabs({ height: 185, width: 290, theme: theme });
+                $('#jqxAllowanceTab').jqxTabs({ height: 185, width: 300, theme: theme });
+                $('#jqxInsuranceTab1').jqxTabs({ height: 185, width: 595, theme: theme });
+
+                var source = ["HSEALLW", "MEALAWWL"];
+
+                var insuranceDataSource = { datatype: "json", datafields: [{ name: 'InsuranceCode', type: 'string' }, { name: 'Description', type: 'string'}], id: 'InsuranceCode', url: '/Insurance/getInsuranceCode' };
+
+                var pensionCodeDataSource = { datatype: "json",
+                    datafields: [{ name: 'PensionRefNum'}],
+                    id: 'PensionRefNum',
+                    url: '/Pension/getPensionCode'
+                };
+
+                var allowanceCode = { datatype: "json",
+                    datafields: [{ name: 'CategoryID', type: 'string' }, { name: 'CategoryDescription', type: 'string'}],
+                    id: 'CategoryDescription', url: '/Allowance/getAllowanceCategoryCode'
+                };
+
+                //populate the dropdownList with the insurance data
+                var insuranceDataAdapter = new $.jqx.dataAdapter(insuranceDataSource);
+                var pensionDataAdapter = new $.jqx.dataAdapter(pensionCodeDataSource);
+                var allowanceCodeAdapter = new $.jqx.dataAdapter(allowanceCode);
+
+                $('#jqxTabs').on('tabclick', function (event) {
+                    //identify the active Tab
+                    var clickedItem = event.args.item;
+                    switch (clickedItem) {
+                        case 0:
+                            _winElementID = "_taxationTAB";
+                            console.log(_winElementID);
+                            break;
+                        case 1:
+                            _winElementID = "_jobGradTAB";
+                            console.log(_winElementID);
+                            break;
+                        case 2:
+                            _winElementID = "_insuranceTAB";
+                            console.log(_winElementID);
+                            break;
+                        case 3:
+                            _winElementID = "_benefitsDeductionsTAB";
+                            console.log(_winElementID);
+                            break;
+                    }
+
+                });
+
+                $('#NewTaxCode').jqxButton({ theme: theme });
+                $('#EditTaxCode').jqxButton({ theme: theme });
+
+                $('#NewTaxCode').click(function () {
+
+                     //_NewTaxationWin(theme,title);
+                    _popupWin(theme, popUpWinTitle);
+                    console.log("New tax code clicked");
+                    //document.getElementById("jqxTaxWidget").style.visibility ="visible";
+                });
+
+                $("#insuranceNo").jqxInput({ theme: theme, height: '20px', disabled: true });
+                $("#insuranceDescript").jqxInput({ theme: theme, height: '20px', width: '200px', disabled: true });
+                $("#serviceProvider").jqxInput({ theme: theme, height: '20px', width: '200px', disabled: true });
+
+                $('#newIsuranceDetails').click(function () {
+                    _popupwinInsurance(theme, insuranceWinTitle);
+                });
+
+                $("#empGrade").jqxInput({ theme: theme, height: '20px', width: '80px' });
+                $("#gradeDescript").jqxInput({ theme: theme, height: '20px' });
+                $("#existingGrade").jqxButton({ theme: theme });
+                //$("#newGrade").jqxButton({ theme: theme });
+                $("#basicPay").jqxInput({ theme: theme, height: '20px' });
+
+                $("#allowanceCode").jqxDropDownList({
+                    theme: theme, source: allowanceCodeAdapter,
+                    selectedIndex: -1, width: '180px', height: '20px',
+                    promptText: "Code", dropDownHeight: "80px", displayMember: 'CategoryDescription', valueMember: 'CategoryID'
+                });
+
+                $("#insuranceCode").jqxDropDownList({
+                    theme: theme, source: insuranceDataAdapter,
+                    selectedIndex: -1, width: '210px', height: '20px',
+                    promptText: "Insurance", dropDownHeight: "80px", displayMember: 'Description', valueMember: 'InsuranceCode'
+                });
+
+                $("#pensionNum").jqxDropDownList({
+                    theme: theme, source: pensionDataAdapter,
+                    selectedIndex: -1, width: '150px', height: '20px',
+                    promptText: "Pension Code...", dropDownHeight: "80px", displayMember: 'PensionRefNum', valueMember: 'PensionRefNum'
+                });
+                $("#overtimeRate").jqxInput({ theme: theme, height: '20px' });
+
+                $("#saveEmpGrade").jqxButton({ theme: theme });
+                $("#cancelEmpGrade").jqxButton({ theme: theme });
+
+                $('#newInsuranceCode').jqxButton({ theme: theme });
+                $('#ShowExistingInsurance').jqxButton({ theme: theme });
+
+                $('#newIsuranceDetails').jqxButton({ theme: theme });
+                $('#AddAllowance').jqxButton({ theme: theme });
+                $('#ViewExisting').jqxButton({ theme: theme });
+                $('#SavePension').jqxButton({ theme: theme });
+                $('#editPension').jqxButton({ theme: theme });
+
+
+                $('#newInsuranceCode').click(function () {
+
+                    //Enable the input boxes on click of this button
+                    $("#insuranceNo").jqxInput({ disabled: false });
+                    $("#insuranceNo").jqxInput('selectAll');
+                    $("#insuranceDescript").jqxInput({ disabled: false });
+                    $("#serviceProvider").jqxInput({ disabled: false });
+                });
+
+                $('#allowanceRefNum').jqxInput({ height: 20, width: 130, theme: theme });
+                $('#allowanceDescript').jqxInput({ height: 20, width: 130, theme: theme });
+                $('#allowanceRate').jqxInput({ height: 20, width: 130, theme: theme });
+                $('#pensionRefNum').jqxInput({ height: 20, width: 130, theme: theme });
+                $('#empContrRate').jqxInput({ height: 20, width: 80, theme: theme });
+                $('#emplrContrRate').jqxInput({ height: 20, width: 80, theme: theme });
+
+/*            }
+        });
+
+        $('#window').jqxWindow('focus')*/
+
+    }
+
+    function _NewTaxationWin(theme,title){
+
+         /* $("#NewTaxationWin").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 470,
+            height: 320,
+            minWidth: 470,
+            minHeight: 290,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#OK"),
+            cancelButton: $("#Cancel"),
+            modalOpacity: 0.07,
+            initContent: function () {
+
+
+                    $("#jqxTaxationTabs").jqxTabs({ height: 200, width: 460, theme: theme });
+                    $("#TaxName").jqxInput({ theme: theme, height: '20px',width:'300px', disabled: false });
+                    $("#Descript").jqxInput({ theme: theme, height: '30px', width: '300px', disabled: false });
+                    $("#dateIssued").jqxDateTimeInput({ theme: theme, width: '300px', height: '20px', formatString: 'MM-dd-yyyy' });
+                    $("#minAmount").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+                    $("#maxAmount").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+                    $("#rate1").jqxNumberInput({ width: '200px', height: '25px', symbol: '%', spinButtons: true });
+                    $("#RateStatus").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+              
+            }
+        });
+
+        $("#NewTaxationWin").jqxWindow('open');*/
+    }
+
+    function _popupWin(theme, title) {
+
+        $("#popupwindow").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 470,
+            height: 290,
+            minWidth: 470,
+            minHeight: 290,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#OK"),
+            cancelButton: $("#Cancel"),
+            modalOpacity: 0.07,
+            initContent: function () {
+
+                $('#jqxTabsmin').jqxTabs({ height: 200, width: 460, theme: theme });
+                $("#TaxName").jqxInput({ theme: theme, height: '20px',width:'250px', disabled: false });
+                $("#Descript").jqxInput({ theme: theme, height: '30px', width: '250px', disabled: false });
+                $("#minAmount").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+                $("#maxAmount").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+                $("#rate1").jqxNumberInput({ width: '200px', height: '25px', symbol: '%', spinButtons: true });
+                $("#RateStatus").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+                $("#dateIssued").jqxDateTimeInput({ theme: theme, width: '250px', height: '20px', formatString: 'MM-dd-yyyy' });
+
+                $("#minAmount2").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+                $("#maxAmount2").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+                $("#rate2").jqxNumberInput({ width: '200px', height: '25px', symbol: '%', spinButtons: true });
+
+                $("#minAmount3").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+                $("#maxAmount3").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+                $("#rate3").jqxNumberInput({ width: '200px', height: '25px', symbol: '%', spinButtons: true });
+
+               
+           }
+
+        });
+
+        $("#popupwindow").jqxWindow('open');
+
+    }
+
+    function _popupwinInsurance(theme, title) {
+
+        console.log("Loading Insurance Details window...");
+        _winID = "_insuranceCatWin";
+        console.log(_winID);
+
+        $("#insurancePopUpWin").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 400,
+            height: 300,
+            minWidth: 350,
+            minHeight: 290,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#AddInsuranceCat1"),
+            cancelButton: $("#CancelInsuranceCat"),
+            modalOpacity: 0.07,
+            initContent: function () {
+
+                $("#jqxTabsInsuranceCat").jqxTabs({ height: '260px', width: '390px', theme: theme });
+                $("#insuranceRate").jqxNumberInput({ width: '200px', height: '25px', symbol: '%', spinButtons: true });
+                $("#insCatID").jqxInput({ theme: theme, height: '20px', disabled: false });
+                $("#CatDescript").jqxInput({ theme: theme, height: '30px', width: '200px', disabled: false });
+                $('#CancelInsuranceCat').jqxButton({ theme: theme });
+                $('#AddInsuranceCat').jqxButton({ theme: theme });
+
+
+                $('#CancelInsuranceCat').click(function () {
+
+                    //reset the _winID global to the previous value
+                    //comment out the console.log() lines, when deploying the application
+                    //it's meant to debug the javascript code during development
+                    
+                    console.log("Closing Insurance Details window...");
+                    _winID = null;
+                    console.log(_winID);
+
+                });
+
+            }
+
+
+        });
+
+        $("#insurancePopUpWin").jqxWindow('open');
+    }
+
+    function _addRecord(row,row2) {
+
+        
+
+           $.ajax({
+                cache: false,
+                datatype: "jsonp",
+                url: "/Taxation/Create",
+                type: "POST",
+                data: row,
+                success: function (data, status, xhr) {
+                    alert(status);
+                    //$("#jqxgrid").jqxGrid('updatebounddata');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                    //commit(false);
+                }
+
+            });
+
+            for (var i = 0; i < row2.length; i++) {
+
+            //add all the rows using the forloop construct
+
+              $.ajax({
+
+                cache: false,
+                datatype: "jsonp",
+                url: "/TaxationThreshold/Create",
+                type: "POST",
+                data: row2[i],
+                success: function (data, status, xhr) {
+                //alert(status);
+                //$("#jqxgrid").jqxGrid('updatebounddata');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+                //commit(false);
+                }
+               }); 
+            }
+
+        }
+
+        function _addNewInsurance(insurancedata,insuranceCatdata) {
+
+            //Function
+            //Action: insert record into Database
+            //parameters: insurance object, insurance category object
+            //return value: none
+
+            //console.log("mouseclickCount =" + _mouseClickCount);
+            //console.log("window id= " + _winID);
+
+        if ((_winID == "_insuranceCatWin") && (_mouseClickCount == 1)){
+
+            $.ajax({
+                cache: false,
+                datatype: "jsonp",
+                url: "/Insurance/Create",
+                type: "POST",
+                data: insurancedata ,
+                success: function (data, status, xhr) {
+                   alert(status);
+  
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                //commit(false);
+                }
+
+            });
+            
+             $.ajax({
+                cache: false,
+                datatype: "jsonp",
+                url: "/InsuranceCategory/Create",
+                type: "POST",
+                data: insuranceCatdata,
+                success: function (data, status, xhr) {
+                   alert(status);
+  
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                //commit(false);
+                }
+            });
+
+        } 
+
+        if ((_winID == "_insuranceCatWin") && (_mouseClickCount > 1)) {
+
+            $.ajax({
+                cache: false,
+                datatype: "jsonp",
+                url: "/InsuranceCategory/Create",
+                type: "POST",
+                data: insuranceCatdata,
+                success: function (data, status, xhr) {
+                    alert(status);
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                    //commit(false);
+                }
+            });
+         }
+
+
+    }
+
+   /*function _addNewAllowance(newrec) {
+
+            $.ajax({
+                cache: false,
+                datatype: "jsonp",
+                url: "/Allowance/Create",
+                type: "POST",
+                data: newrec,
+                success: function (data, status, xhr) {
+                    alert(status);
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                    //commit(false);
+                }
+
+            });
+
+        } */
+
+
+  /*function _addNewRecord(record, controller) {
+
+        switch (controller) {
+
+            case 'Allowance':
+
+                $.ajax({
+                    cache: false,
+                    datatype: "jsonp",
+                    url: "/Allowance/Create",
+                    type: "POST",
+                    data: record,
+                    success: function (data, status, xhr) {
+                        alert(status);
+                        //$("#jqxgrid").jqxGrid('updatebounddata');
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert(errorThrown);
+                        //commit(false);
+                    }
+
+                });
+
+                break;
+
+
+            case 'Pension':
+
+                $.ajax({
+                    cache: false,
+                    datatype: "jsonp",
+                    url: "/Pension/Create",
+                    type: "POST",
+                    data: record,
+                    success: function (data, status, xhr) {
+                        alert(status);
+                        //$("#jqxgrid").jqxGrid('updatebounddata');
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert(errorThrown);
+                        //commit(false);
+                    }
+
+                });
+
+                break;
+
+
+        }
+    } */
+
+
+
+
+
+        function _clicksCountr() {
+
+            _mouseClickCount = _mouseClickCount + 1;
+            return _mouseClickCount;
+        }
+
+
+        $(document).ready(function () {
+
+            _winID = "_appConfigMainWin";
+            console.log("Loading app Configuration window..");
+            console.log(_winID);
+
+            var theme = getDemoTheme();
+            var title = 'Application Configuration';
+            var popUpWinTitle = 'New Taxation Code';
+            var insuranceWinTitle = 'Insurance Categories';
+
+           $("#minAmount").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+            document.getElementById("jqxTaxWidget").style.visibility ="hidden";
+            //load the main form.. 
+            _createFormElements(theme, title, popUpWinTitle, insuranceWinTitle);
+
+
+
+            $('#Cancel').jqxButton({ theme: theme });
+            $('#OK').jqxButton({ theme: theme });
+            $('#Save').jqxButton({ theme: theme });
+            //$("#TaxName").jqxInput({ theme: theme, height: '20px', disabled: false });
+            /*$("#Descript").jqxInput({ theme: theme, height: '30px', width: '200px', disabled: false });*/
+            $('#firstNext').jqxButton({ theme: theme });
+
+            $("#Save").click(function () {
+
+                var recordexist;
+                var dateCreated = CurrentDate();
+
+                _mouseClickCount = _countClicks();
+
+                var Taxationdata = {
+                    Tax_Ref_Code: $("#TaxName").val(),
+                    Description: $("#Descript").val(),
+                    DateCreated: $("#dateIssued").val(),
+                    Status: $("#RateStatus").val()
+                };
+
+                //thresholdID will be system generated
+                //this is just a prototype
+                //here the javascript Math.random function is implemented
+
+                var ThresholdData = [{ ThresholdID: 'PAYE' + Math.floor((Math.random() * 10) + 1),
+                    Tax_Ref_Code: $("#TaxName").val(),
+                    MinimumAmount: $("#minAmount").val(),
+                    MaximumAmount: $("#maxAmount").val(),
+                    Rate: $("#rate1").val()
+                },
+                                               { ThresholdID: 'PAYE' + Math.floor((Math.random() * 10) + 1),
+                                                   Tax_Ref_Code: $("#TaxName").val(),
+                                                   MinimumAmount: $("#minAmount2").val(),
+                                                   MaximumAmount: $("#maxAmount2").val(),
+                                                   Rate: $("#rate2").val()
+                                               },
+                                                  { ThresholdID: 'PAYE' + Math.floor((Math.random() * 10) + 1),
+                                                      Tax_Ref_Code: $("#TaxName").val(),
+                                                      MinimumAmount: $("#minAmount3").val(),
+                                                      MaximumAmount: $("#maxAmount3").val(),
+                                                      Rate: $("#rate3").val()
+                                                  }
+                                             ];
+
+
+                //call the addRecord function to save the new record
+                //PARAMETERS: rowdata (an object with multiple values)
+                //OUTPUT: none
+
+                //recordexist = _checkIfRecordExists($("#TaxName").val(), 'Taxation', 'Create');
+
+                _addRecord(Taxationdata, ThresholdData);
+
+            });
+
+            $("#AddInsuranceCat").click(function () {
+
+                _mouseClickCount = _clicksCountr();
+
+                var insurance = { InsuranceCode: $("#insuranceNo").val(),
+                    Description: $("#insuranceDescript").val(),
+                    ServiceProvider: $("#serviceProvider").val()
+                };
+                var insuranceCat = { CategoryID: $("#insCatID").val(),
+                    InsuranceCode: $("#insuranceNo").val(),
+                    Description: $("#CatDescript").val(),
+                    MonthlyRate: $("#insuranceRate").val()
+                };
+
+                //check if the InsuranceCode exists in the DB. If it does,
+                //we assume that a new category is being created under the same
+                //InsuranceCode
+
+                //Call the _addNewInsurance method...
+                _addNewInsurance(insurance, insuranceCat);
+
+
+
+            });
+
+            $("#CancelInsuranceCat").click(function () {
+                //now reset the _mouseClickCounter
+                _mouseClickCount = 0;
+            });
+
+
+            $("#AddAllowance").click(function () {
+
+                //add the logic to create the new allowance policy record for the database...
+                var allowanceRec = { allowanceRefNum: $("#allowanceRefNum").val(),
+                    Description: $("#allowanceDescript").val(),
+                    allowanceRate: $("#allowanceRate").val()
+                };
+
+                var controller = "Allowance";
+
+                //call the function to save the record now
+                //_addNewAllowance(allowanceRec);
+                _addNewRecord(allowanceRec, controller)
+
+            });
+
+            $("#SavePension").click(function () {
+                //add the logic to create the new pension policy record for the database...
+                var controller = "Pension";
+                var pensionRec = { PensionRefNum: $('#pensionRefNum').val(), EmployeeContrRate: $('#empContrRate').val(), EmployerContrRate: $('#emplrContrRate').val() };
+
+                _addNewRecord(pensionRec, controller);
+            });
+
+            $('#saveEmpGrade').click(function () {
+
+                var controller = 'EmployeeGrade';
+
+                var empgradeRec = { GradeId: $('#empGrade').val(), GradeName: $('#gradeDescript').val(),
+                    MinSalary: $('#basicPay').val(), AllowanceRefNum: $('#allowanceCode').val(),
+                    InsuranceCode: $('#insuranceCode').val(), PensionRefNum: $('#pensionNum').val(),
+                    OvertimeRate: $('#overtimeRate').val()
+                };
+
+                _addNewRecord(empgradeRec,controller);
+            });
+
+        });
+
+</script>
+
+@Html.Partial("_configurations")

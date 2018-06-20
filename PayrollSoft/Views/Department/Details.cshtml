@@ -1,0 +1,20 @@
+﻿@model PayrollSoft.Models.Department
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Department</legend>
+
+    <div class="display-label">DeptName</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DeptName)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.DeptID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

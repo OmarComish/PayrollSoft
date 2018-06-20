@@ -1,0 +1,25 @@
+﻿@model PayrollSoft.Models.Insurance
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>Insurance</legend>
+
+    <div class="display-label">Description</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Description)
+    </div>
+
+    <div class="display-label">ServiceProvider</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.ServiceProvider)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.InsuranceCode }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,260 @@
+@{
+    ViewBag.Title = "Approvals";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/implement-ui-widget-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+<script type="text/javascript">
+
+var controller = null;
+var recordId =  null;
+var sourceId = null;
+var columns = [];
+
+function __AuthorizeRecordDetails(Id, controller){
+  //console.log(Id + " " + controller);
+   var rows = [];
+
+      $.ajax({
+            cache: false,
+            datatype: "jsonp",
+            url: "/" + controller + "/GetRecordToAuthorize",
+            type: "POST",
+            data: {id : Id},
+            success: function (data, status, xhr){
+
+              var s = Object.keys(data[0]);
+             
+              for(var x = 0; x < s.length; x ++){
+                data.forEach(function(val){
+
+                   var key = Object.keys(val)[x];
+                   var value = val[key];
+                   rows.push(val[key]);
+                   columns.push(Object.keys(val)[x]);
+                    //var d = Object.keys(val)[x];
+                   //<summary>
+                   //check if the value is date object and format it accordingly
+                   //</summary>
+                   //d.match(/Date/).length != 0 ? columns.push(_parseJsonDate(Object.keys(val)[x])) : columns.push(Object.keys(val)[x]);
+                   //Object.prototype.toString.call(Object.keys(val)[x]) === '[object Date]' ? columns.push(_parseJsonDate(Object.keys(val)[x])) : columns.push(Object.keys(val)[x]);
+                });
+              }
+
+            },
+            error: function (jqXHR, textStatus, errorThrown){
+                _notificationMessage('error', errorThrown);
+            }
+        });
+
+      return rows;
+}
+
+function _loadGridData(dataAdapter){
+
+        $("#jqxgrid").jqxGrid({
+            width: '100%',
+            source: dataAdapter,
+            theme: theme,
+            pageable: true,
+            autoheight: true,
+            sortable: true,
+            selectionmode: 'none',
+            columns: [
+                       { text: 'Pending ref no', datafield: 'ItemId', width: '15%' },
+                       { text: 'Initiator', datafield: 'FullName', width: '20%'},
+                       { text: 'Source', datafield: 'Source', width: '22%'},
+                       { text: 'Time Stamp', datafield: 'TimeStamp', width: '25%'},
+                       { text: '', datafield: 'Authorize', width: '8%', columntype: 'button', cellsrenderer: function(){
+                                             return 'Authorize';
+                       },buttonclick: function(row){
+                          editrow = row;
+                          var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
+                          
+                          var record = __AuthorizeRecordDetails(dataRecord.ItemId, dataRecord.Controller);
+                          
+                          sourceId = dataRecord.Source;
+                          controller = dataRecord.Controller;
+                          recordId = dataRecord.ItemId;
+                          var title = "Authorize " + dataRecord.Source;
+
+                          _summaryWindow(title,record);
+
+                          document.getElementById("summaryWindow").style.visibility = "visible";
+                        }
+                      },
+                      { text: '', datafield: 'Discard', width: '10%', columntype: 'button', cellsrenderer: function(){
+                                             return 'Discard';
+                      },buttonclick: function(row){
+                           editrow = row;
+                           var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
+                        }
+                      }
+                     ]
+            });
+}
+
+function _queryDataforGrid(){
+
+   var source = {
+                 datatype: "json",
+                 datafields: [
+                              {name: 'ItemId', type: 'string'},
+                              {name: 'FullName', type: 'string'},
+                              {name: 'Source', type: 'string'},
+                              {name: 'Controller', type: 'string'},
+                              {name: 'TimeStamp', type: 'date'}
+                 ],
+                 id: 'ItemId',
+                 url: '/Settings/GetPendingTransactions'
+   };
+
+   return new $.jqx.dataAdapter(source);
+}
+
+function __getRecordToAuthorize(recId, source){
+
+     var record = [];
+
+     switch(source){
+          case 'Personnel':
+          //call the Authorize action from Employee controller
+           console.log("call the Authorize action from Employee controller");
+          break;
+
+          case 'Pension':
+          //call the Authorize action from Pension controller
+          console.log("call the Authorize action from Pension controller");
+          record = __AuthorizeRecordDetails(recId, source);
+          break;
+
+          case 'Loans':
+          record = __AuthorizeRecordDetails(recId,source);
+          break;
+     }
+
+     return record;
+}
+
+
+function _summaryWindow(title, data) {
+
+       $("#summaryWindow").jqxWindow({
+           theme: theme,
+           title: title,
+           resizable: true,
+           width: '80%',
+           height: 480,
+           isModal: true,
+           autoOpen: false,
+           okButton: $("#editWinSaveBtn"),
+           cancelButton: $("#editWinCancelBtn"),
+           modalOpacity: 0.01,
+           initContent: function () {        
+                
+              $('#jqxTabs').jqxTabs({theme: theme, width: '100%', height: 400});
+
+               var tbl = '<table class="table">';
+
+               for (var i = 0; i <= data.length; i++) {
+                  if(data[i] != undefined){
+                    tbl += '<tr><td>' + columns[i] +':</td><td>'+ data[i] +'</td></tr>';
+                  }
+
+                }
+                  
+                tbl += '</table>';
+              document.getElementById('summary-data').innerHTML = tbl;   
+           }
+
+       });
+
+       $("#summaryWindow").jqxWindow('open');
+}
+
+
+$(document).ready(function(){
+
+  _glcontroller = 'Pendings';
+
+   // _getUserAccessRights("Payments");
+
+   _getUserAccessRights();
+
+     //console.log(_glcreateRole);
+
+     document.getElementById("summaryWindow").style.visibility = "hidden";
+
+     //var authrole = userPrivilegdes.find(x => x.Auth === 1);
+     //console.log(authrole === undefined);
+
+     if(pendingItemsCount != 0) console.log('====================');
+         
+     _loadGridData(_queryDataforGrid());
+     //pendingItemsCount >= 1 ?_loadGridData(_queryDataforGrid()) : console.log('pendingItemsCount equal 0');
+    
+
+    setTimeout(__getPendingItems(),1500);
+
+    $("#authorizeBtn").click( function() {
+
+      /*
+       if(controller === "Employee"){
+
+         __authorizeRecord(controller, 'AuthorizeEmployee', recordId);
+
+         $("#jqxgrid").jqxGrid('updatebounddata')
+
+       }
+
+       if(controller === "Pension"){
+
+           __authorizeRecord(controller, 'AuthorizePension', recordId);
+           $("#jqxgrid").jqxGrid('updatebounddata')
+       }
+
+       if(controller === "Settings"){
+          __authorizeRecord(controller, 'AuthorizeSettings', recordId);
+       }
+
+       if(controller === "Overtime"){
+         controller = "Settings";
+         __authorizeRecord(controller, 'AuthorizeOvertime', recordId);
+         $("#jqxgrid").jqxGrid('updatebounddata')
+       }
+      */
+       var method = findElementById(controllerMethodMapping, sourceId);
+       console.log(method.controller);
+        __getPendingItems();
+       if(method.controller === controller){
+          __authorizeRecord(controller,method.action, recordId);
+          $("#jqxgrid").jqxGrid('updatebounddata');
+         
+       }
+        
+         
+       $("#summaryWindow").jqxWindow('close');
+    });
+  
+
+});
+
+</script>
+
+
+@Html.Partial("_approvals")

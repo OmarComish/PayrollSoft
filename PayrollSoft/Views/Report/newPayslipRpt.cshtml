@@ -1,0 +1,111 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>KYC UI--prototype</title>
+     <meta name="viewport" content="width=device-width, inital-scale = 1.0">
+     <link href="@Url.Content("~/Content/css/bootstrap.css")" rel="stylesheet" media="all">
+     <link href="@Url.Content("~/Content/css/custom.css")" rel="stylesheet" media="all">
+  </head>
+ 
+ <body> 
+ <section class="container">
+ <div class="row content_panel">
+       <div class="col-lg-3">
+          <div class="panel panel-primary">
+               <div class="panel-heading">Employee</div>
+              <div class="panel-body">
+                <p>Doe J.J. Hartfield</p>
+              </div>
+        </div>
+    </div>   
+   <div class="col-lg-3">
+       <div class="panel panel-primary">
+              <div class="panel-heading">Number</div>
+               <div class="panel-body"> 
+                 <p>CYT00-1344</p>   
+            </div>  
+          </div>  
+     </div>    
+   <div class="col-lg-6">   
+         <div class="panel panel-primary">  
+             <div class="panel-heading">Employer</div>  
+             <div class="panel-body">
+                  <p>Flywheel & Driftwood Inc.
+                    G.B. Ellington,23 Mint Road,Fordsburg,Johannesburg,South Africa </p> 
+               </div> 
+          </div>  
+      </div>  
+     <div class="col-lg-4">
+           <div class="panel panel-primary">
+             <div class="panel-heading">Earnings</div> 
+              <div class="panel-body">
+                <table class="table"> 
+                     <th>Description</th><th>Amount</th>
+                     <tr>
+                         <td>Basic salary</td><td>1,500.00</td> 
+                    </tr>
+                    <tr>    
+                     <td>House Allowance</td><td>800.00</td>  
+                   </tr> 
+                    <tr>    
+                       <td>Overtime pay</td><td>300.00</td>    
+                 </tr>    
+              </table>  
+               <table class="table">  
+                    <th>Total</th>  
+                   <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                     <th>2,600.00</th>
+                  </table>  
+            </div>
+          </div>   
+   </div>  
+     <div class="col-lg-4">
+          <div class="panel panel-primary"> 
+             <div class="panel-heading">Deductions</div> 
+              <div class="panel-body">
+                   <table class="table">  
+                    <th>Description</th><th>Amount</th>  
+                      <tr>  
+                        <td>PAYE</td><td>200.00</td>  
+                    </tr>     
+                  <tr>  
+                         <td>Loan</td><td>440.00</td>  
+                     </tr> 
+                  </table>
+                   <table class="table"> 
+                    <th>Total</th> 
+                     <th>&nbsp;&nbsp;&nbsp;</th> 
+                     <th>660.00</th>
+                 </table> 
+               </div>
+           </div>
+      </div> 
+     <div class="col-lg-4">
+         <div class="panel panel-primary"> 
+            <div class="panel-heading">Misc</div>
+              <div class="panel-body">
+                  <table class="table">
+                     <tr>    
+                      <td>Holidays: 30</td><td>Taken: 15</td><td>Left: 15</td> 
+                      </tr>  
+                    <tr>   
+                         <td>Loan balance: </td><td>500.00</td><td></td>  
+                    </tr>    
+              </table>
+    
+           </div>
+           </div>    
+    </div> 
+  </div>
+  </section>
+ </body> 
+   <script src="@Url.Content("~/Scripts/jquery_lib/jquery.min.js")"type="text/javascript"></script>
+   <script src="@Url.Content("~/Scripts/jquery_lib/native.js")" type="text/ecmascript"></script> 
+   <script src="@Url.Content("~/Scripts/jquery_lib/jquery-1.11.1.min.js")"type="text/javascript"></script>
+   <script src="@Url.Content("~/Scripts/jquery_lib/bootstrap.min.js")"type="text/javascript"></script>
+</html>
+

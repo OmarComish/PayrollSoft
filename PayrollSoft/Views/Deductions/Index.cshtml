@@ -1,0 +1,530 @@
+@model IEnumerable<PayrollSoft.Models.Settings>
+@{
+    ViewBag.Title = "Index";
+}
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/implement-ui-widget-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript">
+
+function _loadprioritycodeGrid(dataAdapter){
+
+   $("#prioritycodesdataGrid").jqxGrid({
+        width: 625,
+        source: dataAdapter,
+        theme: theme,
+        pageable: true,
+        autoheight: true,
+        sortable: true,
+        selectionmode: 'singlerow',
+        columns: [{text:'Code',datafield:'PriorityCode',width:100},
+                  {text:'Description',datafield:'Description',width:370},
+                  {text: '', datafield: 'Edit', width: 77, columntype: 'button', cellsrenderer: function(){
+                            return 'Edit';
+                   }, buttonclick: function(row){
+
+                      editrow = row;
+                      var dataRecord = $("#prioritycodesdataGrid").jqxGrid('getrowdata', editrow);
+
+                      document.getElementById('prioritycodeSave').value = "Save";
+                      _glfunctionInvoked ="prioritycodeEdit";
+
+                      $("#prioritycodeId").val(dataRecord.PriorityCode);
+                      $("#priorityCodeDescription").val(dataRecord.Description);
+                   }
+                  },
+                  {text: '', datafield: 'Delete', width: 77, columntype: 'button', cellsrenderer: function(){
+                             return 'Delete';
+                   }, buttonclick: function(row){
+
+                        _glfunctionInvoked = "prioritycodeDelete";
+                    
+                        document.getElementById('deleteRecDialog').style.visibility = "visible";
+
+                        editrow = row;
+                        var dataRecord = $("#prioritycodesdataGrid").jqxGrid('getrowdata', editrow);
+                        $("#prioritycodeId").val(dataRecord.PriorityCode);
+
+                        _deleterecordDialog("sample text");
+                   }
+                  }
+                ]
+   });
+}
+
+function _queryDataforGrid(){
+
+   var source = {
+                datatype: "json",
+                datafields: [
+                               {name: 'payCode', type:'string'},
+                               {name: 'payType', type:'string'},
+                               {name: 'payCodeDescription', type: 'string'},
+                               {name: 'payTypeDescription', type: 'string'},
+                               {name: 'gradeId', type: 'string'},
+                               {name: 'groupEligibleDescription', type: 'string'},
+                               {name: 'creditGl', type: 'string'},
+                               {name: 'creditGlDescription', type: 'string'},
+                               {name: 'includeInretrospectPayments', type: 'int'},
+                               {name: 'deductionTakenFromEmployee', type: 'int'},
+                               {name: 'priorityDescription', type: 'string'},
+                               {name: 'priorityCode', type: 'integer'}
+                             ],
+                id: 'payCode',
+                url:'/Deductions/getDeductionPayments'
+   };
+
+   return new $.jqx.dataAdapter(source);
+
+}
+
+function _clearInputFields(){
+
+    $("#deductpayCode").val("");
+    $("#deductpayType").val("");
+    $("#deductpaycodeDescription").val("");
+    $("#deductpayTypeDescription").val("");
+    $("#deductgroupEligible").val("");
+    $("#deductgroupEligibleDescription").val("");
+    $("#creditGL").val("");
+    $("#creditGlDescription").val("");
+    $("#deductionPriority").val("");
+    $("#priorityDescription").val("");
+    $("#includeInretrospectPayChk").val("");
+    $("#deductfromEmployeeChk").val("");
+
+}
+
+function _loaddeductionpaymentGrid(dataAdapter){
+   
+    $("#deductionpaymentsdataGrid").jqxGrid({
+        width: 790,
+        source: dataAdapter,
+        theme: theme,
+        pageable: true,
+        autoheight: true,
+        sortable: true,
+        selectionmode: 'singlerow',
+        columns :[
+                   {text: 'Pay Code', datafield:'payCode', width:100},
+                   {text: 'Description', datafield: 'payCodeDescription', width: 200},
+                   {text: 'PriorityDescription', datafield:'priorityDescription', width:170},
+                   {text: 'Group eligible', datafield:'groupEligibleDescription', width:100},
+                   {text: 'Deduct from employee', datafield:'deductionTakenFromEmployee', width:100},
+                   {text: 'Action', datafield: 'Details',columntype:'button',cellsrenderer: function(){
+                             return 'Details';
+                        },buttonclick: function(row){
+
+                           editrow = row;
+                           var dataRecord = $("#deductionpaymentsdataGrid").jqxGrid('getrowdata', editrow);
+                           console.log("row id: " + row);
+                           console.log(dataAdapter.records[row].creditGL);
+                           $('#deductpayCode').val(dataRecord.payCode);
+                           $('#deductpaycodeDescription').val(dataRecord.payCodeDescription);
+                           $('#deductpayType').val(dataAdapter.records[row].payType);
+                           $('#deductpayTypeDescription').val(dataAdapter.records[row].payTypeDescription);
+                           $('#deductgroupEligible').val(dataAdapter.records[row].gradeId);
+                           $('#deductgroupEligibleDescription').val(dataAdapter.records[row].groupEligibleDescription);
+                           $("#creditGL").val(dataAdapter.records[row].creditGl);
+                           $("#creditGlDescription").val(dataAdapter.records[row].creditGlDescription);
+                           $("#deductionPriority").val(dataAdapter.records[row].priorityCode);
+                           $("#priorityDescription").val(dataAdapter.records[row].priorityDescription);
+                           $("#includeInretrospectPayChk").val(dataAdapter.records[row].includeInretrospectPayments);
+                           $("#deductfromEmployeeChk").val(dataRecord.deductionTakenFromEmployee);
+                           
+
+                           $("#deductionPaymentsWindow").jqxWindow('close'); 
+
+                            $("#deductpayCode").jqxInput({ disabled: true});
+                            $("#deductpayType").jqxInput({ disabled: true});
+                            $("#deductpaycodeDescription").jqxInput({disabled: true});
+                            $("#deductpayTypeDescription").jqxInput({disabled: true});
+                            $('#deleteDeductionBtn').jqxButton({disabled: false});
+
+
+                    }
+                   }
+        ]
+    });
+
+    $("#deductionpaymentsdataGrid").jqxGrid('updatebounddata');
+}
+
+function _deductionsWindow(title, data){
+
+    $('#deductionPaymentsWindow').jqxWindow({
+        theme: theme,
+        resizable: true,
+        width: 900,
+        minHeight: 350,
+        isModal: true,
+        autoOpen: false,
+        title: title,
+        cancelButton: $('#viewDeductionOKBtn'),
+        modalOpacity: 0.01,
+        initContent: function(){
+
+            _loaddeductionpaymentGrid(data);
+        }
+    });
+
+     $("#deductionPaymentsWindow").jqxWindow('open'); 
+}
+
+function _priorityCodeWin(title,data){
+
+  $('#priorityCodeWindow').jqxWindow({
+          theme: theme,
+          resizable: true,
+          width: 650,
+          minHeight: 350,
+          isModal: true,
+          autoOpen: false,
+          title: title,
+          cancelButton:$('#prioritycodeOKBtn'),
+          modalOpacity: 0.01,
+          initContent: function(){
+
+              _loadprioritycodeGrid(data);
+          }
+    });
+
+       $("#priorityCodeWindow").jqxWindow('open');
+}
+
+function _loadDeductionWin(theme, title) {
+
+        $("#deduct-window").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 700,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#Delete"),
+            cancelButton: $("#Cancel"),
+            modalOpacity: 0.01
+
+        });
+
+        $("#deduct-window").jqxWindow('open');
+}
+
+function __enableButton(__id){
+
+   $("#" + __id).jqxButton({disabled: false});
+}
+
+$(document).ready(function () {
+
+          
+   ///<summary>
+   /// _glcontroller holds the value Settings instead of Deduction
+   /// This is to avoid changing the code in the jscript-common-function.js file under
+   /// Later, during code reviews/Unit testing , Create an If branch section in the code to handle
+   /// method invocation from this view(Deduction) to handle deduction actions
+   ///</summary>
+
+    _getUserAccessRights();
+
+    _glcontroller = "Settings";
+    var theme = getDemoTheme();
+    var title = 'Deduction payment';
+ 
+    document.getElementById('priorityCodeWindow').style.visibility="hidden";
+    document.getElementById('deleteRecDialog').style.visibility = "hidden";
+    document.getElementById('deductionPaymentsWindow').style.visibility = "hidden";
+
+      var _jobGrade = { datatype: 'json',
+                        datafields: [{ name: 'GradeId', type: 'string' },
+                                     { name: 'GradeName', type: 'string'}],
+                         id: 'GradeId',
+                         url: '/EmployeeGrade/GetGrades' };
+
+     var jobGradeDataSource = new $.jqx.dataAdapter(_jobGrade);
+
+     var source ={datatype: 'json',
+                  datafields:[{name:'PriorityCode',type: 'string'},{name:'Description',type: 'string'}],
+                  id: 'PriorityCode',
+                  url: '/Settings/getPriorityCodes'};
+
+     var dataAdapter = new $.jqx.dataAdapter(source);
+
+      //_loadDeductionWin(theme,title);
+      $('#jqxTabs').jqxTabs({ height: '380px', width: '100%', theme: theme });
+      $("#deductpayCode").jqxInput({placeHolder: 'e.g ADVPay', theme: theme, height: '25px',width: '120px'});
+      $("#deductpayType").jqxInput({placeHolder: 'e.g TAX', theme: theme, height: '25px',width: '120px'});
+
+      $("#deductgroupEligible").jqxDropDownList({
+                          theme: theme, source:jobGradeDataSource,
+                          selectedIndex: -1, width: '120px', height: '25px',dropDownHeight: "80px",
+                          displayMember:"GradeId",valueMember:"GradeName" });
+
+      $("#creditGL").jqxDropDownList({ source:['draccgl','craccgl'],theme: theme, width: '120px', height: '25px',
+                                      selectedIndex: -1, dropDownHeight: '50px' });
+
+      $("#deductionPriority").jqxDropDownList({ theme: theme, source:dataAdapter,
+                                                selectedIndex: -1, width: '120px', height: '25px',dropDownHeight: "80px",
+                                                displayMember:"PriorityCode",valueMember:"PriorityCode" });
+
+      $("#prioritycodeId").jqxInput({theme: theme, width: '130px', height: '25px' });
+      $("#priorityCodeDescription").jqxInput({theme: theme, width: '300px', height: '25px' });
+
+      $("#deductpaycodeDescription").jqxInput({placeHolder:"Pay code description", theme: theme, height: '25px',width: '500px'});
+      $("#deductpayTypeDescription").jqxInput({placeHolder:"Pay type description", theme: theme, height: '25px',width: '500px'});
+      $("#deductgroupEligibleDescription").jqxInput({placeHolder:"Pay type description", theme: theme, height: '25px',width: '500px'});
+      $("#creditGlDescription").jqxInput({placeHolder:"GL Account name", theme: theme, height: '25px',width: '500px'});
+      $("#priorityDescription").jqxInput({placeHolder:"Priority Description", theme: theme, height: '25px',width: '500px'});
+      $("#priorityCodeDescription").jqxInput({placeHolder:"Priority Description", theme: theme, height: '25px',width: '400px'});
+
+      $('#deductnewpriorityCode').jqxButton({ theme: theme });
+      $('#viewDeductionOKBtn').jqxButton({theme: theme});
+      $('#viewDeductionsBtn').jqxButton({theme:theme});
+      $('#saveDeductionBtn').jqxButton({theme:theme});
+      $('#prioritycodeSave').jqxButton({theme: theme});
+      $('#prioritycodeOKBtn').jqxButton({theme:theme});
+      $('#DeleteDialogBtn').jqxButton({theme:theme});
+      $('#CancelDialogBtn').jqxButton({theme:theme});
+
+      $("#includeInretrospectPayChk").jqxCheckBox({ theme: theme, width: '185px'});
+      $("#deductfromEmployeeChk").jqxCheckBox({ theme: theme, width: '185px'});
+      
+
+      $('#deleteDeductionBtn').jqxButton({disabled: true});
+
+      $("#deductionPriority").on('select',function(event){
+
+              if(event.args){
+                var index = $("#deductionPriority").jqxDropDownList('selectedIndex');
+                $('#priorityDescription').val(dataAdapter.records[index].Description);
+              }
+
+              __enableButton("saveDeductionBtn");
+      });
+
+      $("#deductgroupEligible").on('select',function(event){
+
+             if(event.args){
+                var index = $("#deductgroupEligible").jqxDropDownList('selectedIndex');
+                 $("#deductgroupEligibleDescription").val(jobGradeDataSource.records[index].GradeName)
+
+             }
+      });
+
+      $('#deductnewpriorityCode').click(function(){
+
+          title ="Priority Code";
+
+          //Unhide the priorityCodeWindow now..
+          document.getElementById('priorityCodeWindow').style.visibility="visible";
+
+         _priorityCodeWin(title,dataAdapter);
+
+      });
+
+      $("#creditGL").on('select',function(event){
+
+          if(event.args){
+
+             var index = $("#creditGL").jqxDropDownList('selectedIndex');
+
+             if(index === 0){
+                $("#creditGlDescription").val("Dedit GL account");
+             } else {
+                 $("#creditGlDescription").val("Credit GL account");
+             }
+          }
+      });
+
+      $('#prioritycodeSave').click(function(){
+
+        if(__authorised("Deductions", userPrivilegdes, "Create") === true){
+              
+              if (_glfunctionInvoked === "prioritycodeEdit"){
+
+                  _glfunctionInvoked = "prioritycodeEdit"
+
+              } else {
+
+                _glfunctionInvoked = "prioritycodeSave";
+
+              }
+
+            
+              var datarow = { PriorityCode: parseInt($("#prioritycodeId").val()),
+                              Description: $('#priorityCodeDescription').val() };
+              
+              _addNewRecord(datarow,_glcontroller);
+            
+              $("#prioritycodeId").val("");
+              $('#priorityCodeDescription').val("");
+              $("#prioritycodesdataGrid").jqxGrid('updatebounddata');
+              
+             document.getElementById('prioritycodeSave').value = "Add";
+
+             if(_glfunctionInvoked === "prioritycodeEdit"){
+
+               _glfunctionInvoked ="prioritycodeSave"
+
+             }
+
+         } else {
+
+            _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+         }
+
+      });
+
+      $('#prioritycodeOKBtn').click(function(){
+         //document.getElementById('prioritycodeOKBtn').style.visible = "hidden";
+         $("#priorityCodeWindow").jqxWindow('close');
+      });
+
+      $('#deleteDeductionBtn').click(function(){
+
+        if(__authorised("Deductions", userPrivilegdes, "Delete") === true){
+
+          _glfunctionInvoked = "deleteDeductionBtn";
+
+          document.getElementById('deleteRecDialog').style.visibility = "visible"
+
+          _deleterecordDialog("sample text");
+
+        } else {
+
+           _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+        }
+
+     });
+
+      $('#viewDeductionsBtn').click(function(){
+
+        if(__authorised("Deductions", userPrivilegdes, "Read") === true){
+
+            _deductionsWindow('Deductions', _queryDataforGrid());
+
+            document.getElementById('deductionPaymentsWindow').style.visibility = "visible";
+
+            _glfunctionInvoked = "editDeductionsBtn";
+            
+
+         } else {
+            
+            _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+         }
+
+      });
+
+     $('#DeleteDialogBtn').click(function(){
+
+      ///<SUMMARY>
+      /// This code snippet is essentially changing the status of the
+      /// record in the database to voided. If you trace this code that
+      /// calls the  _addNewRecord() method, the Delete method in the controller,
+      /// is simply updating the state of the record NOT literally deleting it
+      ///</SUMMARY>
+        
+        if(__authorised("Deductions", userPrivilegdes, "Delete") === true){
+
+          if (_glfunctionInvoked === "prioritycodeDelete"){
+
+              var datarow = { PriorityCode: parseInt($("#prioritycodeId").val()),
+                             Description: $('#priorityCodeDescription').val() };
+
+              _addNewRecord(datarow,_glcontroller);
+
+              _glfunctionInvoked = null;
+
+          } else {
+
+              _deleteRecord($("#deductpayCode").val(), "Deductions");
+
+              $("#deductionpaymentsdataGrid").jqxGrid('updatebounddata');
+
+              _clearInputFields();
+
+              _glfunctionInvoked = null;
+
+          }
+
+        } else {
+
+           _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+        }
+
+
+     });
+
+      $('#saveDeductionBtn').click(function(){
+
+        if(__authorised("Deductions", userPrivilegdes, "Create") === true){
+
+             if ((_glfunctionInvoked ==="saveDeductionsBtn") || (_glfunctionInvoked === null)){
+
+                 if(_glfunctionInvoked === null){
+                   _glfunctionInvoked="saveDeductionBtn";
+                 }
+
+                     var deductdataRow = {payCode: $('#deductpayCode').val(),
+                           payType:$('#deductpayType').val(),
+                           payCodeDescription:$('#deductpaycodeDescription').val(),
+                           payTypeDescription: $('#deductpayTypeDescription').val(),
+                           gradeId: $('#deductgroupEligible').val(),
+                           groupEligibleDescription: $('#deductgroupEligibleDescription').val(),
+                           creditGL:$('#creditGL').val(),creditGlDescription:$('#creditGlDescription').val(),
+                           priorityCode:$('#deductionPriority').val(),priorityDescription:$('#priorityDescription').val(),
+                           includeInretrospectPayments: parseInt($('#includeInretrospectPayChk').val() === true ? 1: 0),
+                           deductionTakenFromEmployee: parseInt($('#deductfromEmployeeChk').val() === true ? 1 : 0)
+                         };
+
+                     _addNewRecord(deductdataRow,_glcontroller);
+
+                     _clearInputFields();    
+
+             } else if(_glfunctionInvoked ==="editDeductionsBtn"){
+
+                    var deductdataRow = {payCode: $('#deductpayCode').val(),
+                           payType:$('#deductpayType').val(),
+                           payCodeDescription:$('#deductpaycodeDescription').val(),
+                           payTypeDescription: $('#deductpayTypeDescription').val(),
+                           gradeId: $('#deductgroupEligible').val(),
+                           groupEligibleDescription: $('#deductgroupEligibleDescription').val(),
+                           creditGL:$('#creditGL').val(),creditGlDescription:$('#creditGlDescription').val(),
+                           priorityCode:$('#deductionPriority').val(),priorityDescription:$('#priorityDescription').val(),
+                           includeInretrospectPayments: parseInt($('#includeInretrospectPayChk').val() === true ? 1: 0),
+                           deductionTakenFromEmployee: parseInt($('#deductfromEmployeeChk').val() === true ? 1 : 0)
+                         };
+
+                  _addNewRecord(deductdataRow,_glcontroller);
+
+                  _clearInputFields(); 
+
+             } else {
+
+                return;
+             }
+
+          } else {
+
+             _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+          }
+            
+
+      });
+});
+</script>
+
+
+@Html.Partial("_Deduction")

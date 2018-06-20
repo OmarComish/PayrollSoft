@@ -1,0 +1,38 @@
+﻿@model PayrollSoft.Models.Payroll
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<fieldset>
+    <legend>Payroll</legend>
+
+    <div class="display-label">GradeID</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.GradeID)
+    </div>
+
+    <div class="display-label">insuranceBill</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.insuranceBill)
+    </div>
+
+    <div class="display-label">salaryAdvance</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.salaryAdvance)
+    </div>
+
+    <div class="display-label">overtimeHours</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.overtimeHours)
+    </div>
+</fieldset>
+@using (Html.BeginForm()) {
+    <p>
+        <input type="submit" value="Delete" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}

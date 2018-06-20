@@ -1,0 +1,39 @@
+﻿@model IEnumerable<PayrollSoft.Models.Pension>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table>
+    <tr>
+        <th>
+            EmployerContrRate
+        </th>
+        <th>
+            EmployeeContrRate
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.EmployerContrRate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EmployeeContrRate)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.PensionRefNum }) |
+            @Html.ActionLink("Details", "Details", new { id=item.PensionRefNum }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.PensionRefNum })
+        </td>
+    </tr>
+}
+
+</table>

@@ -1,0 +1,962 @@
+﻿@model IEnumerable<PayrollSoft.Models.Taxation>
+
+@{
+    ViewBag.Title = "Create";
+}
+
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+
+
+<script type="text/javascript">
+
+    function _createFormElements(theme, title,popUpWinTitle,insuranceWinTitle) {
+
+        $('#window').jqxWindow({
+            theme: theme,
+            resizable: true,
+            width: 615,
+            height: 470,
+            minWidth: 500,
+            minHeight: 300,
+            title: title,
+            initContent: function () {
+
+                $('#jqxTabs').jqxTabs({ height: 420, width: 600, theme: theme });
+                $('#jqxPensionTab').jqxTabs({ height: 185, width: 290, theme: theme });
+                $('#jqxAllowanceTab').jqxTabs({ height: 185, width: 300, theme: theme });
+                $('#jqxInsuranceTab1').jqxTabs({ height: 185, width: 595, theme: theme });
+
+                var source = ["HSEALLW", "MEALAWWL"];
+
+                var insuranceDataSource = { datatype: "json", datafields: [{ name: 'InsuranceCode', type: 'string' }, { name: 'Description', type: 'string'}], id: 'InsuranceCode', url: '/Insurance/getInsuranceCode' };
+
+                var pensionCodeDataSource = { datatype: "json",
+                    datafields: [{ name: 'PensionRefNum'}],
+                    id: 'PensionRefNum',
+                    url: '/Pension/getPensionCode'
+                };
+
+                var allowanceCode = { datatype: "json",
+                    datafields: [{ name: 'CategoryID', type: 'string' }, { name: 'CategoryDescription', type: 'string'}],
+                    id: 'CategoryDescription', url: '/Allowance/getAllowanceCategoryCode'
+                };
+
+                //populate the dropdownList with the insurance data
+                var insuranceDataAdapter = new $.jqx.dataAdapter(insuranceDataSource);
+                var pensionDataAdapter = new $.jqx.dataAdapter(pensionCodeDataSource);
+                var allowanceCodeAdapter = new $.jqx.dataAdapter(allowanceCode);
+
+                $('#jqxTabs').on('tabclick', function (event) {
+                    //identify the active Tab
+                    var clickedItem = event.args.item;
+                    switch (clickedItem) {
+                        case 0:
+                            _winElementID = "_taxationTAB";
+                            console.log(_winElementID);
+                            break;
+                        case 1:
+                            _winElementID = "_jobGradTAB";
+                            console.log(_winElementID);
+                            break;
+                        case 2:
+                            _winElementID = "_insuranceTAB";
+                            console.log(_winElementID);
+                            break;
+                        case 3:
+                            _winElementID = "_benefitsDeductionsTAB";
+                            console.log(_winElementID);
+                            break;
+                    }
+
+                });
+
+                $('#NewTaxCode').jqxButton({ theme: theme });
+
+                $('#NewTaxCode').click(function () {
+                    _popupWin(theme, popUpWinTitle);
+                });
+
+                $("#insuranceNo").jqxInput({ theme: theme, height: '20px', disabled: true });
+                $("#insuranceDescript").jqxInput({ theme: theme, height: '20px', width: '200px', disabled: true });
+                $("#serviceProvider").jqxInput({ theme: theme, height: '20px', width: '200px', disabled: true });
+
+                $('#newIsuranceDetails').click(function () {
+                    _popupwinInsurance(theme, insuranceWinTitle);
+                });
+
+                $("#empGrade").jqxInput({ theme: theme, height: '20px', width: '80px' });
+                $("#gradeDescript").jqxInput({ theme: theme, height: '20px' });
+                $("#existingGrade").jqxButton({ theme: theme });
+                //$("#newGrade").jqxButton({ theme: theme });
+                $("#basicPay").jqxInput({ theme: theme, height: '20px' });
+
+                $("#allowanceCode").jqxDropDownList({
+                    theme: theme, source: allowanceCodeAdapter,
+                    selectedIndex: -1, width: '180px', height: '20px',
+                    promptText: "Code", dropDownHeight: "80px", displayMember: 'CategoryDescription', valueMember: 'CategoryID'
+                });
+
+                $("#insuranceCode").jqxDropDownList({
+                    theme: theme, source: insuranceDataAdapter,
+                    selectedIndex: -1, width: '210px', height: '20px',
+                    promptText: "Insurance", dropDownHeight: "80px", displayMember: 'Description', valueMember: 'InsuranceCode'
+                });
+
+                $("#pensionNum").jqxDropDownList({
+                    theme: theme, source: pensionDataAdapter,
+                    selectedIndex: -1, width: '150px', height: '20px',
+                    promptText: "Pension Code...", dropDownHeight: "80px", displayMember: 'PensionRefNum', valueMember: 'PensionRefNum'
+                });
+                $("#overtimeRate").jqxInput({ theme: theme, height: '20px' });
+
+                $("#saveEmpGrade").jqxButton({ theme: theme });
+                $("#cancelEmpGrade").jqxButton({ theme: theme });
+
+                $('#newInsuranceCode').jqxButton({ theme: theme });
+                $('#ShowExistingInsurance').jqxButton({ theme: theme });
+
+                $('#newIsuranceDetails').jqxButton({ theme: theme });
+                $('#AddAllowance').jqxButton({ theme: theme });
+                $('#ViewExisting').jqxButton({ theme: theme });
+                $('#SavePension').jqxButton({ theme: theme });
+                $('#editPension').jqxButton({ theme: theme });
+
+
+                $('#newInsuranceCode').click(function () {
+
+                    //Enable the input boxes on click of this button
+                    $("#insuranceNo").jqxInput({ disabled: false });
+                    $("#insuranceNo").jqxInput('selectAll');
+                    $("#insuranceDescript").jqxInput({ disabled: false });
+                    $("#serviceProvider").jqxInput({ disabled: false });
+                });
+
+                $('#allowanceRefNum').jqxInput({ height: 20, width: 130, theme: theme });
+                $('#allowanceDescript').jqxInput({ height: 20, width: 130, theme: theme });
+                $('#allowanceRate').jqxInput({ height: 20, width: 130, theme: theme });
+                $('#pensionRefNum').jqxInput({ height: 20, width: 130, theme: theme });
+                $('#empContrRate').jqxInput({ height: 20, width: 80, theme: theme });
+                $('#emplrContrRate').jqxInput({ height: 20, width: 80, theme: theme });
+
+            }
+        });
+
+        $('#window').jqxWindow('focus')
+
+    }
+
+    function _popupWin(theme, title) {
+
+        $("#popupwindow").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 470,
+            height: 290,
+            minWidth: 470,
+            minHeight: 290,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#OK"),
+            cancelButton: $("#Cancel"),
+            modalOpacity: 0.07,
+            initContent: function () {
+
+                $('#jqxTabsmin').jqxTabs({ height: 200, width: 460, theme: theme });
+                $("#minAmount").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+                $("#maxAmount").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+                $("#rate1").jqxNumberInput({ width: '200px', height: '25px', symbol: '%', spinButtons: true });
+                $("#RateStatus").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+                $("#dateIssued").jqxDateTimeInput({ theme: theme, width: '250px', height: '20px', formatString: 'MM-dd-yyyy' });
+
+                $("#minAmount2").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+                $("#maxAmount2").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+                $("#rate2").jqxNumberInput({ width: '200px', height: '25px', symbol: '%', spinButtons: true });
+
+                $("#minAmount3").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+                $("#maxAmount3").jqxNumberInput({ width: '250px', height: '25px', symbol: '$', spinButtons: true });
+                $("#rate3").jqxNumberInput({ width: '200px', height: '25px', symbol: '%', spinButtons: true });
+
+               
+            }
+
+        });
+
+        $("#popupwindow").jqxWindow('open');
+
+    }
+
+    function _popupwinInsurance(theme, title) {
+
+        console.log("Loading Insurance Details window...");
+        _winID = "_insuranceCatWin";
+        console.log(_winID);
+
+        $("#insurancePopUpWin").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 400,
+            height: 300,
+            minWidth: 350,
+            minHeight: 290,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#AddInsuranceCat1"),
+            cancelButton: $("#CancelInsuranceCat"),
+            modalOpacity: 0.07,
+            initContent: function () {
+
+                $("#jqxTabsInsuranceCat").jqxTabs({ height: '260px', width: '390px', theme: theme });
+                $("#insuranceRate").jqxNumberInput({ width: '200px', height: '25px', symbol: '%', spinButtons: true });
+                $("#insCatID").jqxInput({ theme: theme, height: '20px', disabled: false });
+                $("#CatDescript").jqxInput({ theme: theme, height: '30px', width: '200px', disabled: false });
+                $('#CancelInsuranceCat').jqxButton({ theme: theme });
+                $('#AddInsuranceCat').jqxButton({ theme: theme });
+
+
+                $('#CancelInsuranceCat').click(function () {
+
+                    //reset the _winID global to the previous value
+                    //comment out the console.log() lines, when deploying the application
+                    //it's meant to debug the javascript code during development
+                    
+                    console.log("Closing Insurance Details window...");
+                    _winID = null;
+                    console.log(_winID);
+
+                });
+
+            }
+
+
+        });
+
+        $("#insurancePopUpWin").jqxWindow('open');
+    }
+
+    function _addRecord(row,row2) {
+
+        
+
+           $.ajax({
+                cache: false,
+                datatype: "jsonp",
+                url: "/Taxation/Create",
+                type: "POST",
+                data: row,
+                success: function (data, status, xhr) {
+                    alert(status);
+                    //$("#jqxgrid").jqxGrid('updatebounddata');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                    //commit(false);
+                }
+
+            });
+
+            for (var i = 0; i < row2.length; i++) {
+
+            //add all the rows using the forloop construct
+
+              $.ajax({
+
+                cache: false,
+                datatype: "jsonp",
+                url: "/TaxationThreshold/Create",
+                type: "POST",
+                data: row2[i],
+                success: function (data, status, xhr) {
+                //alert(status);
+                //$("#jqxgrid").jqxGrid('updatebounddata');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+                //commit(false);
+                }
+               }); 
+            }
+
+        }
+
+        function _addNewInsurance(insurancedata,insuranceCatdata) {
+
+            //Function
+            //Action: insert record into Database
+            //parameters: insurance object, insurance category object
+            //return value: none
+
+            //console.log("mouseclickCount =" + _mouseClickCount);
+            //console.log("window id= " + _winID);
+
+        if ((_winID == "_insuranceCatWin") && (_mouseClickCount == 1)){
+
+            $.ajax({
+                cache: false,
+                datatype: "jsonp",
+                url: "/Insurance/Create",
+                type: "POST",
+                data: insurancedata ,
+                success: function (data, status, xhr) {
+                   alert(status);
+  
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                //commit(false);
+                }
+
+            });
+            
+             $.ajax({
+                cache: false,
+                datatype: "jsonp",
+                url: "/InsuranceCategory/Create",
+                type: "POST",
+                data: insuranceCatdata,
+                success: function (data, status, xhr) {
+                   alert(status);
+  
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                //commit(false);
+                }
+            });
+
+        } 
+
+        if ((_winID == "_insuranceCatWin") && (_mouseClickCount > 1)) {
+
+            $.ajax({
+                cache: false,
+                datatype: "jsonp",
+                url: "/InsuranceCategory/Create",
+                type: "POST",
+                data: insuranceCatdata,
+                success: function (data, status, xhr) {
+                    alert(status);
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                    //commit(false);
+                }
+            });
+         }
+
+
+    }
+
+   /*function _addNewAllowance(newrec) {
+
+            $.ajax({
+                cache: false,
+                datatype: "jsonp",
+                url: "/Allowance/Create",
+                type: "POST",
+                data: newrec,
+                success: function (data, status, xhr) {
+                    alert(status);
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                    //commit(false);
+                }
+
+            });
+
+        } */
+
+
+  /*function _addNewRecord(record, controller) {
+
+        switch (controller) {
+
+            case 'Allowance':
+
+                $.ajax({
+                    cache: false,
+                    datatype: "jsonp",
+                    url: "/Allowance/Create",
+                    type: "POST",
+                    data: record,
+                    success: function (data, status, xhr) {
+                        alert(status);
+                        //$("#jqxgrid").jqxGrid('updatebounddata');
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert(errorThrown);
+                        //commit(false);
+                    }
+
+                });
+
+                break;
+
+
+            case 'Pension':
+
+                $.ajax({
+                    cache: false,
+                    datatype: "jsonp",
+                    url: "/Pension/Create",
+                    type: "POST",
+                    data: record,
+                    success: function (data, status, xhr) {
+                        alert(status);
+                        //$("#jqxgrid").jqxGrid('updatebounddata');
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert(errorThrown);
+                        //commit(false);
+                    }
+
+                });
+
+                break;
+
+
+        }
+    } */
+
+
+
+
+
+        function _clicksCountr() {
+
+            _mouseClickCount = _mouseClickCount + 1;
+            return _mouseClickCount;
+        }
+
+
+        $(document).ready(function () {
+
+            _winID = "_appConfigMainWin";
+            console.log("Loading app Configuration window..");
+            console.log(_winID);
+
+            var theme = getDemoTheme();
+            var title = 'Application Configuration';
+            var popUpWinTitle = 'New Taxation Code';
+            var insuranceWinTitle = 'Insurance Categories';
+
+
+
+            //load the main form.. 
+            _createFormElements(theme, title, popUpWinTitle, insuranceWinTitle);
+
+
+
+            $('#Cancel').jqxButton({ theme: theme });
+            $('#OK').jqxButton({ theme: theme });
+            $('#Save').jqxButton({ theme: theme });
+            $("#TaxName").jqxInput({ theme: theme, height: '20px', disabled: false });
+            $("#Descript").jqxInput({ theme: theme, height: '30px', width: '200px', disabled: false });
+            $('#firstNext').jqxButton({ theme: theme });
+
+            $("#Save").click(function () {
+
+                var recordexist;
+                var dateCreated = CurrentDate();
+
+                _mouseClickCount = _countClicks();
+
+                var Taxationdata = {
+                    Tax_Ref_Code: $("#TaxName").val(),
+                    Description: $("#Descript").val(),
+                    DateCreated: $("#dateIssued").val(),
+                    Status: $("#RateStatus").val()
+                };
+
+                //thresholdID will be system generated
+                //this is just a prototype
+                //here the javascript Math.random function is implemented
+
+                var ThresholdData = [{ ThresholdID: 'PAYE' + Math.floor((Math.random() * 10) + 1),
+                    Tax_Ref_Code: $("#TaxName").val(),
+                    MinimumAmount: $("#minAmount").val(),
+                    MaximumAmount: $("#maxAmount").val(),
+                    Rate: $("#rate1").val()
+                },
+                                               { ThresholdID: 'PAYE' + Math.floor((Math.random() * 10) + 1),
+                                                   Tax_Ref_Code: $("#TaxName").val(),
+                                                   MinimumAmount: $("#minAmount2").val(),
+                                                   MaximumAmount: $("#maxAmount2").val(),
+                                                   Rate: $("#rate2").val()
+                                               },
+                                                  { ThresholdID: 'PAYE' + Math.floor((Math.random() * 10) + 1),
+                                                      Tax_Ref_Code: $("#TaxName").val(),
+                                                      MinimumAmount: $("#minAmount3").val(),
+                                                      MaximumAmount: $("#maxAmount3").val(),
+                                                      Rate: $("#rate3").val()
+                                                  }
+                                             ];
+
+
+                //call the addRecord function to save the new record
+                //PARAMETERS: rowdata (an object with multiple values)
+                //OUTPUT: none
+
+                //recordexist = _checkIfRecordExists($("#TaxName").val(), 'Taxation', 'Create');
+
+                _addRecord(Taxationdata, ThresholdData);
+
+            });
+
+            $("#AddInsuranceCat").click(function () {
+
+                _mouseClickCount = _clicksCountr();
+
+                var insurance = { InsuranceCode: $("#insuranceNo").val(),
+                    Description: $("#insuranceDescript").val(),
+                    ServiceProvider: $("#serviceProvider").val()
+                };
+                var insuranceCat = { CategoryID: $("#insCatID").val(),
+                    InsuranceCode: $("#insuranceNo").val(),
+                    Description: $("#CatDescript").val(),
+                    MonthlyRate: $("#insuranceRate").val()
+                };
+
+                //check if the InsuranceCode exists in the DB. If it does,
+                //we assume that a new category is being created under the same
+                //InsuranceCode
+
+                //Call the _addNewInsurance method...
+                _addNewInsurance(insurance, insuranceCat);
+
+
+
+            });
+
+            $("#CancelInsuranceCat").click(function () {
+                //now reset the _mouseClickCounter
+                _mouseClickCount = 0;
+            });
+
+
+            $("#AddAllowance").click(function () {
+
+                //add the logic to create the new allowance policy record for the database...
+                var allowanceRec = { allowanceRefNum: $("#allowanceRefNum").val(),
+                    Description: $("#allowanceDescript").val(),
+                    allowanceRate: $("#allowanceRate").val()
+                };
+
+                var controller = "Allowance";
+
+                //call the function to save the record now
+                //_addNewAllowance(allowanceRec);
+                _addNewRecord(allowanceRec, controller)
+
+            });
+
+            $("#SavePension").click(function () {
+                //add the logic to create the new pension policy record for the database...
+                var controller = "Pension";
+                var pensionRec = { PensionRefNum: $('#pensionRefNum').val(), EmployeeContrRate: $('#empContrRate').val(), EmployerContrRate: $('#emplrContrRate').val() };
+
+                _addNewRecord(pensionRec, controller);
+            });
+
+            $('#saveEmpGrade').click(function () {
+
+                var controller = 'EmployeeGrade';
+
+                var empgradeRec = { GradeId: $('#empGrade').val(), GradeName: $('#gradeDescript').val(),
+                    MinSalary: $('#basicPay').val(), AllowanceRefNum: $('#allowanceCode').val(),
+                    InsuranceCode: $('#insuranceCode').val(), PensionRefNum: $('#pensionNum').val(),
+                    OvertimeRate: $('#overtimeRate').val()
+                };
+
+                _addNewRecord(empgradeRec,controller);
+            });
+
+        });
+
+</script>
+<div id="window">
+    <div>
+      <div>
+         <div>
+             <div id="jqxTabWidget">
+                <div style='float: left;'>
+                  <div id="jqxTabs">
+                  <ul style='margin-left: 10px;'>
+                      <li>Taxation</li>
+                      <li>Job Grading</li>
+                      <!--<li>Insurance</li>-->
+                      <li>Benefits & Deductions</li>
+                  </ul>
+                      <div>
+                        <div style="padding-top: 35px;">
+                           <div style='margin-left: 15px;margin-right:15px;'>Add the new taxation code here.Add custom Text here. Add custom Text here. Add custom Text here.Add custom Text here.</div>
+                           <input style="margin-left: 350px;" type="button" id="NewTaxCode" value="New Tax Code" />
+                        </div>
+                        <div style="padding-top: 38px;">
+                           <input style="margin-left: 350px;" type="button" id="EdiTaxCode" value="Edit Tax Code" />
+                        </div>
+                      </div>
+                      <div>
+                         <div style="padding-top: 35px;margin-left: 15px;">
+                             <label >Grade:</label><input id="empGrade" style="margin-left:70px;" />
+                             <label>Description:</label><input id="gradeDescript" style="margin-left:5px;" />
+                             <input style="margin-left: 10px;" type="button" id="existingGrade" value="Load exisiting" />
+                             <!--<input type="button" id="newGrade" value="New Grade" />-->
+                         </div>
+                         <div style="padding-top:10px;margin-left:10px;">
+                          <table>
+                             <tr>
+                                <td><label >Basic Pay:</label><input id="basicPay" style="margin-left:50px;" /></td> 
+                                <td>Allowance Code:</td>
+                                <td><div id="allowanceCode"></div></td>
+                            </tr>
+                           </table>
+                         </div>
+                         <div style="margin-top:10px;margin-left:10px;">
+                           <table>
+                              <tr>
+                                 <td><div style="padding-left:-1px;">Insurance:</div></td>
+                                 <td><div id="insuranceCode" style="margin-left:45px;"></div></td>
+ 
+                              </tr>
+                           </table>
+                          
+                         </div>
+                         <div style="margin-top:10px;margin-left:10px;">
+                         <table>
+                           <tr>
+                            <td>Pension number:</td>
+                            <td><div id="pensionNum" style="margin-left:5px;"></div></td>
+                          </tr>
+                         </table>
+                         </div>
+                         <div style="padding-top: 10px;margin-left: 15px;">
+                           <label>Overtime rate:</label><input id="overtimeRate" style="margin-left:25px;" />
+                         </div>
+                         <div style="margin-right:50px;padding-top:15px;">
+                              <input style="margin-left: 350px;" type="button" id="saveEmpGrade" value="Save" />
+                              <input type="button" id="cancelEmpGrade" value="Cancel" />
+                         </div>
+                      </div>
+                      <!--<div>
+                         <div style='padding-top:30px;margin-left:10px;'>
+                          <table>
+                             <tr>
+                                <td align="right">Insurance Ref. number:</td><td align="left"><input id="insuranceNo" /></td>
+                             </tr>
+                             <tr><td></td><td></td></tr>
+                              <tr>
+                                <td align="right">Description:</td><td align="left"><input id="insuranceDescript" /></td>
+                              </tr>
+                              <tr><td></td><td></td></tr>
+                              <tr>
+                                <td align="right"> Service Provider:</td><td align="left"><input id="serviceProvider" /></td>
+                              </tr>
+                              <tr><td></td><td></td></tr>
+                          </table>
+                          </div>
+                          <div style='padding-top:25px;margin-left:10px;'>
+                          <table>
+                              <tr><td></td><td></td></tr>
+                               <tr>
+                                  <td></td>
+                                  <td>
+                                     <input style="margin-left:270px;" type="button" id="ShowExistingInsurance" value="View existng" />
+                                     <input type="button" id="newInsuranceCode" value="New Insurance" />
+                                     <input  type="button" id="newIsuranceDetails" value="Next" />
+                                  </td>
+                               </tr>
+                            </table>
+                          </div>
+                      </div>-->
+                      <div> 
+                         <div style="margin-top:10px;" ></div>
+                         <div id="jqxTabWidget">
+                              <div style='float: left;'>
+                                  <div id='jqxPensionTab'>
+                                     <ul style='margin-left: 20px;'>
+                                          <li>Allowance</li>
+                                     </ul>
+                                    <div>
+                                         <div style="margin-top:10px; padding-left:5px;">
+                                            <label >Ref. Number:</label><input id="allowanceRefNum" style="margin-left:45px;" />
+                                         </div>
+                                        <div style="margin-top:10px; padding-left:5px;">
+                                            <label >Description:</label><input id="allowanceDescript" style="margin-left:50px;" />
+                                         </div>
+                                         <div style="margin-top:10px; padding-left:5px;">
+                                            <label >Rate:</label><input id="allowanceRate" style="margin-left:70px;" />
+                                         </div>
+                                         <div style="margin-top: 10px;margin-left:120px;">
+                                           <table>
+                                             <tr>
+                                              <td><input type="button" id="AddAllowance" value="Add" /></td>
+                                              <td><input type="button" id="ViewExisting" value="View Existing" /></td>
+                                            </tr>
+                                          </table>
+                                         </div>
+                                    </div>
+                                   </div>
+                                      
+                               </div>
+                           </div>
+                         <div style="margin-top:10px;" ></div>
+                         <div id="jqxTabWidget">
+                              <div style='float: right;'>
+                                  <div id='jqxAllowanceTab'>
+                                     <ul style='margin-left: 15px;'>
+                                          <li>Pension</li>
+                                     </ul>
+                                    <div>
+                                         <div style="margin-top:10px; padding-left:5px;">
+                                            <label >Ref. Number:</label><input id="pensionRefNum" style="margin-left:50px;" />
+                                         </div>
+                                        <div style="margin-top:10px; padding-left:5px;">
+                                            <label >Employer Contr Rate:</label><input id="empContrRate" style="margin-left:45px;" />
+                                         </div>
+                                         <div style="margin-top:10px; padding-left:5px;">
+                                            <label >Employee Contr Rate:</label><input id="emplrContrRate" style="margin-left:45px;" />
+                                         </div>
+                                         <div style="margin-top: 15px;margin-left:180px;">
+                                           <table>
+                                             <tr>
+                                              <td><input type="button" id="SavePension" value="Save" /></td>
+                                              <td><input type="button" id="editPension" value="Edit" /></td>
+                                            </tr>
+                                          </table>
+                                         </div>
+                                    </div>
+                                   </div>
+                                      
+                               </div>
+                           </div>
+                           <div style="margin-top:10px;" >
+                           <div id="jqxTabWidget">
+                              <div style='float:left;'>
+                                 <div id='jqxInsuranceTab1'>
+                                       <ul style='margin-left: 15px;'>
+                                          <li>Insurance</li>
+                                     </ul>
+                                     <div>
+                                    <div style='padding-top:5px;margin-left:10px;'>
+                                     <table>
+                                      <tr>
+                                        <td align="right">Insurance Ref. number:</td><td align="left"><input id="insuranceNo" /></td>
+                                     </tr>
+                                     <tr><td></td><td></td></tr>
+                                      <tr>
+                                        <td align="right">Description:</td><td align="left"><input id="insuranceDescript" /></td>
+                                      </tr>
+                                      <tr><td></td><td></td></tr>
+                                      <tr>
+                                        <td align="right"> Service Provider:</td><td align="left"><input id="serviceProvider" /></td>
+                                      </tr>
+                                      <tr><td></td><td></td></tr>
+                                    </table>
+                                    </div>
+                                   <div style='padding-top:4px;margin-left:10px;'>
+                                   <table>
+                                     <tr>
+                                      <td></td>
+                                   <td>
+                                     <input style="margin-left:250px;" type="button" id="ShowExistingInsurance" value="View existng" />
+                                     <input type="button" id="newInsuranceCode" value="New Insurance" />
+                                     <input  type="button" id="newIsuranceDetails" value="Next" />
+                                   </td>
+                                 </tr>
+                               </table>
+                          </div>
+                                     </div>
+                                 </div>
+                              </div>
+                              </div>
+                           </div>
+                      </div>
+                </div>
+                </div>
+             </div>
+         </div>
+      </div>
+    </div>
+</div>
+<div id="popupwindow">
+  <div>New Tax Code</div>
+      <div style="overflow: hidden;">
+         <div id="jqxTabWidgetmin">
+            <div style='float: left;'>
+               <div id="jqxTabsmin">
+                   <ul style='margin-left: 10px;'>
+                       <li>General</li>
+                       <li>Threshold A</li>
+                       <li>Threshold B</li>
+                       <li>Threshold C</li>
+                   </ul>
+                   <div>
+                      <div style='padding-top:30px;margin-left:20px;'>
+                      <table>
+                        <tr>
+                          <td align="right">Code:</td>
+                          <td align="left"><input id="TaxName" /></td>
+                        </tr>
+                        <tr><td></td><td></td></tr>
+                        <tr>
+                          <td align="right">Description:</td>
+                          <td align="left"><input id="Descript" /></td>
+                        </tr>
+                        <tr><td></td><td></td></tr>
+                        <tr>
+                          <td align="right">Date Issued:</td>
+                          <td align="left"><div id="dateIssued"></div></td>
+                        </tr>
+                        <tr><td></td><td></td></tr>
+                        <tr>
+                          <td align="right">Active</td>
+                          <td align="left"><div id="RateStatus"></div></td>
+                        </tr>
+                     </table> 
+                     
+                      </div>
+                   </div>
+                   <div>
+                      <div style='padding-top:30px;margin-left:20px;'>
+                      <table>
+                         <tr>
+                            <td style="margin-left:10px;">Minimum Amount:</td>
+                            <td style="margin-right:20px;"><div id="minAmount"></div></td>
+                         </tr>
+                         <tr><td></td><td></td></tr>
+                         <tr>
+                            <td style="margin-left:20px;">Maxmum Amount:</td>
+                            <td style="margin-right:20px;"><div id="maxAmount"></div></td>
+                         </tr>
+                         <tr><td></td><td></td></tr>
+                         <tr>
+                            <td style="margin-left:20px;">Rate:</td>
+                            <td style="margin-right:20px;"><div id="rate1"></div></td>
+                         </tr>
+                      </table>
+                      </div>
+                   </div>
+                   <div>
+                      <div style='padding-top:30px;margin-left:20px;'>
+                      <table>
+                         <tr>
+                            <td style="margin-left:10px;">Minimum Amount:</td>
+                            <td style="margin-right:20px;"><div id="minAmount2"></div></td>
+                         </tr>
+                         <tr><td></td><td></td></tr>
+                         <tr>
+                            <td style="margin-left:20px;">Maxmum Amount:</td>
+                            <td style="margin-right:20px;"><div id="maxAmount2"></div></td>
+                         </tr>
+                         <tr><td></td><td></td></tr>
+                         <tr>
+                            <td style="margin-left:20px;">Rate:</td>
+                            <td style="margin-right:20px;"><div id="rate2"></div></td>
+                         </tr>
+                      </table>
+                      </div>
+                   </div>
+                   <div>
+                     <div style='padding-top:30px;margin-left:20px;'>
+                      <table>
+                         <tr>
+                            <td style="margin-left:10px;">Minimum Amount:</td>
+                            <td style="margin-right:20px;"><div id="minAmount3"></div></td>
+                         </tr>
+                         <tr><td></td><td></td></tr>
+                         <tr>
+                            <td style="margin-left:20px;">Maxmum Amount:</td>
+                            <td style="margin-right:20px;"><div id="maxAmount3"></div></td>
+                         </tr>
+                         <tr><td></td><td></td></tr>
+                         <tr>
+                            <td style="margin-left:20px;">Rate:</td>
+                            <td style="margin-right:20px;"><div id="rate3"></div></td>
+                         </tr>
+                      </table>
+                      </div>
+                   </div>
+                </div>
+                 <div>
+                   <div style="padding-top:10px;margin-left:340px;">
+                    <table>
+                       <tr>
+                          <td>
+                              <input type="button" id="Save" value="Save" />
+                              <input type="button" id="Cancel" value="Cancel" />
+                          </td>
+                          <td></td>
+                       </tr>
+                     </table>
+                     </div>
+                 </div>
+            </div>
+         </div>
+      </div>
+</div>
+<div id="insurancePopUpWin">
+   <div>Insurance Details</div>
+    <div style="overflow: hidden;">
+       <div id="jqxTabWidgetInsurance">
+         <div style="float: left;">
+          <div id="jqxTabsInsuranceCat">
+             <ul style='margin-left: 10px;'>
+                <li>Details</li>
+             </ul>
+             <div>
+                 <div style='padding-top:30px;margin-left:15px;'>
+                    <table>
+                      <tr>
+                        <td align="right">Category ID:</td>
+                          <td align="left"><input id="insCatID" /></td>
+                        </tr>
+                      <tr><td></td><td></td></tr>
+                      <tr>
+                         <td align="right">Description:</td>
+                         <td align="left"><input id="CatDescript" /></td>
+                      </tr>
+                      <tr><td></td><td></td></tr>
+                      <tr>
+                        <td align="right">Monthly Rate:</td>
+                        <td align="left"><div id="insuranceRate"></div></td>
+                      </tr>
+                    </table> 
+                    <div style="padding-top:45px;margin-left:245px;">
+                    <table>
+                       <tr>
+                          <td>
+                              <input type="button" id="AddInsuranceCat" value="Save" />
+                              <input type="button" id="CancelInsuranceCat" value="Close" />
+                          </td>
+                          <td></td>
+                       </tr>
+                     </table>
+                 </div>
+                </div>
+             </div>
+          </div>
+         </div>
+       </div>
+    </div>
+</div>
+<div id="newGradePopUpWin">
+</div>

@@ -1,0 +1,100 @@
+﻿@model PayrollSoft.Models.PersonnelPayslip
+@{
+    ViewBag.Title = "Payslip report";
+    Layout = null;
+}
+
+<h2>Employee Payslip</h2>
+
+
+
+    <table>
+      <tr>
+          <th>Earnings</th>
+
+      </tr>
+
+         @for (int i = 0; i < Model.PersonnelEarnings.Count(); i++)
+         {
+             <tr>
+
+                <td>@Html.DisplayFor(m =>Model.PersonnelEarnings.ElementAt(i).payCode)</td>
+                <td>@Html.DisplayFor(m =>Model.PersonnelEarnings.ElementAt(i).ActualAmount)</td>
+
+             </tr>
+         }
+    </table>
+
+    <table>
+       <tr>
+       @for (int i = 0; i < Model.PersonnelEarnings.Count(); i++ )
+       {
+          <th>@Html.DisplayFor(m => Model.EmployeeGrossPay.ElementAt(i).ActualAmount)</th>
+       }
+      </tr>
+   </table>
+
+    <table>
+      <tr>
+          <th>Deductions</th>
+
+      </tr>
+
+         @for (int i = 0; i < Model.PersonnelDeductions.Count(); i++)
+         {
+             <tr>
+
+                <td>@Html.DisplayFor(m =>Model.PersonnelDeductions.ElementAt(i).payCode)</td>
+                <td>@Html.DisplayFor(m => Model.PersonnelDeductions.ElementAt(i).ActualAmount)</td>
+
+             </tr>
+         }
+    </table>
+
+    <h3>Loan Deduction(s):</h3>
+
+       @for (var r = 0; r < Model.InitialLoanAmount.Count(); r++)
+       {
+           <table>
+             <tr>
+                <td>Loan Amount: </td>
+                <td>@Html.DisplayFor( g => Model.InitialLoanAmount.ElementAt(r).LoanAmount)</td>
+            </tr>
+          </table>
+         <table border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <th>
+                   Principal Paid
+                </th>
+                 <th>
+                   Interest Paid
+                </th>
+                 <th>
+                   Loan Balance
+                </th>
+            </tr>
+            @for (var x = 0; x < Model.LoanDeductions.Count(); x++)
+            {
+                <tr>
+                   <td>@Html.DisplayFor(i => Model.LoanDeductions.ElementAt(x).PrincipalPaid)</td>
+                   <td>@Html.DisplayFor(i => Model.LoanDeductions.ElementAt(x).InterestPaid)</td>
+                   <td>@Html.DisplayFor(i => Model.LoanDeductions.ElementAt(x).LoanBalance)</td>
+                </tr>
+            }
+        </table>
+
+       }
+
+    <table>
+      <tr>
+         <th>PAYE Tax:</th>
+         <th>@Html.DisplayFor(x => Model.PayAsYouEarn.ElementAt(0).PAYE)</th>
+      </tr>
+    </table>
+
+     <table>
+      <tr>
+         <th>Net Earnings:</th>
+         <th>@Html.DisplayFor(i => Model.NetSalaryPay.ElementAt(0).NetPay)</th>
+      </tr>
+    </table>

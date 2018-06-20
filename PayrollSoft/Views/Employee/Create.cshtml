@@ -1,0 +1,440 @@
+@model IEnumerable<PayrollSoft.Models.Employee>
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxvalidator.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/implement-ui-widget-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript">
+
+
+function _getEmploymentTypes(){
+
+      var data = { datatype: "json",
+                   datafields: [{name: 'EmploymentTypeId', type: 'string'},
+                                {name: 'Description', type: 'string'}],
+                   id: 'EmploymentTypeId',
+                  url: '/Employee/GetEmploymentTypes'
+
+      };
+
+      return new $.jqx.dataAdapter(data);
+}
+
+function _createFormElements(title, theme, dataAdapter, _deptdataAdapter, _gradesdataAdapter, _employmenttypes) {
+
+
+          var genders = ["Male", "Female"];
+          var dept = ["IT01", "Fin01"];
+          var grade = ["A-1", "B-1"];
+          var jobtitle = ["Human Resources Manager", "Information Technology Officer", "Financial Controller", "CEO"];
+
+          $('#jqxTabs').jqxTabs({ height: 450, width: '100%', theme: theme });
+          $("#empID").jqxInput({ theme: theme, width: '500px', height: '25px' });
+          $("#qualificationName").jqxInput({ theme: theme, width: '500px', height: '25px' });
+          $("#profession").jqxInput({ theme: theme, width: '500px', height: '25px' });
+          $("#firstName").jqxInput({ theme: theme, width: '500px', height: '25px' });
+          $("#middleName").jqxInput({ theme: theme, width: '500px', height: '25px' });
+          $("#lastName").jqxInput({ theme: theme, width: '500px', height: '25px' });
+          $("#address").jqxInput({ theme: theme, width: '500px', height: '25px' });
+          $("#contactNo2").jqxInput({ theme: theme, width: '250px', height: '25px', placeHolder: 'other number' });
+          $("#contactNo").jqxInput({ theme: theme, width: '250px', height: '25px', placeHolder: '1st number' });
+          $("#identityNumber").jqxInput({ theme: theme, width: '500px', height: '25px' });
+          $("#nextOfKinName").jqxInput({ theme: theme, width: '500px', height: '25px' });
+          $("#nextOfKinMobile1").jqxInput({ theme: theme, width: '250px', height: '25px',placeHolder: '1st number' });
+          $("#nextOfKinMobile2").jqxInput({ theme: theme, width: '240px', height: '25px',placeHolder: 'other number' });
+          $("#onPayroll").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+
+          //$("#onMedicalScheme").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+          //$("#Pension").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+          //$("#MedSchemContribAmount").jqxNumberInput({ width: '180px', height: '25px', spinButtons: true, theme: theme });
+          //$("#overtimeHours").jqxNumberInput({ width: '180px', height: '25px', spinButtons: true, theme: theme });
+          //$("#advanceLoan").jqxNumberInput({ width: '180px', height: '25px', spinButtons: true, theme: theme });
+
+          $("#sex").jqxDropDownList({
+              theme: theme, source: genders,
+              selectedIndex: -1, width: '500px', height: '25px',
+              promptText: "Gender...", dropDownHeight: "50px"
+          });
+
+          $("#maritalStatus").jqxDropDownList({
+              theme: theme, source: ['Married','Single','Divorced'],
+              selectedIndex: -1, width: '500px', height: '25px',
+              promptText: "Marital status...", dropDownHeight: "80px"
+          });
+
+          $("#emptype").jqxDropDownList({theme: theme, source: ['Permanent','Contract','Seasonal'],
+              selectedIndex: -1, width: '500px', height: '25px',
+              promptText: "Employment type", dropDownHeight: "80px", displayMember: "Description",
+              valueMember: "EmploymentTypeId" });
+
+
+          $("#payschedule").jqxDropDownList({theme: theme, source: ['Hourly','Daily','Weekly','Fort nightly','Monthly'],
+              selectedIndex: -1, width: '500px', height: '25px',
+              promptText: "Pay schedule", dropDownHeight: "100px", displayMember: "Description",
+              valueMember: "EmploymentTypeId" });
+
+          $("#identityType").jqxDropDownList({
+              theme: theme, source: ['National Id','Passport','Drivers licence'],
+              selectedIndex: -1, width: '500px', height: '25px',
+              promptText: "Identity type.", dropDownHeight: "80px"
+          });
+
+          $("#nationality").jqxDropDownList({
+              theme: theme, source: ['Angola','Algeria','Malawi','Zimbabwe','Botswana'],
+              selectedIndex: -1, width: '500px', height: '25px',
+              promptText: "nationality...", dropDownHeight: "80px"
+          });
+
+          $("#deptno").jqxDropDownList({
+              theme: theme, source: _deptdataAdapter,
+              selectedIndex: -1, width: '500px', height: '25px',
+              promptText: "Department...", dropDownHeight: "80px",
+              displayMember: "DeptName", valueMember: "DeptID"
+          });
+
+          $("#empgrade").jqxDropDownList({
+              theme: theme, source: _gradesdataAdapter,
+              selectedIndex: -1, width: '500px', height: '25px',
+              promptText: "Grade...", dropDownHeight: "80px",
+              displayMember: "GradeName", valueMember: "GradeId"
+          });
+
+          $("#onPayroll").on('change', function (event) {
+              
+               _glOnPayroll = event.args.checked;
+          });
+
+          $("#dateHired").jqxDateTimeInput({ theme: theme, width: '500px', height: '25px', formatString: 'yyyy-MM-dd' });
+          $("#validUntil").jqxDateTimeInput({ theme: theme, width: '500px', height: '25px', formatString: 'yyyy-MM-dd' });
+          //$("#highestQualificationYear").jqxDateTimeInput({ theme: theme, width: '500px', height: '25px', formatString: 'dd-MM-yyyy' });
+          $("#enddate").jqxDateTimeInput({ theme: theme, width: '500px', height: '25px', formatString: 'yyyy-MM-dd' });
+          $("#dob").jqxDateTimeInput({ theme: theme, width: '500px', height: '25px', formatString: 'yyyy-MM-dd' });
+
+          $("#jobposition").jqxDropDownList({
+              theme: theme, source: jobtitle,
+              selectedIndex: -1, width: '500px', height: '25px',
+              promptText: "Job Title...", dropDownHeight: "110px"
+          });
+
+          $("#highestQualification").jqxDropDownList({
+              theme: theme, source: ['Doctorate','Masters','Bachelors','Diploma','Certificate'],
+              selectedIndex: -1, width: '500px', height: '25px',
+              promptText: "qaulification...", dropDownHeight: "130px"
+          });
+
+          $("#otherQualification").jqxDropDownList({
+              theme: theme, source: ['Doctorate','Masters','Bachelors','Diploma','Certificate'],
+              selectedIndex: -1, width: '500px', height: '25px',
+              promptText: "qaulification...", dropDownHeight: "130px"
+          });
+          
+
+          //<summary>
+          // Input validation code
+          //<summary/>
+
+        $('#newEmployee-form').jqxValidator({
+
+              rules: [
+                      { input: '#empID', message: 'Employment number is required!', action: 'keyup, blur', rule: 'required' },
+                      { input: '#firstName', message: 'First name is required!', action: 'keyup, blur', rule: 'required' },
+                      { input: '#firstName', message: 'First name must contain only letters!', action: 'keyup', rule: 'notNumber' },
+                      { input: '#firstName', message: 'First name must be between 3 and 35 characters!', action: 'keyup', rule:  function(input, commit){
+                                                
+
+                             if(input.val().trim().length < 3){
+
+                                   return false;
+
+                              } else {
+
+                                    return true;
+                              }
+
+                            } 
+                        },
+                        { input: '#middleName', message: 'Middle name must contain only letters!', action: 'keyup', rule: 'notNumber' },
+                        { input: '#middleName', message: 'Middle name must be between 3 and 35 characters!', action: 'keyup', rule:  function(input, commit){
+                                                
+
+                            if(input.val().trim().length === 0){
+
+                                  return false;
+                              } else {
+
+                                return true;
+                              }
+
+                             } 
+                        },
+                        { input: '#lastName', message: 'Last name is required!', action: 'keyup, blur', rule: 'required' },
+                        { input: '#lastName', message: 'Last name must contain only letters!', action: 'keyup', rule: 'notNumber' },
+                        { input: '#lastName', message: 'Last name must be between 2 and 35 characters!', action: 'keyup', rule:  function(input, commit){
+                                                
+
+                             if(input.val().trim().length < 2){
+
+                                   return false;
+
+                              } else {
+
+                                    return true;
+                              }
+
+                            } 
+                        },
+                        { input: '#contactNo', message: 'Invalid phone number!', action: 'valuechanged, blur', rule: function(input){
+                                                       if(input.val().trim() === 0){
+                                                          return false;
+                                                       } else{
+                                                          return true;
+                                                       }
+
+                                                     } 
+                        },
+                        { input: '#sex', message: 'Gender is required', action: 'select, blur', rule: function(input){
+                                           
+                                           if(input.val().trim().length === 0){
+
+                                               return false;
+
+                                           } else {
+
+                                             return true;
+                                           }
+                           }
+                        },
+                        { input: '#deptno', message: 'Department is required', action: 'select, blur', rule: function(input){
+                                           if(input.val().trim().length === 0){
+
+                                              return false;
+
+                                           } else {
+
+                                              return true;
+                                           }
+                          } 
+                        },
+                        { input: '#jobposition', message: 'Department is required', action: 'select, blur', rule: function(input){
+                                           
+                                           if(input.val().trim().length === 0){
+
+                                              return false;
+
+                                           } else {
+
+                                              return true;
+                                           }
+                         } 
+                        },
+                        { input: '#empgrade', message: 'Grade is required', action: 'select, blur', rule: function(input){
+                                            
+                                            if(input.val().trim().length === 0){
+
+                                               return false;
+
+                                            } else {
+
+                                              return true;
+                                            }
+                         }
+                       },
+                       { input: '#dob', message: 'Birthdate is invalid', action: 'select, blur', rule: function(input){
+
+                                            //<SUMMARY>
+                                            // 18 and 80 respectvely, are the minimum and maximum age of employability and has been used here tentatively,
+                                            // Note that its subject to change. Ideally this value varies based on the labour laws of the land.
+                                            // As such a varible should be defined that is modifiable through the UI
+                                            //</SUMMARY>
+
+                                            //console.log(input.val().split("-")[0]);
+
+                                             var year_difference = parseInt(new Date().getFullYear()) - parseInt(input.val().split("-")[0]);
+                                            
+                                             if(parseInt(input.val().split("-")[0]) === parseInt(new Date().getFullYear()) || (year_difference < 18 ) || (year_difference > 80)){
+
+                                                return false;
+
+                                             } else {
+
+                                                return true;
+                                             }
+                           }
+                         },
+                         {input: '#dateHired', message: 'Date hired is invalid', action: 'select, blur', rule: function(input){
+
+                                ///<SUMMARY>
+                                /// 1 is added to the new Date.getMonth() because Javascript month counting begings from 0.
+                                /// NOTE: 10 has been used as the minimum limit allowable days to back date the hire date.
+                                /// Make this value customizable from the UI.
+                                ///</SUMMARY>
+                                        
+                                          var monthDifference = parseInt(new Date().getMonth() + 1) - parseInt(input.val().split("-")[1]);
+                                          var daysDifference = parseInt(new Date().getDate()) - parseInt(input.val().split("-")[2]); 
+
+                                          if((monthDifference >= 1 && daysDifference  === 0) || (monthDifference === 0 && daysDifference > 10) || (parseInt(input.val().split("-")[2]) > parseInt(new Date().getDate()))){
+                                             
+                                              return false;
+
+                                          } else if( parseInt(input.val().split("-")[1]) > parseInt(new Date().getMonth() + 1) ||(parseInt(input.val().split("-")[1]) < parseInt(new Date().getMonth() + 1))) {
+
+                                              return false;
+                                          } else if (parseInt(input.val().split("-")[0]) > parseInt(new Date().getFullYear()) || (parseInt(input.val().split("-")[0]) < parseInt(new Date().getFullYear()))){
+
+                                              return false;
+                                          } else {
+
+                                              return true
+                                          }             
+                          }
+                         
+
+                       }
+
+                      ],theme:theme
+          });
+
+         
+
+          //$("#addBtn").jqxButton({ theme: theme, height: '30px' });
+          //$("#Cancel").jqxButton({ theme: theme });
+
+
+ }
+
+
+$(document).ready(function () {
+
+        _glcontroller = "Employee";
+        var theme = getDemoTheme();
+        var title = 'Create Employee';
+        var url = '/Employee/GetEmployees';
+        var source = {
+            datatype: "json",
+            datafields: [
+                               { name: 'EmpName', type: 'string' },
+                               { name: 'EmpID', type: 'string' },
+                               { name: 'DeptID', type: 'string' },
+                               { name: 'GradeID', type: 'string' },
+                               { name: 'Gender', type: 'string' },
+                               { name: 'HireDate', type: 'date' },
+                               { name: 'DateOfBirth', type: 'date' },
+                               { name: 'JobTitle', type: 'string' },
+                               { name: 'MobileNumber', type: 'string' }
+                          ],
+            id: 'EmpID',
+            url: url
+
+        };
+
+        var datasource = {
+            datatype: "json",
+            datafields: [
+                                { name: 'DeptID', type: 'string' },
+                                { name: 'DeptName', type: 'string' }
+                    ],
+            id: 'DeptID',
+            url: '/Employee/GetDepartments'
+        }
+
+    _getEmploymentTypes();
+
+
+        var gradesdatasource = { datatype: "json", 
+                                 datafields: [
+                                               { name: 'GradeId', type: 'string'},
+                                               { name: 'GradeName', type: 'string'}
+                                             ], 
+                                 id: 'GradeId',
+                                 url: '/EmployeeGrade/GetGrades' };
+
+        var dataAdapter = new $.jqx.dataAdapter(source);
+
+        //the second dataAdapter is populated with departments
+        var _deptdataAdapter = new $.jqx.dataAdapter(datasource);
+
+        //the third data source is populated with gradeID's from the grades table
+        var _gradesdataAdapter = new $.jqx.dataAdapter(gradesdatasource);
+
+        //var _employmenttypes = __getEmployementTypes();
+
+        _createFormElements(title, theme, dataAdapter, _deptdataAdapter, _gradesdataAdapter);
+
+        $("#addBtn").click(function () {
+
+          console.log("addButton clicked!");
+
+             var payrollcheckValue = 0;
+
+                  if(_glOnPayroll){
+
+                     payrollcheckValue = 0;
+
+                  } else {
+
+                    payrollcheckValue = 1;
+                  }
+
+              if ($('#newEmployee-form').jqxValidator('validate')){
+                  
+                  var record = {
+                         EmpID: $("#empID").val(),
+                         EmpName: $("#firstName").val() + " " + $("#middleName").val() + " " + $("#lastName").val(),
+                         DeptID: $("#deptno").val(),
+                         GradeID: $("#empgrade").val(),
+                         HireDate: $("#dateHired").val(),
+                         EndDate: $('#enddate').val(),
+                         DateOfBirth: $("#dob").val(),
+                         JobTitle: $("#jobposition").val(),
+                         Gender: $("#sex").val(),
+                         MobileNumber1: $("#contactNo").val(),
+                         MobileNumber2: $("#contactNo2").val(),
+                         EmploymentStatus: "Active",
+                         EmploymentType: $('#emptype').val(),
+                         PaySchedule: $('#payschedule').val(),
+                         MaritalStatus: $("#maritalStatus").val(),
+                         Address: $("#address").val(),
+                         Nationality: $("#nationality").val(),
+                         onPayroll: payrollcheckValue,
+                         IdentityType: $("#identityType").val(),
+                         IdentityNumber: $('#identityNumber').val(),
+                         ValidityDate: $('#validUntil').val(),
+                         NextOfKinName: $('#nextOfKinName').val(),
+                         ContactNo1: $('#nextOfKinMobile1').val(),
+                         ContactNo2: $('#nextOfKinMobile2').val()
+                   };
+
+                  _addNewRecord(record,_glcontroller);
+
+                  //_verifyDataBeforePosting(record);
+
+              } else{
+                console.log('validation failed!');
+              }
+             
+             
+          });
+
+
+});
+
+</script>
+
+
+    @Html.Partial("_addNewEmployee")

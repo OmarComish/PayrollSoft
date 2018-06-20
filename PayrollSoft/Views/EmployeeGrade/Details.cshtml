@@ -1,0 +1,25 @@
+﻿@model PayrollSoft.Models.EmployeeGrade
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+    <legend>EmployeeGrade</legend>
+
+    <div class="display-label">GradeName</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.GradeName)
+    </div>
+
+    <div class="display-label">MinSalary</div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.MinSalary)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.GradeId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

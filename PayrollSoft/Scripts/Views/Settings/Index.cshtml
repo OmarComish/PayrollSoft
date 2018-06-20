@@ -1,0 +1,91 @@
+﻿@model IEnumerable<PayrollSoft.Models.Settings>
+
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<!--<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>-->
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/implement-ui-widget-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript">
+
+    function _showCalendarWin(theme, title) {
+
+        $("#calendarWin").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 600,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#Delete"),
+            cancelButton: $("#Cancel"),
+            modalOpacity: 0.01,
+            initContent: function(){
+
+                 $("#jqxcalWidget").jqxCalendar({width: 220, height: 220});
+            }
+
+        });
+
+        $("#calendarWin").jqxWindow('open');
+
+    }
+   
+      function _showCalendar(){
+
+        //$("#jqxcalWidget").jqxCalendar({width: 220, height: 220});
+      }
+
+   $(document).ready(function(){
+
+   	 _glcontroller = "Setting";
+     var theme = getDemoTheme();
+     var title = 'Application Configuration';
+
+     $('#jqxTabs').jqxTabs({ height: 300, width: 900, theme: theme });
+    // $('#jqxTaxWidget').jqxTabs({height: 150, width 300, theme: theme});
+
+     document.getElementById('jqxTaxWidget').style.visibility = "hidden";
+     document.getElementById('jqxHolidayWidget').style.visibility = "hidden";
+
+     $('#NewTaxCode').jqxButton({ theme: theme });
+     $('#viewDefinedHoliday').jqxButton({ theme: theme });
+     $('#defineHoliday').jqxButton({ theme: theme });
+     $("#holidayName").jqxInput({placeHolder:"Enter holiday name", theme: theme, height: '25px',width: '200px', disabled: false});
+     $("#dateFrom").jqxDateTimeInput({ theme: theme, width: '160px', height: '25px', formatString: 'dd-MM-yyyy' });
+     $("#dateTo").jqxDateTimeInput({ theme: theme, width: '160px', height: '25px', formatString: 'dd-MM-yyyy' });
+
+     $("#leavePayInclusion").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+     $("#schemeContribToLeavePay").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+     $("#rateofPay").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+
+     $('#NewTaxCode').click(function(){
+     	
+     	  document.getElementById('jqxTaxWidget').style.visibility = "visible";
+     	  console.log("Tax Code Clicked");
+     });
+
+     $('#defineHoliday').click(function(){
+      
+        //document.getElementById('jqxHolidayWidget').style.visibility = "visible";
+        //_showCalendar();
+        //_showCalendarWin(theme,'Calendar');
+        console.log("define calendar button clicked");
+     });
+
+       
+   });
+
+</script>
+
+@Html.Partial("_configurations")

@@ -1,0 +1,255 @@
+﻿@{
+    //ViewBag.Title = "SeveranceSettings";
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript">
+
+var records = [];
+
+function __loadUIElements(){
+
+	   $('#jqxTabs').jqxTabs({ width: '99.5%', height: 200, position: 'top', theme: theme });
+     $("#payCode").jqxInput({placeHolder: 'pay code',theme: theme, height: '25px',width: '600px', disabled: true});
+     $("#description").jqxInput({placeHolder: 'description',theme: theme, height: '25px',width: '600px', disabled: true});
+
+     $("#periodOfServiceStart").jqxNumberInput({ width: '100px', height: '25px', spinButtons: true });
+     $("#periodOfServiceEnd").jqxNumberInput({ width: '100px', height: '25px', spinButtons: true });
+     $("#rateOfPay").jqxNumberInput({ width: '100px', height: '25px',symbol: '%', spinButtons: true });
+
+     $("#periodOfServiceStart2").jqxNumberInput({ width: '100px', height: '25px', spinButtons: true });
+     $("#periodOfServiceEnd2").jqxNumberInput({ width: '100px', height: '25px', spinButtons: true });
+     $("#rateOfPay2").jqxNumberInput({ width: '100px', height: '25px',symbol: '%', spinButtons: true });
+
+     $("#periodOfServiceStart3").jqxNumberInput({ width: '100px', height: '25px', spinButtons: true });
+     $("#periodOfServiceEnd3").jqxNumberInput({ width: '100px', height: '25px', spinButtons: true });
+     $("#rateOfPay3").jqxNumberInput({ width: '100px', height: '25px',symbol: '%', spinButtons: true });
+
+
+     $("#periodOfServiceStartUnits").jqxDropDownList({ source: ['Days','Weeks','Months','Years'], theme: theme, width: '130px',
+                                      height: '25px', selectedIndex: 3, dropDownHeight: '90px' });
+
+     $("#periodOfServiceEndUnits").jqxDropDownList({ source: ['Days','Weeks','Months','Years'], theme: theme, width: '130px',
+                                      height: '25px', selectedIndex: 3, dropDownHeight: '90px' });
+
+     $("#periodOfServiceStartUnits2").jqxDropDownList({ source: ['Days','Weeks','Months','Years'], theme: theme, width: '130px',
+                                      height: '25px', selectedIndex: 3, dropDownHeight: '90px' });
+
+     $("#periodOfServiceEndUnits2").jqxDropDownList({ source: ['Days','Weeks','Months','Years'], theme: theme, width: '130px',
+                                      height: '25px', selectedIndex: 3, dropDownHeight: '90px' });
+
+     $("#periodOfServiceStartUnits3").jqxDropDownList({ source: ['Days','Weeks','Months','Years'], theme: theme, width: '130px',
+                                      height: '25px', selectedIndex: 3, dropDownHeight: '90px' });
+
+     $("#periodOfServiceEndUnits3").jqxDropDownList({ source: ['Days','Weeks','Months','Years'], theme: theme, width: '130px',
+                                      height: '25px', selectedIndex: 3, dropDownHeight: '90px' });
+
+     $('#saveSettingsBtn').jqxButton({theme: theme, disabled: true});
+     $('#cancelBtn').jqxButton({theme: theme, disabled: true});
+}
+
+function __checkMissingData(data){
+    var rec = data[0];
+    
+    for(var key in rec){ 
+    	if(records[key] === undefined){ 
+    		console.log("missing value for " + key); 
+    		_notificationMessage('warning','Missing data for ' + key );
+    		return;
+    	} else {
+    		
+    		return false;
+    	}
+    } 
+}
+
+function __loadSettings(){
+
+	       $.ajax({
+              cache: false,
+              datatype: "jsonp",
+              url: "/Settings/ReadSeveranceSettings",
+              type: "GET",
+              success: function (data, status, xhr) {
+
+              	  for(var x = 0; x < data.length; x ++){
+
+              	 records.push({RefNumber: data[x].RefNumber,
+              	               Description: data[x].Description,
+              	               FirstThresholdRate: data[x].FirstThresholdRate,
+              	               FirstThresholdMinPeriod: data[x].FirstThresholdMinPeriod,
+              	               FirstThresholdMaxPeriod: data[x].FirstThresholdMaxPeriod,
+              	               FirstThresholdMinPeriodIn: data[x].FirstThresholdMinPeriodIn,
+              	               FirstThresholdMaxPeriodIn: data[x].FirstThresholdMaxPeriodIn,
+              	               SecondThresholdRate: data[x].SecondThresholdRate,
+              	               SecondThresholdMinPeriod: data[x].SecondThresholdMinPeriod,
+              	               SecondThresholdMaxPeriod: data[x].SecondThresholdMaxPeriod,
+              	               SecondThresholdMinPeriodIn: data[x].SecondThresholdMinPeriodIn,
+              	               SecondThresholdMaxPeriodIn: data[x].SecondThresholdMaxPeriodIn,
+              	               ThirdThresholdRate: data[x].ThirdThresholdRate,
+              	               ThirdThresholdMinPeriod: data[x].ThirdThresholdMinPeriod,
+              	               ThirdThresholdMaxPeriod: data[x].ThirdThresholdMaxPeriod,
+              	               ThirdThresholdMinPeriodIn: data[x].ThirdThresholdMinPeriodIn,
+              	               ThirdThresholdMaxPeriodIn: data[x].ThirdThresholdMaxPeriodIn});
+
+              	  	  $('#payCode').val(data[x].RefNumber);
+              	  	  $('#description').val(data[x].Description);
+              	  	  $('#periodOfServiceStart').val(data[x].FirstThresholdMinPeriod);
+              	  	  $('#periodOfServiceEnd').val(data[x].FirstThresholdMaxPeriod);
+              	  	  $('#rateOfPay').val(data[x].FirstThresholdRate);
+              	  	  $('#periodOfServiceStartUnits').val(data[x].FirstThresholdMinPeriodIn);
+              	  	  $('#periodOfServiceEndUnits').val(data[x].FirstThresholdMaxPeriodIn);
+
+              	  	  $('#periodOfServiceStart2').val(data[x].SecondThresholdMinPeriod);
+              	  	  $('#periodOfServiceEnd2').val(data[x].SecondThresholdMaxPeriod);
+              	  	  $('#rateOfPay2').val(data[x].SecondThresholdRate);
+              	  	  $('#periodOfServiceStartUnits2').val(data[x].SecondThresholdMinPeriodIn);
+              	  	  $('#periodOfServiceEndUnits2').val(data[x].SecondThresholdMaxPeriodIn);
+
+              	  	  $('#periodOfServiceStart3').val(data[x].ThirdThresholdMinPeriod);
+              	  	  $('#periodOfServiceEnd3').val(data[x].ThirdThresholdMaxPeriod);
+              	  	  $('#rateOfPay3').val(data[x].ThirdThresholdRate);
+              	  	  $('#periodOfServiceStartUnits3').val(data[x].ThirdThresholdMinPeriodIn);
+              	  	  $('#periodOfServiceEndUnits3').val(data[x].ThirdThresholdMaxPeriodIn);
+              	  }
+              },
+              error: function(jqXHR, textStatus, errorThrown){
+                 
+              }
+          });
+}
+    
+
+$(document).ready(function(){
+
+ 	 var theme = "";
+ 	 var _glcontroller = "Settings";
+ 	
+     
+     __loadUIElements();
+
+     __loadSettings();
+   
+
+     $("#periodOfServiceStart").on('change',function(event){
+     	 if(event){
+     	 	records[0].FirstThresholdMinPeriod = $("#periodOfServiceStart").val();
+     	 	$('#saveSettingsBtn').jqxButton({disabled: false});
+     	 }
+     });
+
+     $("#periodOfServiceEnd").on('change',function(event){
+     	 if(event){
+     	 	records[0].FirstThresholdMaxPeriod = $("#periodOfServiceEnd").val();
+     	 	$('#saveSettingsBtn').jqxButton({disabled: false});
+     	 }
+     });
+
+     $("#periodOfServiceStart2").on('change',function(event){
+     	 if(event){
+     	 	records[0].SecondThresholdMinPeriod = $("#periodOfServiceStart2").val();
+     	 	$('#saveSettingsBtn').jqxButton({disabled: false});
+     	 }
+     });
+
+     $("#periodOfServiceEnd2").on('change',function(event){
+     	 if(event){
+     	 	records[0].SecondThresholdMaxPeriod = $("#periodOfServiceEnd2").val();
+     	 	$('#saveSettingsBtn').jqxButton({disabled: false});
+     	 }
+     });
+
+     $("#periodOfServiceStart3").on('change',function(event){
+     	 if(event){
+     	 	records[0].ThirdThresholdMinPeriod = $("#periodOfServiceStart3").val();
+     	 	$('#saveSettingsBtn').jqxButton({disabled: false});
+     	 }
+     });
+
+     $("#periodOfServiceEnd3").on('change',function(event){
+     	 if(event){
+     	 	records[0].ThirdThresholdMaxPeriod = $("#periodOfServiceEnd3").val();
+     	 	$('#saveSettingsBtn').jqxButton({disabled: false});
+     	 }
+     });
+     
+     $('#rateOfPay').on('change',function(event){
+     	 if(event){
+     	 	records[0].FirstThresholdRate = $('#rateOfPay').val();
+     	 	$('#saveSettingsBtn').jqxButton({disabled: false});
+     	 }
+     });
+
+     $('#rateOfPay2').on('change',function(event){
+     	 if(event){
+     	 	records[0].SecondThresholdRate = $('#rateOfPay').val();
+     	 	$('#saveSettingsBtn').jqxButton({disabled: false});
+     	 }
+     });
+
+     $('#rateOfPay3').on('change',function(event){
+     	 if(event){
+     	 	records[0].ThirdThresholdRate = $('#rateOfPay').val();
+     	 	$('#saveSettingsBtn').jqxButton({disabled: false});
+     	 }
+     });
+
+     $('#periodOfServiceStartUnits').on('change',function(event){
+          if(event){
+          	 records[0].FirstThresholdMinPeriodIn = $('#periodOfServiceStartUnits').val();
+          	 $('#saveSettingsBtn').jqxButton({disabled: false});
+          }
+     });
+
+     $('#periodOfServiceEndUnits').on('change',function(event){
+          if(event){
+          	 records[0].FirstThresholdMaxPeriodIn = $('#periodOfServiceEndUnits').val();
+          	 $('#saveSettingsBtn').jqxButton({disabled: false});
+          }
+     });
+
+     $('#periodOfServiceStartUnits2').on('change',function(event){
+          if(event){
+          	 records[0].SecondThresholdMinPeriodIn = $('#periodOfServiceStartUnits2').val();
+          	 $('#saveSettingsBtn').jqxButton({disabled: false});
+          }
+     });
+
+     $('#periodOfServiceEndUnits2').on('change',function(event){
+          if(event){
+          	 records[0].SecondThresholdMaxPeriodIn = $('#periodOfServiceEndUnits2').val();
+          	 $('#saveSettingsBtn').jqxButton({disabled: false});
+          }
+     });
+
+     $('#periodOfServiceStartUnits3').on('change',function(event){
+          if(event){
+          	 records[0].ThirdThresholdMinPeriodIn = $('#periodOfServiceStartUnits3').val();
+          	 $('#saveSettingsBtn').jqxButton({disabled: false});
+          }
+     });
+
+     $('#periodOfServiceEndUnits3').on('change',function(event){
+          if(event){
+          	 records[0].ThirdThresholdMaxPeriodIn = $('#periodOfServiceEndUnits3').val();
+          	 $('#saveSettingsBtn').jqxButton({disabled: false});
+          }
+     });
+
+      $('#saveSettingsBtn').click(function(){
+      	
+            _glfunctionInvoked = "saveSeveranceSettingsBtn";
+            _addNewRecord(records, _glcontroller);
+
+      });
+
+});
+</script>
+
+@Html.Partial("_SeveranceSettings")

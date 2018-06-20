@@ -1,0 +1,172 @@
+<div id='jqxWidget' style="margin-top: 2px;">
+  <div id='jqxTabs'>
+   <ul>
+      <li style="margin-left: 30px;">Earning</li>
+  </ul>
+  <div>
+  <table style="margin-top: 30px; margin-left: 5px; width: 90%;">
+      <tr>
+         <td><div style="margin-left: 10px;">Pay code:</div></td>
+         <td><div><input id="payCode" /></div></td>
+         <td></td>
+         <td><span class="inputbox-spacing"><input id="paycodeDescription" /></span></td>
+         <td><span class="inputbox-spacing"><!--<input type="button" id="newPayCode" value="Create..." />--></span></td>
+      </tr>
+       <tr>
+        <td colspan="4"><div class="inputbox-spacing"></div></td>
+      </tr>
+      <tr>
+        <td><div style="margin-left: 10px;">Pay type:</div></td>
+        <td><div><input id="payType2" /></div></td>
+        <td></td>
+        <td><span class="inputbox-spacing"><input id="payTypeDescription" /></span></td>
+        <td><div class="inputbox-spacing"><!--<input type="button" id="newpayTypeCode" value="Create..." />--></div></td>
+      </tr>
+       <tr>
+        <td colspan="4"><div class="inputbox-spacing"></div></td>
+      </tr>
+      <tr>
+         <td><div style="margin-left: 10px;">Group eligible:</div></td>
+         <td><div><div id="groupEligible"></div></td>
+         <td></td>
+         <td><span class="inputbox-spacing"><input id="groupEligibleDescription" /></span></td>
+         <td></td>
+       </tr>
+       <tr>
+        <td colspan="4"><div class="inputbox-spacing"></div></td>
+      </tr>
+       <tr>
+         <td><div style="margin-left: 10px;">Debit GL:</div></td>
+         <td><div><div id="debitGL"></div></td>
+         <td></td>
+         <td><span class="inputbox-spacing"><input id="debitGlDescription" /></span></td>
+         <td></td>
+       </tr>
+      <tr>
+        <td colspan="4"><div class="inputbox-spacing"></div></td>
+      </tr>
+       <tr>
+         <td><div style="margin-left: 10px;">Priority:</div></td>
+         <td><div><div id="priority"></div></td>
+         <td></td>
+         <td><span class="inputbox-spacing"><input id="priorityDescription2" /></span></td>
+         <td><div class="inputbox-spacing"><input type="button" id="earningspriorityCode" value="Create..." /></div></td>
+       </tr>
+       <tr>
+        <td colspan="4"><div class="inputbox-spacing"></div></td>
+      </tr>
+       <tr>
+         <td><div style="margin-left: 10px;">Pay rate:</div></td>
+         <td><div id="payRate"></div></td>
+         <td><div class="inputbox-spacing"></div></td>
+         <td>Rate derived from:<div style="float:right;" id="rateDerivedSource"></div></td>
+         <td><div class="inputbox-spacing"><input type="button" id="payrateEdit" value="Edit" /></div></td>
+       </tr>
+       <tr>
+        <td colspan="4"><div class="inputbox-spacing"></div></td>
+      </tr>
+       <tr>
+         <td><div style="margin-left: 10px;">Pay method:</div></td>
+         <td><div id="payMethod"></div></td>
+         <td></td>
+         <td><span class="inputbox-spacing">Actual amount:</span><div style="float:right;" id="actualPayAmount"></div></td>
+         <td></td>
+       </tr>
+       <tr>
+        <td colspan="4"><div class="inputbox-spacing"></div></td>
+      </tr>
+    </table>
+    <table style="margin-left: 5px; width: 90%;">
+      <tr>
+        <td><div style="margin-left: 10px;"><div id="timesheetEntryAllowedChk">Allow Time Sheet entries</div></div></td>
+        <td><div id="paidAsEarningsChk">Paid as earnings</div></td>
+        <td><div id="taxableIncomeChk">Taxable income</div></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td colspan="4"><div class="inputbox-spacing"></div></td>
+      </tr>
+      <tr>
+        <td><div style="margin-left: 10px;"><div id="precedenceFactor"></div></div></td>
+        <td>takes higher precedence</td>
+        <td> when calculating the earnings</td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+    <div style="float:left;">
+    <table>
+      <tr>
+        <td><div style="padding-top: 20px;"><input style="margin-left: 10px;" type="button" id="viewEarningsBtn" value="View existing" /></div></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+    <div style="float: right;">
+    <table>
+      <tr>
+        <td></td>
+        <td><div style="padding-top:20px; margin-right: 5px;"><input type="button" id="saveEarningsBtn" value="Save" /></div></td>
+        <td><div style="padding-top: 20px; margin-right: 10px;"><input type="button" id="deleteEarningBtn" value="Delete" /></div></td>
+      </tr>
+    </table>
+  </div>
+</div>
+</div>
+</div>
+<div id="messageNotification" style="overflow:hidden;">
+     <div></div>
+</div>
+
+  <div id="priorityCodeWindow" style="overflow: hidden";>
+    <div>Codes</div>
+        <div style="overflow: hidden; margin-left: 5px;">
+          <div style="padding-top: 15px;"></div>
+            <div style="margin-bottom: 10px;">
+             <table>
+               <tr>
+                  <td>Code:</td>
+                  <td><input id ="prioritycodeId" /></td>
+                  <td></td>
+                  <td><span class="inputbox-spacing"><input  id="priorityCodeDescription" /></span></td>
+                  <td><span class="inputbox-spacing"><input type="button" id="prioritycodeSave" value="Add" /></span></td>
+
+               </tr>
+            </table>
+            </div>
+          <div id="prioritycodesdataGrid"></div>
+          <div style="float:right">
+            <table>
+               <tr>
+                 <td></td>
+                 <td></td>
+                 <td></td>
+                 <td></td>
+                 <td><div style="padding-top:20px;margin-right:5px;"><input type="button" id="prioritycodeOKBtn" value="OK" /></div></td>
+               </tr>
+            </table>
+          </div>
+
+      </div>
+  </div>
+
+<div id="earningPaymentsWindow" style="overflow: hidden";>
+  <div>Earning payments</div>
+      <div style="overflow: hidden;">
+        <div style="margin-top: 1px;"></div>
+        <div id="earningpaymentsdataGrid"></div>
+        <div style="margin-top:35px;float: right; margin-right:5px;"><input type="button" id="viewEarningOKBtn" value="OK" />
+        </div>
+      </div>
+</div>
+
+<div id="deleteRecDialog" style="overflow: hidden";>
+  <div> Delete</div>
+    <div style="overflow: hidden; margin-left: 15px;">
+        <p>Do you want to delete this record?</p>
+           
+        <input type="button" id="DeleteDialogBtn" value="Delete" />
+        <input type="button" id="CancelDialogBtn" value="Cancel" />
+    </div>
+</div>

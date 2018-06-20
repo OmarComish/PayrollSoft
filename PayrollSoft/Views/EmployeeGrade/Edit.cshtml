@@ -1,0 +1,216 @@
+﻿@model IEnumerable<PayrollSoft.Models.EmployeeGrade>
+
+@{
+    ViewBag.Title = "Index";
+}
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript">
+
+    function _createFormElements(title, theme, dataAdapter) {
+
+        $('#window').jqxWindow({
+            theme: theme,
+            resizable: true,
+            width: 410,
+            height: 400,
+            minWidth: 420,
+            minHeight: 300,
+            title: title,
+            initContent: function () {
+
+
+                $("#jqxgrid").jqxGrid({
+                    width: 410,
+                    source: dataAdapter,
+                    theme: theme,
+                    pageable: true,
+                    autoheight: true,
+                    sortable: true,
+                    selectionmode: 'none',
+                    columns: [
+                                       { text: 'Description', datafield: 'GradeName', width: 150 },
+                                       { text: 'Salary', datafield: 'MinSalary', width: 120 },
+                                       { text: 'Grade ID', datafield: 'GradeId', width: 80 },
+                                       { text: 'Action', datafield: 'Edit', columntype: 'button', cellsrenderer: function () {
+                                           return "Edit";
+                                       }, buttonclick: function (row) {
+
+                                           editrow = row;
+                                           var offset = $("#jqxgrid").offset();
+                                           $("#popupwindow").jqxWindow({ position: { x: parseInt(offset.left) + 60, y: parseInt(offset.top) + 60} });
+                                           var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
+                                           $("#gradeId").val(dataRecord.GradeId);
+                                           $("#salary").val(dataRecord.MinSalary);
+                                           $("#descript").val(dataRecord.GradeName);
+                                           var title = 'Edit';
+                                           //show the popup Window
+                                           _popupWin(theme, title);
+                                       }
+                                       }
+                            ]
+
+                });
+            }
+
+        });
+
+        $('#window').jqxWindow('focus');
+    }
+
+    function _popupWin(theme, title) {
+
+        $("#popupwindow").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 280,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#OK"),
+            cancelButton: $("#Cancel"),
+            modalOpacity: 0.01
+
+        });
+
+        $("#popupwindow").jqxWindow('open');
+
+    }
+
+    function _editRecord(rowid,rowdata) {
+
+        //alert("Delete record?");
+        $.ajax({
+            cache: false,
+            datatype: "jsonp",
+            url: "/EmployeeGrade/Edit/",
+            type: "POST",
+            data: rowdata,
+            success: function (data, status, xhr) {
+                alert(status);
+                $("#jqxgrid").jqxGrid('updatebounddata');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+                //commit(false);
+            }
+
+
+
+        });
+    }
+
+
+    $(document).ready(function () {
+
+        var theme = getDemoTheme();
+        var title = 'Create Grade';
+        var url = '/EmployeeGrade/GetGrades';
+        var editrow = -1;
+        var source = {
+            datatype: "json",
+            datafields: [
+                                    { name: 'GradeId', type: 'string' },
+                                    { name: 'GradeName', type: 'string' },
+                                    { name: 'MinSalary', type: 'decimal' },
+                                    { name: 'AllowanceRefNum', type: 'string' },
+                                    { name: 'InsuranceCode', type: 'string' },
+                                    { name: 'PensionRefNum', type: 'string' },
+                                    { name: 'OvertimeRate', type: 'decimal' },
+                                    { name: 'ThresholdID', type: 'string' }
+                        ],
+            id: "GradeId",
+            url: url
+        };
+
+        $("#popupwindow").on('open', function () {
+            $("#gradeId").jqxInput('selectAll');
+        });
+
+        $("#gradeId").jqxInput({ theme: theme, height: '20px', disabled: true });
+        $("#descript").jqxInput({ theme: theme, height: '20px', disabled: false });
+        $("#salary").jqxNumberInput({ height: '20px', spinButtons: true, theme: theme });
+        $("#Cancel").jqxButton({ theme: theme });
+        $("#Save").jqxButton({ theme: theme });
+        $("#OK").jqxButton({ theme: theme });
+
+        $("#Save").click(function () {
+
+            var row = { GradeId: $("#gradeId").val(), GradeName: $("#descript").val(), MinSalary: parseFloat($("#salary").jqxNumberInput('decimal')) };
+            var rowID = $('#jqxgrid').jqxGrid('getrowid', editrow);
+            //alert(row.Salary);
+
+            $("#popupwindow").jqxWindow('hide');
+
+            _editRecord(row.GradeId, row);
+
+
+
+        });
+
+        var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+            if (value < 20) {
+                return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #ff0000;">' + value + '</span>';
+            }
+            else {
+                return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #008000;">' + value + '</span>';
+            }
+        }
+
+
+        var dataAdapter = new $.jqx.dataAdapter(source);
+
+        _createFormElements(title, theme, dataAdapter);
+
+    });
+
+</script>
+
+<div id="window">
+     <div>
+       <div id="windowHeader"></div>
+         <div>
+           <div id="jqxgrid"></div>
+
+   
+         </div>
+       
+         
+     </div>
+     
+</div>
+
+ <div id="popupwindow" style="overflow: hidden";>
+           <div>Edit</div>
+            <div style="overflow: hidden;">
+              <table>
+                    <tr>
+                        <td align="right">ID:</td>
+                        <td align="left"><input id="gradeId" /></td>
+                    </tr>
+                     <tr>
+                        <td align="right">Description:</td>
+                        <td align="left"><input id="descript" /></td>
+                    </tr>
+                    <tr>
+                        <td align="right">Salary:</td>
+                        <td align="left"><div id="salary"></td>
+                    </tr>
+                     <tr>
+                        <td align="right"></td>
+                        <td style="padding-top: 10px;" align="right"><input style="margin-right: 5px;" type="button" id="Save" value="Save" /><input id="Cancel" type="button" value="Cancel" /></td>
+                    </tr>
+                </table>
+            </div>
+     </div>

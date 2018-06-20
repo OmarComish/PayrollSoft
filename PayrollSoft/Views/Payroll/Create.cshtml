@@ -1,0 +1,427 @@
+@model IEnumerable<PayrollSoft.Models.Payroll>
+
+@{
+    ViewBag.Title = "Options";
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/datagrid_datasource.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+
+<script type="text/javascript">
+
+var empNumber = null;
+var paycode = null;
+
+function _clearFields(){
+
+  $("#emp").val("");
+  $("#empGroup").val("");
+  $("#paycodeDescription").val("");
+  $("#Amount").val("");
+}
+
+function _removePayment(record){
+
+   
+     $.ajax({
+           cache: false,
+           datatype: "jsonp",
+           url: "/Payroll/DeletePayment",
+           type: "POST",
+           data: record,
+           success: function (data, status, xhr) {
+
+           },
+           error: function (jqXHR, textStatus, errorThrown) {
+               
+           }
+      });
+ }
+
+function _createPayment(record){
+
+    $.ajax({
+           cache: false,
+        datatype: "jsonp",
+             url: "/Payroll/CreatePayment/",
+            type: "POST",
+            data: record,
+         success: function (data, status, xhr) {
+          
+              if(data.Status === "success"){
+                 _populatePaymentList(empNumber);
+                 document.getElementById('detailgrid').style.visibility = 'visible';
+              }
+            
+           },
+          error: function (jqXHR, textStatus, errorThrown) {
+
+                _notificationMessage("error", errorThrown);
+
+          }
+
+        });
+}
+
+function _reloadDataGrid(data){
+
+     var source = {
+                   localdata: data,
+                   datatype: "array",
+                   datafields: [
+                               {name:'payCode', type:'string'},
+                               {name:'ActualAmount', type:'decimal'},
+                               {name:'paymentNumber', type:'string'},
+                               {name:'LogId', type:'integer'}
+                             ]
+                 };
+
+      return new $.jqx.dataAdapter(source);
+}
+
+function _populatePaymentList(id){
+
+       var records = new Array();
+
+       $.ajax({
+             cache: false,
+             datatype: "jsonp",
+             url: "/Payroll/GetPayrollPayments",
+             type: "POST",
+             data: {empid: id},
+             success: function (data, status, xhr) {
+
+               for(var x = 0; x < data.length; x++){
+
+                 records.push({payCode:       data[x].payCode, 
+                               ActualAmount:  parseFloat(data[x].ActualAmount).toFixed(2), 
+                               paymentNumber: data[x].paymentNumber,
+                               LogId:         data[x].LogId });
+                }
+                
+               _loaddetailGrid(_reloadDataGrid(records));
+
+                $("#detailgrid").jqxGrid('updatebounddata');
+             },
+             error: function (jqXHR, textStatus, errorThrown) {
+
+                 _notificationMessage("error", errorThrown);
+
+             }
+        });
+}
+
+function _paycodeData(){
+
+    var source = { datatype: 'json',
+                   datafields: [{ name: 'payCode', type: 'string'},
+                                {name:'Description',type:'text'}],
+                   id: 'payCode',
+                   url: '/Payments/getpaymentCode'};
+
+    return new $.jqx.dataAdapter(source);
+}
+
+function _fetchpaymentData(){
+
+   var records = new Array();
+
+      $.ajax({
+             cache: false,
+             datatype: "jsonp",
+             url: "/Payroll/GetPayrollPayments",
+             type: "GET",
+             success: function (data, status, xhr) {
+
+               for(var x = 0; x < data.length; x++){
+
+                 records.push({payCode:       data[x].payCode, 
+                               ActualAmount:  data[x].ActualAmount, 
+                               paymentNumber: data[x].paymentNumber,
+                               LogId:         data[x].LogId });
+                }
+             },
+             error: function (jqXHR, textStatus, errorThrown) {
+
+                 _notificationMessage("error", errorThrown);
+
+             }
+        });
+}
+ 
+function _readDataSource(){
+
+     var source = {
+                    datatype: "json",
+                    datafields: [
+                              { name: 'EmpID', type: 'string' },
+                              { name: 'EmpName', type: 'string' },
+                              { name: 'GradeID', type: 'string' },
+                              { name: 'DeptName', type: 'string' },
+                              { name: 'JobTitle', type: 'string' }
+                          ],
+                    id: "EmpId",
+                    url: '/Payroll/PayrollList'
+                  };
+
+      return new $.jqx.dataAdapter(source);
+}
+
+function _createFormElements(theme,datasource){
+
+     $("#jqxgrid").jqxGrid({
+                    width: '100%',
+                    source: datasource,
+                    theme: theme,
+                    pageable: true,
+                    autoheight: true,
+                    sortable: true,
+                    selectionmode: 'none',
+                    columns: [  
+                                {text: 'Name', datafield: 'EmpName', width: '28%'},
+                                {text: 'Designation', datafield: 'JobTitle', width: '28%' },
+                                {text: 'Department', datafield: 'DeptName', width: '23.5%' },
+                                {text: 'Grade/Level', datafield: 'GradeID', width: '11.23%' },
+                                {text: 'Action', datafield: 'Details', width: '10.11%', columntype: 'button', cellsrenderer: function(){
+                                       return 'Details';
+                                  }, buttonclick: function(row){
+                                         editrow = row;
+                                         var offset = $("#jqxgrid").offset();
+                                         var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
+                                         $('#emp').val(dataRecord.EmpName);
+                                         $('#empGroup').val(dataRecord.GradeID);
+                                         empNumber = dataRecord.EmpID;
+                                         
+                                         document.getElementById("detailswindow").style.visibility ="visible";
+
+                                         _detailsWindow(_paycodeData());
+                                  }
+                                }
+                              ]
+                     });
+
+}
+
+function _detailsWindow(DataSource){
+
+     $("#detailswindow").jqxWindow({
+                      theme: theme,
+                      resizable: true,
+                      width: '100%',
+                      height: 500,
+                      isModal: true,
+                      autoOpen: false,
+                      title: 'Details',
+                      okButton: $("#detailsOKBtn"),
+                      cancelButton: $("#detailsCancelBtn"),
+                      modalOpacity: 0.01,
+                      initContent: function(){
+
+                          $('#jqxTabs').jqxTabs({theme: theme, height: 250, position: 'top', width: '100%'});
+
+                          $("#emp").jqxInput({theme: theme, height: '25px',width: '300px'});
+                          $("#empGroup").jqxInput({placeHolder:"Employee Group", theme: theme, height: '25px',width: '300px'});
+                          
+                          $("#paycodeDescription").jqxInput({placeHolder:"Pay code description", theme: theme, height: '25px',width: '240px'});
+                          $("#overtimepaycodeDescription").jqxInput({placeHolder:"Pay code description", theme: theme, height: '25px',width: '240px'});
+                          $("#Amount").jqxNumberInput({ width: '300px', height: '25px', symbol: '$', spinButtons: true });
+                          $("#overtimeHours").jqxNumberInput({ width: '300px', height: '25px', symbol: 'Hrs', spinButtons: true });
+                          //$('#enterTimesheetData').jqxButton({ theme: theme });
+                          $('#sysdefinedFormulaChk').jqxCheckBox({ theme: theme, width: '135px', checked: true });
+                          $("#overtimeBtn").jqxButton({theme:theme});
+                          $('#refreshList').jqxButton({theme: theme});
+                          $('#addItemtoPayment').jqxButton({theme: theme});
+                          $('#finishBtn').jqxButton({theme: theme});
+                      }
+
+        });
+
+        $("#detailswindow").jqxWindow('open');
+}
+
+function _loaddetailGrid(datasource){
+
+        $('#detailgrid').jqxGrid({
+                    width: '99.5%',
+                    source: datasource,
+                    theme: theme,
+                    pageable: true,
+                    autoheight: true,
+                    sortable: true,
+                    selectionmode: 'none',
+                    columns: [{text:'Pay Code', datafield:'payCode', width:'22%'},
+                              {text:'Amount', datafield:'ActualAmount', width:'26.8%'},
+                              {text:'payment Number', datafield:'paymentNumber', width:'21.7%'},
+                              {text:'Log Id', datafield:'LogId', width:'14.49%'},
+                              {text:'Action',datafield: 'Remove',columntype:'button',cellsrenderer: function(){
+                                    return "Remove";
+                                },buttonclick:function(row){
+
+                                   editrow = row;
+
+                                   var dataRecord = $("#detailgrid").jqxGrid('getrowdata', editrow);
+
+                                    var payment = {EmpId:         empNumber,
+                                                  payCode:       dataRecord.payCode,
+                                                  ActualAmount:  dataRecord.ActualAmount,
+                                                  paymentNumber: dataRecord.paymentNumber,
+                                                  LogId:         dataRecord.LogId};
+
+                                   _removePayment(payment);
+
+                                   //after the delete action, refresh the grid to reflect the changes
+                                   _populatePaymentList(empNumber);
+                                }
+                              }
+                             ]
+        });
+
+        $("#detailgrid").jqxGrid('updatebounddata');
+}
+
+function __getPaymentCodes(){
+ 
+ ///<summary>
+ ///This method pulls all the payment codes from Deductions and Earnings tables and bundles them 
+ ///into one dropdown listbox. 
+ ///This code is not efficient due to that it makes two separate requests to the server just to populate one datasource
+ ///Review the LINQ query responsible for these data pulls to incorporate these two requests into 1
+ ///</summary>
+
+    $.ajax({
+             cache: false,
+             datatype: "jsonp",
+             url: "/Payments/GetEarningPaycodes",
+             type: "GET",
+             success: function (data, status, xhr) {
+
+                for(var x = 0; x < data.length; x ++){
+                    paymentCodes.push({payCode: data[x].payCode , Description: data[x].Description });
+                }
+                
+             },
+             error: function(jqXHR, textStatus, errorThrown){
+
+                  _notificationMessage("error", errorThrown);
+             }
+
+           });
+ 
+}
+
+$(document).ready(function(){
+    
+     _getUserAccessRights();
+
+     var theme = getDemoTheme();
+     
+    
+     document.getElementById("detailswindow").style.visibility ='hidden';
+     document.getElementById('detailgrid').style.visibility = 'hidden';
+     document.getElementById('confirmActionDialog').style.visibility = 'hidden';
+
+      var codes = __getPaymentCodes();
+      
+
+       var _payCode = { localdata: codes,
+                         datatype: 'json',
+                       datafields: [{ name: 'payCode', type: 'string'},{name: 'Description',type:'text'}],
+                               id: 'payCode',
+                              url: '/Payments/getpaymentCode'
+                        };
+
+       var payCodeDataSource = new $.jqx.dataAdapter(_payCode);
+       
+     _createFormElements(theme, _readDataSource());
+    
+     $('#addItemtoPayment').click(function(){
+          
+         console.log('addItemtoPayment METHOD INVOKED');
+
+        var paymentrec = { id:              paycode,
+                           gradeName:       $("#empGroup").val(),
+                           empNumber:       empNumber,
+                           actualPayAmount: $("#Amount").val(),
+                           payrollRunDate:  CurrentDate(), 
+                           PayrollCode:     'PAY-'+ empNumber,
+                           hoursWorked:     $('#overtimeHours').val()};
+
+         _createPayment(paymentrec);
+
+         //_clearFields();
+     });
+     
+
+   $("#overtimepayCode").jqxDropDownList({ theme: theme, source: payCodeDataSource,
+        selectedIndex: -1, width: '290px', height: '25px',dropDownHeight: "95px",
+        displayMember:"payCode",valueMember:"payCode" });
+
+   $("#overtimepayCode").on('select',function(event){
+
+       if(event.args){
+           
+            var index = $("#overtimepayCode").jqxDropDownList('selectedIndex');         
+            $("#overtimepaycodeDescription").val(payCodeDataSource.records[index].Description);
+            paycode = $("#overtimepayCode").val();
+       }
+
+    });
+
+   $("#payCode").jqxDropDownList({ theme: theme, source: payCodeDataSource,
+        selectedIndex: -1, width: '290px', height: '25px',dropDownHeight: "95px",
+        displayMember:"payCode",valueMember:"payCode" });
+
+
+    $("#payCode").on('select',function(event){
+
+       if(event.args){
+           
+            var index = $("#payCode").jqxDropDownList('selectedIndex');         
+            $("#paycodeDescription").val(payCodeDataSource.records[index].Description);
+            paycode = $("#payCode").val();
+       }
+
+    });
+
+    $('#refreshList').click(function(){
+        
+       _populatePaymentList(empNumber);
+       document.getElementById('detailgrid').style.visibility = 'visible';
+
+    });
+
+    $('#finishBtn').click(function(){
+
+      $("#detailswindow").jqxWindow('close');
+      document.getElementById('detailgrid').style.visibility = 'hidden';
+   });
+
+
+    var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+      if (value < 20) {
+      return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #ff0000;">' + value + '</span>';
+    }
+    else {
+         return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #008000;">' + value + '</span>';
+          }
+    }
+
+});
+
+</script>
+
+@Html.Partial("_payrollList")

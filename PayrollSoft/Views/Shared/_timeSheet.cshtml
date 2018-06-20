@@ -1,0 +1,81 @@
+<div id='jqxWidget' style="margin-top: 1px;">
+  <div id='jqxTabs'>
+   <ul>
+      <li style="margin-left: 25px;">Daily</li>
+      <li>Weekly</li>
+      <li>Monthly</li>
+  </ul>
+  <div>
+  	 <table style='margin-top: 2px; margin-left: 2px; width: 99.5%; height: 40px; background:#e6e6e6;'>
+  	 	<tr>
+  	 		<td></td>
+  	 		<td></td>
+  	 		<td></td>
+  	 		<td></td>
+  	 		<td style="float: right; margin-top: 6px; margin-right: 5px;"><div id='timesheetDate'></div></td>
+  	 	</tr>
+  	 </table>
+  	 <div id="dvTable" style="margin-top: 2px;"></div>
+  	 <table id='footertbl' style='margin-top: 0px; margin-left: 2px; width: 99.5%; height: 40px; background:#e6e6e6;'>
+  	 	<tr>
+  	 		<td>
+  	 			<button type="button" id="Generate" class="btn btn-primary btn-sm" onclick="__addRow();">
+	                 <!--<i class="glyphicon glyphicon-plus"></i>--><span>Add line</span>
+                </button>
+  	 		</td>
+  	 		<td>Total</td>
+  	 		<td></td>
+  	 		<td></td>
+  	 		<td></td>
+  	 	</tr>
+  	 </table>
+  </div>
+  <div>
+  	  <table style='margin-top: 2px; margin-left: 2px; width: 99.6%; height: 40px; background:#e6e6e6;'>
+  	 	<tr>
+  	 		<td></td>
+  	 		<td></td>
+  	 		<td></td>
+  	 		<td></td>
+  	 		<td style="float: right; margin-top: 6px; margin-right: 5px;"><div id='weeklytimesheetDate'></div></td>
+  	 	</tr>
+  	  </table>
+  	  <div id="weeklyTable"></div>
+  	  <table id='footertbl' style='margin-top: 0px; margin-left: 2px; width: 99.5%; height: 40px; background:#e6e6e6;'>
+  	 	<tr>
+  	 		<td>
+  	 			<button type="button" id="Generate" class="btn btn-primary btn-sm" onclick="__addRow();">
+	                 <!--<i class="glyphicon glyphicon-plus"></i>--><span>Add line</span>
+                </button>
+  	 		</td>
+  	 		<td><div id='MonTotal'></div></td>
+  	 		<td><div id='TuesTotal'></div></td>
+  	 		<td><div id='WedTotal'></div></td>
+  	 		<td><div id='ThursTotal'></div></td>
+  	 		<td><div id='FriTotal'></div></td>
+  	 		<td><div id='SatTotal'></div></td>
+  	 		<td><div id='SunTotal'></div></td>
+  	 		<td></td>	
+  	 	</tr>
+  	 </table>
+  </div>
+  <div>
+  	
+  </div>
+ </div>
+</div>
+
+<div>
+	<table style="float: right">
+		<tr>
+			<td>
+				<button type="button" id="submitTimesheet" class="btn btn-success" onclick="__submitTimeSheet();">
+	               <span>Submit</span>
+                </button>
+			</td>
+		</tr>
+	</table>
+</div>	
+<div id="messageNotification" style="overflow:hidden;">
+     <div></div>
+</div>

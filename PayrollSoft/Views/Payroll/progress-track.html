@@ -1,0 +1,92 @@
+<div class="container">
+
+	<div class="row">
+		<div class="col-md-8" >
+
+
+
+<div class="panel panel-default rad" style="border: 0px solid grey">
+  <div class="panel-heading rad"><h1>Generator patients</h1></div>
+  <div class="panel-body rad">
+
+
+			<div class="col-md-12">
+				<div class="form-group">
+					<label for="number_of_patients">Number of patients</label>
+						<input type="number" id="number_of_patients" class="form-control rad">
+				</div>
+				<div class="form-group rad">
+					<label>Gender</label>
+					<select class="form-control rad" id="gender">
+					  <option selected>Select gender</option>
+					  <option value="M">Male</option>
+					  <option value="F">Female</option>
+					  <option value="B">Both</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="">Date of birth from</label>
+						<input type="date" id="dob" class="form-control rad" data-provide="datepicker">
+				</div>
+				<div class="form-group">
+					<button class="btn btn-info rad" onclick="startCreating()">Create</button>
+				</div>
+			</div>
+	</div>
+</div>
+
+		</div>
+		<div class="col-md-4">
+			<p>Progress...</p>
+			<span id="progress"></span>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	var count = 1; records = 0 
+
+	function createPatient(){
+		var progress = document.getElementById('progress');
+		var gender = document.getElementById('gender').value;
+		var dob = document.getElementById('dob').value;
+
+	    if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari  
+	        xmlhttp=new XMLHttpRequest();                                             
+	      }else{// code for IE6, IE5                                                  
+	        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");                           
+	      }                                                                           
+	      xmlhttp.onreadystatechange=function() { 
+	                                    
+	        if (xmlhttp.readyState==4 && xmlhttp.status==200) {                       
+	          var results = xmlhttp.responseText;                                    
+	          if(results == 'undefined' || results == '' || results == '"did not create"') {  
+	          	               
+	            return;                                                               
+	          }else{ 
+	          	                                      
+	            progress.innerHTML = count;
+	            if(count < records) {
+	            	count++;
+	            	createPatient();
+	            }
+	          }                                                                       
+	        }                                                                         
+	      }                                                                           
+	      xmlhttp.open("GET","/create_patient/"+gender+"/"+dob,true);           
+	      xmlhttp.send();
+	}
+	
+	function startCreating(){
+		
+		count = 1;
+		var number_of_patients = parseInt(document.getElementById('number_of_patients').value);
+		/*
+		while (number_of_patients > 0){
+			createPatient();
+			number_of_patients -= 1;
+		} */
+		records = number_of_patients;
+		createPatient();
+	}
+</script>

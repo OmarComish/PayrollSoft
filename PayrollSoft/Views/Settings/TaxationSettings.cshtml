@@ -1,0 +1,229 @@
+@model PayrollSoft.Models.Settings
+
+@{
+    //ViewBag.Title = "Holiday settings";
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxvalidator.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+<script type="text/javascript"> 
+
+var record = [];
+var currency = ['$','ZAR','K','KR'];
+
+function _initializeFormElements(theme){
+
+    $('#jqxTabs').jqxTabs({ width: '99.5%', height: 250, position: 'top', theme: theme });
+    //$('#SaveTaxBtn').jqxButton({theme:theme, disabled: true});
+    $("#TaxName").jqxInput({ theme: theme, height: '25px',width:'500px', disabled: true });
+    $("#Descript").jqxInput({ theme: theme, height: '30px', width: '500px', disabled: true });
+    $("#dateIssued").jqxDateTimeInput({ theme: theme, width: '300px', height: '25px', formatString: 'yyyy-MM-dd',disabled: true });
+    $("#RateStatus").jqxCheckBox({ theme: theme, width: '185px', checked: true, disabled: true });
+    $("#firstThresholdMinAmt").jqxNumberInput({ width: '300px', height: '25px', symbol: currency[2], spinButtons: true, min: 0, disabled: false });
+    $("#firstThresholdMaxAmt").jqxNumberInput({ width: '300px', height: '25px', symbol: currency[2], spinButtons: true, min: 0, disabled: true });
+    $("#firstThresholdRate").jqxNumberInput({ width: '300px', height: '25px', symbol: '%', spinButtons: true, min: 0, disabled: true });
+    $("#secondThresholdMinAmt").jqxNumberInput({ width: '300px', height: '25px', symbol: currency[2], spinButtons: true, min: 0, disabled: true });
+    $("#secondThresholdMaxAmt").jqxNumberInput({ width: '300px', height: '25px', symbol: currency[2], spinButtons: true, min: 0, disabled: true });
+    $("#secondThresholdRate").jqxNumberInput({ width: '300px', height: '25px', symbol: '%', spinButtons: true, min: 0, disabled: true });
+    $("#thirdThresholdMinAmt").jqxNumberInput({ width: '300px', height: '25px', symbol: currency[2], spinButtons: true, min: 0, disabled: true });
+    $("#thirdThresholdMaxAmt").jqxNumberInput({ width: '300px', height: '25px', symbol: currency[2], spinButtons: true, min: 0, disabled: true });
+    $("#thirdThresholdRate").jqxNumberInput({ width: '300px', height: '25px', symbol: '%', spinButtons: true, min: 0, disabled: true });
+    $("#fourthThresholdMinAmt").jqxNumberInput({ width: '300px', height: '25px', symbol: currency[2], spinButtons: true, min: 0, disabled: true });
+    $("#fourthThresholdMaxAmt").jqxNumberInput({ width: '300px', height: '25px', symbol: currency[2], spinButtons: true, min: 0, disabled: true });
+    $("#fourthThresholdRate").jqxNumberInput({ width: '300px', height: '25px', symbol: '%', spinButtons: true, min: 0, disabled: true });
+    
+    ///<SUMMARY>
+    /// Input validation code
+    ///</SUMMARY>
+    $('#taxation-form').jqxValidator({
+          rules: [
+                   { input: '#TaxName', message: 'Tax name is required!', action: 'keyup, blur', rule: 'required' },
+                   { input: '#Descript', message: 'Description must contain only letters!', action: 'keyup', rule: 'notNumber' }
+          ],theme: theme
+    });
+}
+
+function __loadSettings(){
+
+        $.ajax({
+              cache: false,
+              datatype: "jsonp",
+              url: "/Settings/ReadTaxationSettings",
+              type: "GET",
+              success: function (data, status, xhr){
+
+                for(var r = 0; r < data.length; r ++){
+
+                  record.push({TaxRefCode: data[r].TaxRefCode,
+                               Rate: data[r].Rate,
+                               MinAmount: data[r].MinAmount,
+                               MaxAmount: data[r].MaxAmount,
+                               ThresholdNumber: data[r].ThresholdNumber,
+                               Description: data[r].Description,
+                               DateCreated: data[r].DateCreated});
+
+                  if(data[r].ThresholdNumber == 1){
+                     $('#firstThresholdMinAmt').val(data[r].MinAmount);
+                     $('#firstThresholdMaxAmt').val(data[r].MaxAmount);
+                     $('#firstThresholdRate').val(data[r].Rate);
+                     $("#TaxName").val(data[r].TaxRefCode);
+                     $("#Descript").val(data[r].Description);
+                     $("#dateIssued").val(data[r].DateCreated);
+                  }
+
+                  if(data[r].ThresholdNumber == 2){
+                     $('#secondThresholdMinAmt').val(data[r].MinAmount);
+                     $('#secondThresholdMaxAmt').val(data[r].MaxAmount);
+                     $('#secondThresholdRate').val(data[r].Rate);
+                  }
+
+                  if(data[r].ThresholdNumber == 3){
+                     $('#thirdThresholdMinAmt').val(data[r].MinAmount);
+                     $('#thirdThresholdMaxAmt').val(data[r].MaxAmount);
+                     $('#thirdThresholdRate').val(data[r].Rate);
+                  }
+
+                  if(data[r].ThresholdNumber == 4){
+                     $('#fourthThresholdMinAmt').val(data[r].MinAmount);
+                     $('#fourthThresholdMaxAmt').val(data[r].MaxAmount);
+                     $('#fourthThresholdRate').val(data[r].Rate);
+                  }
+
+                  /*  */
+
+                 }
+
+
+              },
+              error: function(jqXHR, textStatus, errorThrown){
+
+                 _notificationMessage('error',errorThrown);
+              }
+            });
+}
+
+$(document).ready(function(){
+
+    _glcontroller = "Taxation";
+    var theme = getDemoTheme();
+    var title = 'Application Configuration';
+
+   _initializeFormElements(theme);
+   __loadSettings();
+
+   $("#firstThresholdMinAmt").on('change',function(event){
+       if(event){
+          //$('#SaveTaxBtn').jqxButton({ disabled: false});
+          record[0].MinAmount = $("#firstThresholdMinAmt").val();
+       }
+   });
+
+   $("#firstThresholdMaxAmt").on('change',function(event){
+       if(event){
+          //$('#SaveTaxBtn').jqxButton({ disabled: false});
+          record[0].MaxAmount = $("#firstThresholdMaxAmt").val();
+       }
+   });
+
+   $("#firstThresholdRate").on('change',function(event){
+      if(event){
+         //$('#SaveTaxBtn').jqxButton({disabled: false});
+         record[0].Rate = $('#firstThresholdRate').val();
+         record[0].ThresholdNumber = 1;
+      }
+   });
+
+   $("#secondThresholdMinAmt").on('change',function(event){
+       if(event){
+          //$('#SaveTaxBtn').jqxButton({ disabled: false});
+          record[1].MinAmount = $("#secondThresholdMinAmt").val();
+       }
+   });
+
+   $("#secondThresholdMaxAmt").on('change',function(event){
+       if(event){
+          //$('#SaveTaxBtn').jqxButton({ disabled: false});
+          record[1].MaxAmount = $("#secondThresholdMaxAmt").val();
+       }
+   });
+
+   $("#secondThresholdRate").on('change',function(event){
+      if(event){
+         //$('#SaveTaxBtn').jqxButton({disabled: false});
+         record[1].Rate = $('#secondThresholdRate').val();
+         record[1].ThresholdNumber = 2;
+      }
+   });
+
+   $("#thirdThresholdMinAmt").on('change',function(event){
+       if(event){
+          //$('#SaveTaxBtn').jqxButton({ disabled: false});
+          record[2].MinAmount = $("#thirdThresholdMinAmt").val();
+       }
+   });
+
+   $("#thirdThresholdMaxAmt").on('change',function(event){
+       if(event){
+          //$('#SaveTaxBtn').jqxButton({ disabled: false});
+          record[2].MaxAmount = $("#thirdThresholdMaxAmt").val();
+       }
+   });
+
+   $("#thirdThresholdRate").on('change',function(event){
+      if(event){
+         //$('#SaveTaxBtn').jqxButton({disabled: false});
+         record[2].Rate = $('#thirdThresholdRate').val();
+         record[2].ThresholdNumber = 3;
+      }
+   });
+
+   $("#fourthThresholdMinAmt").on('change',function(event){
+       if(event){
+          //$('#SaveTaxBtn').jqxButton({ disabled: false});
+          record[3].MinAmount = $("#fourthThresholdMinAmt").val();
+       }
+   });
+
+   $("#fourthThresholdMaxAmt").on('change',function(event){
+       if(event){
+          //$('#SaveTaxBtn').jqxButton({ disabled: false});
+          record[3].MaxAmount = $("#fourthThresholdMaxAmt").val();
+       }
+   });
+
+   $("#fourthhresholdRate").on('change',function(event){
+      if(event){
+         //$('#SaveTaxBtn').jqxButton({disabled: false});
+         record[3].Rate = $('#fourthThresholdRate').val();
+         record[3].ThresholdNumber = 4;
+      }
+   });
+
+    $('#SaveTaxBtn').click(function(){
+         
+      for (var i = 0; i < record.length; i ++) {
+         _addNewRecord(record[i], _glcontroller);
+      }
+       
+
+    });
+
+
+});
+
+</script>
+
+@Html.Partial("_TaxationSettings")

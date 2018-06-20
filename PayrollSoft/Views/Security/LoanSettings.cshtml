@@ -1,0 +1,33 @@
+﻿@model PayrollSoft.Models.Settings
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<script type="text/javascript">
+
+
+    $(document).ready(function(){
+
+      _glcontroller = "Settings";
+      var theme = getDemoTheme();
+      var title = 'Application Configuration';
+
+      $("#chkAutogenerateLoanRefNum").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+      $("#chkPrecalculateloan").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+
+      $("#maxRepaymntPeriod").jqxNumberInput({theme: theme, height: '20px',width: '130px',spinButtons: true});
+
+      $("#loanProcessingOption").jqxDropDownList({placeHolder: "Choose processing option",theme: theme, source:['Auto','Manual'],
+                                                 selectedIndex: -1, width: '200px',height: '20px',dropDownHeight: "50px"});
+      $("#loanProcessingDate").jqxNumberInput({theme: theme, height: '20px',width: '130px',spinButtons: true});
+
+      $('#loaninterestType').jqxButton({ theme: theme });
+      $('#loantypeDetails').jqxButton({ theme: theme });
+      $('#saveLoanSettingsBtn').jqxButton({theme:theme});
+
+    });
+
+</script>
+
+@Html.Partial("_LoanSettings")

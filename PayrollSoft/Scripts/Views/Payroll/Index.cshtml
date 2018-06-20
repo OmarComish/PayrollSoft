@@ -1,0 +1,269 @@
+﻿@model IEnumerable<PayrollSoft.Models.Payroll>
+
+@{
+    ViewBag.Title = "Options";
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+
+<script type="text/javascript"  >
+
+    function _createFormElements(title, theme, dataAdapter) {
+
+       /* $('#window').jqxWindow({
+            theme: theme,
+            resizable: true,
+            width: 525,
+            height: 400,
+            minWidth: 420,
+            minHeight: 300,
+            title: title,
+            initContent: function () {*/
+
+
+                $("#jqxgrid").jqxGrid({
+                    width: 512,
+                    source: dataAdapter,
+                    theme: theme,
+                    pageable: true,
+                    autoheight: true,
+                    sortable: true,
+                    selectionmode: 'none',
+                    columns: [
+                                       { text: 'Name', datafield: 'EmpName', width: 150 },
+                                       { text: 'Insurance Bill', datafield: 'insuranceBill', width: 100 },
+                                       { text: 'Salary Advance', datafield: 'salaryAdvanceDeduction', width: 100 },
+                                       { text: 'overtimeHours', datafield: 'overtimeHours', width: 100 },
+                                       { text: 'Action', datafield: 'Edit', columntype: 'button', cellsrenderer: function () {
+                                           return "Edit";
+                                       }, buttonclick: function (row) {
+
+                                           editrow = row;
+                                           var offset = $("#jqxgrid").offset();
+                                           $("#popupwindow").jqxWindow({ position: { x: parseInt(offset.left) + 60, y: parseInt(offset.top) + 60} });
+                                           var dataRecord = $("#jqxgrid").jqxGrid('getrowdata', editrow);
+                                           $("#EmpID").val(dataRecord.EmpID);
+                                           $("#overtimeHours").val(dataRecord.overtimeHours);
+                                           $("#insuranceBill").val(dataRecord.insuranceBill);
+                                           $("#salaryAdvanceDeduction").val(dataRecord.salaryAdvanceDeduction);
+                                           var title = 'Edit';
+                                           document.getElementById("popupwindow").style.visibility = "visible";
+                                           //show the popup Window
+                                           _popupWin(theme, title);
+                                       }
+                                       }
+                            ]
+
+                });
+            //}
+
+        //});
+
+        //$('#window').jqxWindow('focus');
+    }
+
+
+     function _deleteRecord(row,controller) {
+
+         //alert("Delete record?");
+         $.ajax({
+             cache: false,
+             datatype: "jsonp",
+             url: "/Payroll/Delete/" + row.EmpID,
+             type: "POST",
+             success: function (data, status, xhr) {
+                 //alert(status);
+                  //Notify the user
+
+                  //NOTE: _addNewRecord() method is called immediately after the delete record
+                  //       to recreate the deleted record. Traditional Edit method in the controller
+                  //       is throwing an exception, which we haven't figured the work around yet
+                  //EXCEPTION DETAILS:
+                  //DATE:04-SEP-2015
+                  //TIME:14:30
+                 _addNewRecord(row,controller);
+
+                 $("#jqxgrid").jqxGrid('updatebounddata');
+
+                 _notificationMessage("success", "Record Saved Successfully!");
+             },
+             error: function (jqXHR, textStatus, errorThrown) {
+                 alert(errorThrown);
+                 //commit(false);
+             }
+
+         });
+         console.log("Delete action invoked");
+
+     }
+
+
+     function _popupWin(theme, title) {
+
+        $("#popupwindow").jqxWindow({
+            theme: theme,
+            resizable: false,
+            width: 350,
+            isModal: true,
+            autoOpen: false,
+            title: title,
+            okButton: $("#Delete"),
+            cancelButton: $("#Cancel"),
+            modalOpacity: 0.01
+
+        });
+
+        $("#popupwindow").jqxWindow('open');
+
+    }
+
+    $(document).ready(function () {
+
+        _winID = "Options";
+        var theme = getDemoTheme();
+        var url = '/Payroll/PayrollList';
+        var editrow = -1;
+
+        document.getElementById("popupwindow").style.visibility = "hidden";
+
+        var source = {
+            datatype: "json",
+            datafields: [
+                                    { name: 'EmpID', type: 'string' },
+                                    { name: 'EmpName', type: 'string' },
+                                    { name: 'insuranceBill', type: 'decimal' },
+                                    { name: 'salaryAdvanceDeduction', type: 'decimal' },
+                                    { name: 'overtimeHours', type: 'number' }
+                        ],
+            id: "EmpId",
+            url: url
+        };
+
+        $("#popupwindow").on('open', function () {
+            $("#EmpID").jqxInput('selectAll');
+        });
+
+        $("#EmpID").jqxInput({ theme: theme, height: '20px', disabled: true });
+        //  $("#empName").jqxInput({ theme: theme, height: '20px', disabled: true });
+        $("#overtimeHours").jqxNumberInput({ height: '20px', spinButtons: true, theme: theme });
+        $("#insuranceBill").jqxNumberInput({ height: '20px', spinButtons: true, theme: theme });
+        $("#salaryAdvanceDeduction").jqxNumberInput({ height: '20px', spinButtons: true, theme: theme });
+        $("#onPayroll").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+
+        $("#onPayroll").on('change', function (event) {
+             //var onPayroll = event.args.checked;
+              _glOnPayroll = event.args.checked;
+        });
+
+        $("#Cancel").jqxButton({ theme: theme });
+        $("#Save").jqxButton({ theme: theme });
+
+        $("#Save").click(function () {
+
+            _glcontroller = "Payroll";
+
+            var row = { EmpID: $("#EmpID").val(),
+                overtimeHours: parseInt($("#overtimeHours").jqxNumberInput('decimal')),
+                insuranceBill: parseFloat($("#insuranceBill").jqxNumberInput('decimal')),
+                salaryAdvanceDeduction: parseFloat($("#salaryAdvanceDeduction").jqxNumberInput('decimal')),
+                PayrollCode: 'PAY-'+ $("#EmpID").val()
+            };
+
+            var rowID = $('#jqxgrid').jqxGrid('getrowid', editrow);
+            //alert(row.Salary);
+
+            $("#popupwindow").jqxWindow('hide');
+
+            _deleteRecord(row,_glcontroller);
+
+            //_editRecord(row.EmpID, row, controller);
+
+
+
+        });
+
+        var cellsrenderer = function (row, columnfield, value, defaulthtml, columnproperties) {
+            if (value < 20) {
+                return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #ff0000;">' + value + '</span>';
+            }
+            else {
+                return '<span style="margin: 4px; float: ' + columnproperties.cellsalign + '; color: #008000;">' + value + '</span>';
+            }
+        }
+
+        var dataAdapter = new $.jqx.dataAdapter(source);
+
+        _createFormElements(_winID, theme, dataAdapter)
+
+    });
+
+</script>
+
+<!--<div id="window">
+     <div>
+       <div id="windowHeader"></div>-->
+         <div>
+           <div id="jqxgrid"></div>
+
+   
+         </div>
+       
+         
+    <!-- </div>
+     
+</div>-->
+
+ <div id="popupwindow" style="overflow: hidden";>
+           <div>Edit</div>
+            <div style="overflow: hidden;">
+              <table>
+                    <tr>
+                        <td align="right">ID:</td>
+                        <td align="left"><input id="EmpID" /></td>
+                    </tr>
+               @*      <tr>
+                        <td align="right">Employee:</td>
+                        <td align="left"><div id="empName"></div></td>
+                    </tr>*@
+                     <tr>
+                        <td align="right">Overtime Hours:</td>
+                        <td align="left"><div id="overtimeHours"></div></td>
+                    </tr>
+                    <tr>
+                        <td align="right">Insurance Bill:</td>
+                        <td align="left"><div id="insuranceBill"></div></td>
+                    </tr>
+                     <tr>
+                        <td align="right">Salary Advance:</td>
+                        <td align="left"><div id="salaryAdvanceDeduction"></div></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><div style="margin-left: 2px;">
+                        <div id="onPayroll">On Payroll</div>
+                       </div></td>
+
+                    </tr>
+                     <tr>
+                        <td align="right"></td>
+                        <td style="padding-top: 10px;" align="right"><input style="margin-right: 5px;" type="button" id="Save" value="Save" /><input id="Cancel" type="button" value="Cancel" /></td>
+                    </tr>
+                </table>
+            </div>
+     </div>
+<div id="messageNotification" style="overflow:hidden;">
+     <div></div>
+</div>

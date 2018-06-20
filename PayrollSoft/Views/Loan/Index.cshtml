@@ -1,0 +1,682 @@
+@model IEnumerable<PayrollSoft.Models.Settings>
+@{
+    ViewBag.Title = "Index";
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxtabs.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxcheckbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxlistbox.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.sort.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.pager.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.selection.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxgrid.edit.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdata.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxnumberinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxinput.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxdropdownlist.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxexpander.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jqxvalidator.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jqwidgets/jscript-app-globals.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery_lib/implement-ui-widget-1.0.js")" type="text/javascript"></script>
+<script type="text/javascript">
+
+var loanHistory = [];
+var index = 0;
+var loanstatus = "";
+
+function _checkdata(data){
+    console.log(data);
+}
+
+function findItem(item){
+    console.log("the picked loan is: " + $("#loanrefNum").val());
+    return item.refnum === $("#loanrefNum").val();
+}
+
+function _populateLoanHistoryData(sourcedata){
+    
+
+     $("#loanHistoryGrid").jqxGrid({
+        width: 780,
+        source: sourcedata,
+        theme: theme,
+        pageable: false,
+        autoheight: true,
+        sortable: true,
+        selectionmode: 'none',
+        columns: [{text:'Date',datafield:'EntryDate',width: 200},
+                  {text:'Interest paid',datafield:'InterestPaid',width: 160},
+                  {text:'Principal paid',datafield:'PrincipalPaid',width: 160},
+                  {text:'Balance',datafield:'LoanBalance',width: 160},
+                  {text:'Period',datafield:'EndOfPeriod',width: 100}
+                ]
+      });
+
+      $("#loanHistoryGrid").jqxGrid('updatebounddata');
+
+}
+
+function _populateDataSource(){
+
+   var _loanlist = { datatype: 'json',
+                     datafields: [{ name: 'EmpID', type: 'string' },
+                                  { name: 'LoanRefNumber', type: 'string'}, 
+                                  { name: 'EmpName', type: 'string'},
+                                  { name: 'Description', type: 'string'},
+                                  { name: 'startDate', type: 'date'},
+                                  { name: 'EndDate',  type: 'date'},
+                                  { name: 'LoanAmount', type: 'number'},
+                                  { name: 'Status', type: 'string'},
+                                  { name: 'PaybackPeriods', type: 'number'},
+                                  { name: 'Formular', type: 'string'}
+                                  ],
+                             id: 'EmpID',
+                            url: '/Settings/getExistingLoans' };
+
+   return new $.jqx.dataAdapter(_loanlist);
+}
+
+function _getLoanRecord(id){
+
+   var _loanlist = { datatype: 'json',
+                     datafields: [{ name: 'EntryDate', type: 'date' },
+                                  { name: 'InterestPaid', type: 'decimal'}, 
+                                  { name: 'PrincipalPaid', type: 'decimal'},
+                                  { name: 'LoanBalance', type: 'decimal'},
+                                  { name: 'EndOfPeriod', type: 'number'}
+                                 ],
+                             id: 'LoanRefNumber',
+                            url: '/Loan/SearchParam/' + id };
+
+   return new $.jqx.dataAdapter(_loanlist);
+}
+  
+function _calculateMaturityDate(initDate,periods){
+
+    console.log("invoked _calculateMaturityDate method");
+
+     var date1 = parseInt(initDate.split("/")[2]);
+     var month1 = parseInt(initDate.split("/")[1]);
+     var year1 = parseInt(initDate.split("/")[0]);
+     var date2 = date1;
+     var month2 = 0;
+     var year2 = 0;
+     var finalDate = null;
+
+
+    if(periods > 0 && periods < 12){
+       
+       month1 = parseInt(periods) + month1;
+       console.log(month1);
+
+     if(month1 > 12){
+
+        month2 = (month1 % 12);
+        year2 = Math.trunc(year1 + (month1 / 12));
+
+      }else {
+
+         month2 = month1;
+         year2 = year1;
+
+       
+      }
+
+
+
+    } else {
+             
+        _notificationMessage("warning","Payback periods cannot be less than 1");
+        document.getElementById('PaybackPeriods').focus();
+       
+    }
+
+       finalDate = year2 + "/" + month2 + "/" + date2 ;
+       $('#maturityDate').val(finalDate);
+       console.log(finalDate);      
+
+}
+
+function _existingLoansGrid(datasource){
+
+
+     $('#loansDataGrid').jqxGrid({
+                    width: 800,
+                    source: datasource,
+                    theme: theme,
+                    pageable: true,
+                    autoheight: true,
+                    sortable: true,
+                    selectionmode: 'none',
+                    columns: [{text: 'Action', datafield: 'Details',width: 70, columntype: 'button', cellsrenderer: function(){
+                                   return "Details";
+                                 },buttonclick: function(row){
+                                        
+                                   editrow = row;
+
+                                   var dataRecord = $("#loansDataGrid").jqxGrid('getrowdata', editrow);
+                                   $("#employeeName").val(dataRecord.EmpName);
+                                   $("#loanType").val(dataRecord.LoanTypeNumber);
+                                   $('#loanStatus').val(dataRecord.Status);
+                                   $('#maturityDate').val(dataRecord.EndDate);
+                                   $('#loanAmount').val(parseFloat(dataRecord.LoanAmount));
+                                   $('#paybackPeriods').val(dataRecord.PaybackPeriods);
+                                   $("#loanrefNum").val(dataRecord.LoanRefNumber);
+                                   $('#formular').val(dataRecord.Formular);
+                                   loanstatus = dataRecord.Status;
+
+                                  _glfunctionInvoked = "editLoanBtn";
+
+                                   $("#loanListingWindow").jqxWindow('close');
+
+
+                                 }
+                              },
+                              {text:'Name', datafield:'EmpName', width:150},
+                              {text:'Loan type', datafield:'LoanTypeNumber', width:80},
+                              {text:'Start date', datafield:'startDate', width:100},
+                              {text:'End date', datafield:'EndDate', width:100},
+                              {text:'Loan amount', datafield:'LoanAmount', width:100},
+                              {text:'Status', datafield:'Status', width:80},
+                              {text:'Repayment period', datafield:'PaybackPeriods', width:100},
+                              {text:'Ref number', datafield:'LoanRefNumber', width:80}
+
+                             ]
+        });
+
+        $("#loansDataGrid").jqxGrid('updatebounddata');
+}
+
+function _loanListings(theme, title){
+
+  $("#loanListingWindow").jqxWindow({
+                        theme: theme,
+                        resizable: true,
+                        width: 1000,
+                        height: 450,
+                        isModal: true,
+                        autoOpen: false,
+                        title: title,
+                        cancelButton: $("#loanListingCloseBtn"),
+                        modalOpacity: 0.01,
+                                initContent: function(){
+
+                                    _existingLoansGrid(_populateDataSource());
+                        }
+
+                });
+
+            $("#loanListingWindow").jqxWindow('open');
+
+      
+}
+
+function _loanDetails(theme, title, dataAdapter){
+
+
+  $("#loanDetailsWindow").jqxWindow({
+                        theme: theme,
+                        resizable: true,
+                        width: 800,
+                        height: 300,
+                        isModal: true,
+                        autoOpen: false,
+                        title: title,
+                        modalOpacity: 0.01,
+                        initContent: function(){
+
+                              
+                              _populateLoanHistoryData(dataAdapter);
+                        }
+
+                });
+
+            $("#loanDetailsWindow").jqxWindow('open');
+
+      
+}
+
+function _nextProcessingDateWindow(){
+
+   $('#NextProcessinDateWindow').jqxWindow({
+                resizable: true,
+                width: 500,
+                height: 150,
+                isModal: true,
+                autoOpen: false,
+                title: 'Date',
+                modalOpacity: 0.01,
+                initContent: function(){
+                     $("#nextprocessingDate").jqxDateTimeInput({theme: theme, width: '250px', height: '25px', formatString: 'yyyy/MM/dd'});
+                }
+   });
+
+   $('#NextProcessinDateWindow').jqxWindow('open');
+}
+
+function _fetchLoanHistory(refnumber){
+
+    //1. Get request to the server to fetch the history of a loan
+    //console.log(loanrefnumber);
+    var loanportfolios = [];
+
+    __searchParam(refnumber);
+    
+    /*
+    $.ajax({
+            cache: false,
+            datatype: "jsonp",
+            url: "/Loan/getLoanRecord/" + refnumber,
+            type: "GET",
+            success: function (data, status, xhr) {
+
+              _verifyDataBeforePosting(data);
+            
+                 for(var x =0; x < data.length; x ++){
+
+                    console.log(data[x].startDate);
+
+                    loanportfolios.push({refnum: data[x].LoanRefNumber,
+                                         Description: data[x].Description,
+                                         startDate: data[x].startDate,
+                                         EndDate: data[x].EndDate,
+                                         PaybackPeriods: data[x].PaybackPeriods,
+                                         LoanAmount: data[x].LoanAmount,
+                                         LoanBalance: data[x].LoanBalance});
+                 }
+
+                  _populateLoanHistoryData(loanportfolios);
+                
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+
+                _notificationMessage("error", errorThrown); //Notify the user
+            }
+         });
+        */
+            
+    //2. dynamically add the rows to the table with loan history data
+
+}
+
+$(document).ready(function(){
+
+  ///<summary>
+  /// _glcontroller holds the value Settings instead of Loan
+  /// This is to avoid changing the code in the jscript-common-function.js file
+  /// Later, during code reviews/Unit testing , Create an If branch section in the code to handle
+  /// method invocation from this view(Deduction) to handle deduction actions
+  ///</summary>
+
+ _getUserAccessRights();
+
+ _glcontroller = "Settings";
+ var theme = getDemoTheme();
+ var title = 'Loan payment';
+ 
+ 
+ document.getElementById('loantypeWin').style.visibility = "hidden";
+ document.getElementById('loanListingWindow').style.visibility = "hidden";
+ document.getElementById('loanDetailsWindow').style.visibility ="hidden";
+
+ //$("#loan-details-footer").jqxExpander({ toggleMode: 'none', width: '800px', showArrow: false, theme: theme });
+
+ var _empDetails = { datatype: 'json',
+                    datafields: [{ name: 'EmpID', type: 'string' }, { name: 'EmpName', type: 'string'}],
+                    id: 'EmpID',
+                    url: '/Settings/getEmployee' };
+
+  var empDetailsDataSource = new $.jqx.dataAdapter(_empDetails);
+
+  //_checkdata(empDetailsDataSource);
+ 
+
+  var _loanType = {datatype: 'json',
+                   datafields: [{ name: 'Code', type: 'string' },{ name: 'Description', type: 'string'},
+                                {name: 'InterestRate',type: 'number'},{name:'AutoGenerateLoanRefNum',type:'string'},{name:'EnablePrecalculation',type:'string'}],
+                   id: 'Code',
+                   url: '/Settings/getLoanType'};
+
+  var loanTypeDataSource = new $.jqx.dataAdapter(_loanType);
+  //$("#chkAutogenerateLoanRefNum").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+  //$("#chkPrecalculateloan").jqxCheckBox({ theme: theme, width: '185px', checked: true });
+
+  //$("#maxRepaymntPeriod").jqxNumberInput({theme: theme, height: '20px',width: '130px',spinButtons: true});
+  $('#jqxTabs').jqxTabs({ height: '550px', width: '100%', theme: theme });
+  $("#loanrefNum").jqxInput({theme: theme, height: '25px',width: '380px',disabled: true});
+  $("#loantypeCode").jqxInput({theme: theme, height: '25px',width: '380px'});
+  $("#loantypeDescript").jqxInput({theme: theme, height: '30px',width: '200px',disabled: true});
+  $("#empID").jqxInput({theme: theme, height: '25px',width: '100px',disabled: true});
+  $('#interestRate').jqxInput({theme: theme, height: '25px',width: '50px',disabled: true});
+  //$("#totalInterest").jqxInput({theme: theme, height: '25px',width: '100px',disabled: true});
+  $("#monthlyRepayment").jqxInput({theme: theme, height: '25px',width: '180px',disabled: true});
+  $("#employeeName").jqxInput({source:empDetailsDataSource, displayMember:"EmpName", valueMember:"EmpID", placeHolder:"Employee name", theme: theme, height: '25px',width: '380px'});
+
+
+
+  $("#loanType").jqxDropDownList({
+             theme: theme, source:loanTypeDataSource,
+             selectedIndex: 0, width: '300px', height: '25px',dropDownHeight: "50px",displayMember:"Code", valueMember:"Code"});
+
+  $('#loanStatus').jqxDropDownList({ placeHolder:"Active",
+             theme: theme, source:['Active','Frozen'],
+             selectedIndex: 0, width: '300px', height: '25px',dropDownHeight: "50px"});
+
+  $("#formular").jqxDropDownList({placeHolder: "Loan calculation formular",
+                                 theme: theme, source:['RBL','STL'],
+                                 selectedIndex: -1, width: '300px',height: '25px',dropDownHeight: "50px"});
+
+  //$("#loanProcessingDate").jqxNumberInput({theme: theme, height: '20px',width: '130px',spinButtons: true});
+
+  // $("#interestType").jqxDropDownList({
+  //            theme: theme, source:['Flex','Limited'],
+  //            selectedIndex: -1, width: '130px', height: '20px',dropDownHeight: "50px"});
+  // $("#annuityMethod").jqxDropDownList({
+  //            theme: theme, source:['Method1','Method2'],
+  //            selectedIndex: -1, width: '130px', height: '20px',dropDownHeight: "50px"});
+
+  $("#startDate").jqxDateTimeInput({ theme: theme, width: '380px', height: '25px', formatString: 'yyyy/MM/dd' });
+  
+
+  //$("#maturityDate").jqxInput({theme: theme, height: '25px',width: '380px',disabled: true});
+  $("#maturityDate").jqxDateTimeInput({ theme: theme, width: '380px', height: '25px', formatString: 'yyyy/MM/dd', disabled: true });
+
+  $('#loaninterestRate').jqxNumberInput({ width: '130px', height: '25px', symbol: '%', spinButtons: true });
+
+  $("#loanAmount").jqxNumberInput({ width: '380px', height: '25px', symbol: '', spinButtons: true });
+
+  $("#paybackPeriods").jqxNumberInput({ width: '380px', height: '25px', symbol: '', spinButtons: true });
+
+
+  //$('#loaninterestType').jqxButton({ theme: theme });
+  $('#loanDetailsBtn').jqxButton({ theme: theme, disabled: true});
+
+  $('#precalculateLoan').jqxButton({ theme: theme });
+  $('#saveLoanBtn').jqxButton({ theme: theme });
+  $('#nextProcessingDateBtn').jqxButton({ theme: theme });
+  $('#loanTypeCancelBtn').jqxButton({theme: theme});
+  $('#viewExistingloan').jqxButton({theme:theme});
+  $('#loanListingCloseBtn').jqxButton({theme: theme});
+
+
+  //----Events triggered code ----//
+
+  $('#loanDetailsBtn').on('click', function () {
+
+        var id = $("#loanrefNum").val();
+        
+       _loanDetails(theme, "Loan repayment history", _getLoanRecord(id));
+
+       document.getElementById('loanDetailsWindow').style.visibility = "visible";
+
+  });
+
+  $('#loanTypeOKBtn').click(function(){
+
+      $("#loantypeWin").jqxWindow('close');
+  });
+
+  $("#employeeName").on('select',function(event){
+       if(event.args){
+         var item = event.args.item;
+         $('#empID').val(item.value.trim());
+         //console.log(item.value.trim());
+       }
+  });
+
+  $("#paybackPeriods").on('change',function(event){
+
+         if(event.args){
+             
+             if ($('#paybackPeriods').val() >= 1){
+                 _calculateMaturityDate($('#startDate').val(),$('#paybackPeriods').val());
+             }
+             
+         }
+  });
+  
+  $('#loanStatus').on('change', function(event){
+
+     if(event.args){
+
+        if($('#loanStatus').val().trim() === 'Frozen'){
+          _nextProcessingDateWindow();
+        }
+        
+     }
+  });
+  
+$("#loanType").on('select',function(event){
+
+
+   if(event.args){
+      var index = $("#loanType").jqxDropDownList('selectedIndex');
+       $("#loantypeDescript").val(loanTypeDataSource.records[index].Description);
+       //$("#loanType").val(loanTypeDataSource.records[index].Code);
+       $("#interestRate").val(loanTypeDataSource.records[index].InterestRate + "%");
+       //console.log("Loan precalculation: " + loanTypeDataSource.records[index].EnablePrecalculation);
+       //console.log("Autogenerate ref number: " + loanTypeDataSource.records[index].AutoGenerateLoanRefNum);
+
+       var refnum = AutogenerateCode();
+       //console.log("refnum: " + refnum);
+       //$('#loanrefNum').val("");
+
+      //if(loanTypeDataSource.records[index].AutoGenerateLoanRefNum.trim() == true){
+         //$('#loanrefNum').val(loanTypeDataSource.records[index].Code.trim() + refnum);
+          //console.log(loanTypeDataSource.records[index].AutoGenerateLoanRefNum.trim());
+       //}
+       if(loanTypeDataSource.records[index].AutoGenerateLoanRefNum.trim() === "true"){
+          console.log("ref number autogenerate true");
+          $('#loanrefNum').val(loanTypeDataSource.records[index].Code.trim() + refnum);
+       }
+
+   }
+
+  });
+
+  $('#loantypeDetails').click(function(){
+
+       _loadWindow(theme,"Loan type");
+       document.getElementById('loantypeWin').style.visibility = "visible";
+
+
+  });
+
+  $('#loaninterestType').click(function(){
+
+       _loadWindow(theme,"Existing loan types");
+       document.getElementById('loaninterestWin').style.visibility = "visible";
+
+  });
+
+  $('#viewExistingloan').click(function(){
+
+       $('#loanDetailsBtn').jqxButton({disabled: false});
+
+      _loanListings(theme,"Existing loan list");
+       document.getElementById('loanListingWindow').style.visibility = "visible";
+
+  });
+
+  $('#precalculateLoan').click(function(){
+
+        console.log("loan precalculation method invoked");
+
+        var pmtCalculationParams = {rate: parseFloat($('#interestRate').val()), 
+                                   amount: $("#loanAmount").val(), 
+                                   months: parseInt($("#paybackPeriods").val()) };
+
+         $.ajax({
+              cache: false,
+              datatype: "jsonp",
+              url: "/Settings/getLoanMonthlyRepayment",
+              type: "POST",
+              data: pmtCalculationParams,
+              success: function(data, status, xhr){
+                   
+                   $("#monthlyRepayment").val(data.Amount);
+              },
+              error: function(jqXHR, textStatus,errorThrown){
+
+                  _notificationMessage("error", errorThrown); //Notify the user
+              }
+
+          });
+
+      //_getUserAccessRights("Loans");
+     /* var datarow ={interestRate:$('#interestRate').val(),PaybackPeriods:$('#paybackPeriods').val(),LoanAmount:$('#loanAmount').val()};
+
+      console.log("interest rate: " + datarow.interestRate);
+      console.log("payback periods: " + datarow.PaybackPeriods);
+      console.log("Loan Amount: " + datarow.LoanAmount);
+
+      $.ajax({
+          cache: false,
+          datatype: "jsonp",
+          url: "/Settings/PrecalculateLoan",
+          type: "POST",
+          data: datarow,
+          success: function (data, status, xhr) {
+              alert(status);
+              //$("#jqxgrid").jqxGrid('updatebounddata');
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+              alert(errorThrown);
+              //commit(false);
+          }
+
+      });
+
+      //if(updateRole === true){
+
+                  $.ajax({
+                  cache: false,
+                  datatype: "jsonp",
+                  url:"/Home/RetrieveUserRoles",
+                  type: 'GET',
+                  success: function (data){
+
+                     for(var x = 0; x < data.length; x ++){
+                       userPrivilegdes.push({name:data[x].ModuleId, roles: data[x].AccessId});
+                     }
+
+                     retrieveUnassignedRoles(userPrivilegdes);
+
+                     //_checkAccessRights(appmodule, userPrivilegdes);
+
+                  },
+                  error: function(jqXHR, textStatus, errorThrown){
+                         console.log("Error, " + errorThrown);
+                  }
+          });
+     */
+
+    // _verifyDataBeforePosting(pmtCalculationParams);
+
+       
+    //  } else {
+
+      //  _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+
+    //  }
+
+
+  });
+
+  $('#nextProcessingDateBtn').click(function(){
+
+       var currentMonth = new Date().getMonth() + 1
+       var currentYear = parseInt(CurrentDate().substr(0,4));
+       var resumeMonth = parseInt($('#nextprocessingDate').val().substr(5,2));
+       var resumeYear = parseInt($('#nextprocessingDate').val().substr(0,4));
+ 
+         if(resumeMonth > currentMonth && resumeYear >= currentYear){
+             $('#NextProcessinDateWindow').jqxWindow('close');
+          } else {
+             _notificationMessage("error","Resume date cannot be equal or less than the current date");
+          }  
+  });
+
+  $('#loanStatus').on('select',function(event){
+
+      if(event.args){
+         var item = event.args.item;
+         loanstatus = item.value.trim();
+       }
+  });
+
+  $('#saveLoanBtn').click(function(){
+
+       $('#loan-form').jqxValidator('validate');
+
+          if(_glfunctionInvoked === 'editLoanBtn'){
+              
+              var datarow = { LoanrefNumber: $('#loanrefNum').val(),
+                              resumeDate:    $('#nextprocessingDate').val(),
+                              Status:   $('#loanStatus').val()};
+
+              if(__authorised('Loans', userPrivilegdes, 'Update') === true){
+
+                    __POSTWrapper(datarow,  _glfunctionInvoked);
+
+              } else {
+
+                    _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+              }
+
+          } else {
+
+            _glfunctionInvoked ="saveLoanBtn";
+
+                   var datarow = {LoanRefNumber:      $('#loanrefNum').val(),
+                                  LoanTypeNumber:     $("#loanType").val().trim(),
+                                  EmpID:              $('#empID').val(),
+                                  startDate:          $('#startDate').val(),
+                                  EndDate:            $('#maturityDate').val(),
+                                  PaybackPeriods:     $('#paybackPeriods').val(),
+                                  LoanAmount:         $('#loanAmount').val(),
+                                  MonthlyRepayment:   $('#MonthlyRepayment').val(),
+                                  Status:             $('#loanStatus').val(),
+                                  EntryID:            AutogenerateCode(),
+                                  EndOfPeriod:        1,
+                                  Formular:           $('#formular').val()
+                                };
+
+                if(__authorised('Loans', userPrivilegdes, 'Create') === true){
+                    
+                    __POSTWrapper(datarow,  _glfunctionInvoked);
+
+                } else {
+
+                    _notificationMessage("error","Permission denied. You have insufficient rights to complete this action");
+                }
+          }
+     
+  });
+
+
+   $('#loanTypeCancelBtn').click(function(){
+
+        $("#loantypeWin").jqxWindow('close');
+
+   });
+
+   $('#loan-form').jqxValidator({
+             rules: [
+              { input: '#employeeName', message: 'Employee Name is required!', action: 'keyup, blur', rule: 'required' },
+              { input: '#employeeName', message: 'Employee name must contain only letters!', action: 'keyup', rule: 'notNumber' },
+              { input: '#employeeName', message: 'Employee name must be between 3 and 35 characters!', action: 'keyup', rule: 'length=3,25' },
+
+
+              ],theme: theme
+  });
+
+
+});
+
+</script>
+
+
+@Html.Partial("_Loan")

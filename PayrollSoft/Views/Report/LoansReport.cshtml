@@ -1,0 +1,44 @@
+﻿@model PayrollSoft.Models.GroupLoanPortifolios
+
+﻿@{
+    ViewBag.Title = "LoansReport";
+}
+
+<h2>LoansReport</h2>
+<table>
+   <tr>
+     <td>RefNumber</td>
+     <td>Loan Type</td>
+     <td>Employee Name</td>
+     <td>Start Date</td>
+     <td>End Date</td>
+     <td>Loan Amount</td>
+     <td>Monthly repayment</td>
+     <td>Payback periods</td>
+     <td>Status</td>
+   </tr>
+
+   @for (var x = 0; x < Model.PortifolioDetails.Count(); x++)
+   {
+     <tr>
+         <td>@Html.DisplayFor(m => Model.PortifolioDetails.ElementAt(x).LoanRefNumber)</td>
+         <td>@Html.DisplayFor(m => Model.PortifolioDetails.ElementAt(x).LoanTypeNumber)</td>
+         <td>@Html.DisplayFor(m => Model.PortifolioDetails.ElementAt(x).EmpID)</td>
+         <td>@Html.DisplayFor(m => Model.PortifolioDetails.ElementAt(x).startDate)</td>
+         <td>@Html.DisplayFor(m => Model.PortifolioDetails.ElementAt(x).EndDate)</td>
+         <td>@Html.DisplayFor(m => Model.PortifolioDetails.ElementAt(x).LoanAmount)</td>
+         <td>@Html.DisplayFor(m => Model.PortifolioDetails.ElementAt(x).PaybackPeriods)</td>
+         <td>@Html.DisplayFor(m => Model.PortifolioDetails.ElementAt(x).Status)</td>
+         <td>@Html.DisplayFor(m => Model.PortifolioDetails.ElementAt(x).MonthlyRepayment)</td>
+     </tr>
+   }
+</table>
+<table>
+  <tr>
+    @for(var x = 0; x < Model.Total.Count(); x ++)
+    {
+      <td>TOTAL</td><td>@Html.DisplayFor(m => Model.Total.ElementAt(x).LoanAmount)</td>
+    }
+
+  </tr>
+</table>
